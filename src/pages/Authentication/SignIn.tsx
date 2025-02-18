@@ -6,6 +6,10 @@ import Logo from '../../images/logo/logo.svg';
 import DefaultLayout from '../../layout/DefaultLayout';
 
 const SignIn: React.FC = () => {
+
+  const handleSignin = () => {
+    console.log('Sign in');
+  };
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Sign In" />
@@ -227,6 +231,7 @@ const SignIn: React.FC = () => {
                   <input
                     type="submit"
                     value="Sign In"
+                    onClick={()=>handleSignin()}
                     className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
                   />
                 </div>
