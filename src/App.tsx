@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 
-import ECommerce from './pages/Dashboard/ECommerce';
+// import ECommerce from './pages/Dashboard/ECommerce';
 import Analytics from './pages/Dashboard/Analytics';
 import Marketing from './pages/Dashboard/Marketing';
 import CRM from './pages/Dashboard/CRM';
