@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
-
+import Setting from './pages/Dashboard/Setting';
+import Calender from './pages/Dashboard/Calender';
+import Attendance from './pages/Dashboard/Attendance';
+import User from './pages/Dashboard/User';
+import Dashboard from './pages/Dashboard/Dashboard';
 // import ECommerce from './pages/Dashboard/ECommerce';
 import Analytics from './pages/Dashboard/Analytics';
 import Marketing from './pages/Dashboard/Marketing';
 import CRM from './pages/Dashboard/CRM';
 import Stocks from './pages/Dashboard/Stocks';
-import Calendar from './pages/Calendar';
+// import Calendar from './pages/Calendar';
 import Profile from './pages/Profile';
 import TaskKanban from './pages/Task/TaskKanban';
 import TaskList from './pages/Task/TaskList';
@@ -59,6 +63,7 @@ import Spinners from './pages/UiElements/Spinners';
 import ComingSoon from './pages/Authentication/ComingSoon';
 import TwoStepVerification from './pages/Authentication/TwoStepVerification';
 import UnderMaintenance from './pages/Authentication/UnderMaintenance';
+import WeeklyReport from './pages/Dashboard/WeeklyReport';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -83,6 +88,60 @@ function App() {
             <>
               <PageTitle title="eCommerce Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template" />
               <SignIn />
+            </>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <>
+              <PageTitle title="Analytics Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <Dashboard />
+            </>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <>
+              <PageTitle title="Analytics Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <User />
+            </>
+          }
+        />
+         <Route
+          path="/attendance"
+          element={
+            <>
+              <PageTitle title="Analytics Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <Attendance />
+            </>
+          }
+        />
+        <Route
+          path="/calendar"
+          element={
+            <>
+              <PageTitle title="Calendar | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <Calender />
+            </>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <>
+              <PageTitle title="Calendar | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <Setting />
+            </>
+          }
+        />
+        <Route
+          path="/weekly-report"
+          element={
+            <>
+              <PageTitle title="Calendar | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <WeeklyReport />
             </>
           }
         />
@@ -122,15 +181,7 @@ function App() {
             </>
           }
         />
-        <Route
-          path="/calendar"
-          element={
-            <>
-              <PageTitle title="Calendar | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Calendar />
-            </>
-          }
-        />
+        
         <Route
           path="/profile"
           element={
@@ -545,6 +596,9 @@ function App() {
             </>
           }
         />
+        
+          
+        
         <Route
           path="/auth/signup"
           element={
