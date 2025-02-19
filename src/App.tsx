@@ -5,7 +5,7 @@ import Calender from './pages/Dashboard/Calender';
 import Attendance from './pages/Dashboard/Attendance';
 import User from './pages/Dashboard/User';
 import Dashboard from './pages/Dashboard/Dashboard';
-import ECommerce from './pages/Dashboard/ECommerce';
+// import ECommerce from './pages/Dashboard/ECommerce';
 import Analytics from './pages/Dashboard/Analytics';
 import Marketing from './pages/Dashboard/Marketing';
 import CRM from './pages/Dashboard/CRM';
