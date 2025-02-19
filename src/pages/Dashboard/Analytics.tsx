@@ -9,6 +9,7 @@ import TableTwo from '../../components/Tables/TableTwo';
 import TopChannels from '../../components/TopChannels';
 import TopContent from '../../components/TopContent';
 import DefaultLayout from '../../layout/DefaultLayout';
+// import Logout from '../Authentication/Logout';
 
 const Analytics: React.FC = () => {
   useEffect(() => {
@@ -130,7 +131,7 @@ const Analytics: React.FC = () => {
           {/* <!-- ====== Top Channels End --> */}
         </div>
         <ChartThree />
-
+       
         {/* <!-- ====== Table Two Start --> */}
         <div className="col-span-12 xl:col-span-7">
           <TableTwo />

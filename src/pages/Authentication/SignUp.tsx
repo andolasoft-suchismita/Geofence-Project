@@ -1,11 +1,44 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link ,useNavigate} from 'react-router-dom';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
-import LogoDark from '../../images/logo/logo-dark.svg';
-import Logo from '../../images/logo/logo.svg';
+// import LogoDark from '../../images/logo/logo-dark.svg';
+// import Logo from '../../images/logo/logo.svg';
 import DefaultLayout from '../../layout/DefaultLayout';
 
 const SignUp: React.FC = () => {
+  
+    const navigate = useNavigate();
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [rePassword, setRePassword] = useState('');
+  
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      // Simple validation: check that both passwords match
+      if (password !== rePassword) {
+        alert('Passwords do not match!');
+        return;
+      }
+
+       // Check if the email already exists in localStorage
+    const existingUser = JSON.parse(localStorage.getItem('user') || '[]');
+    const emailExists = existingUser.some((user: { email: string }) => user.email === email);
+
+    if (emailExists) {
+      setError('You already have an account with this email.');
+      return;
+    }
+  
+      // Save the user details in localStorage as a JSON string
+      const user = { name, email, password };
+      localStorage.setItem('user', JSON.stringify(user));
+  
+      alert('Account created successfully! Please sign in.');
+      // Redirect to sign in page
+      navigate('/auth/signin');
+    };
+  
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Sign Up" />
@@ -15,12 +48,12 @@ const SignUp: React.FC = () => {
           <div className="hidden w-full xl:block xl:w-1/2">
             <div className="px-26 py-17.5 text-center">
               <Link className="mb-5.5 inline-block" to="/">
-                <img className="hidden dark:block" src={Logo} alt="Logo" />
-                <img className="dark:hidden" src={LogoDark} alt="Logo" />
+                {/* <img className="hidden dark:block" src={Logo} alt="Logo" />
+                <img className="dark:hidden" src={LogoDark} alt="Logo" /> */}
               </Link>
-              <p className="2xl:px-20">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit
-                suspendisse.
+              <p className="2xl:px-120">
+                <b><strong> OGeo</strong></b>
+               
               </p>
 
               <span className="mt-15 inline-block">
@@ -150,11 +183,11 @@ const SignUp: React.FC = () => {
 
           <div className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
             <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
-             <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
+             {/* <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
                 Sign Up to OGeo
-              </h2>
+              </h2> */}
 
-              <form>
+              <form onSubmit={handleSubmit}>
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Name
@@ -163,6 +196,8 @@ const SignUp: React.FC = () => {
                     <input
                       type="text"
                       placeholder="Enter your full name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
 
@@ -198,6 +233,8 @@ const SignUp: React.FC = () => {
                     <input
                       type="email"
                       placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
 
@@ -229,6 +266,8 @@ const SignUp: React.FC = () => {
                     <input
                       type="password"
                       placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
 
@@ -258,12 +297,14 @@ const SignUp: React.FC = () => {
 
                 <div className="mb-6">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
-                    Re-type Password
+                    Confirm Password
                   </label>
                   <div className="relative">
                     <input
                       type="password"
-                      placeholder="Re-enter your password"
+                      placeholder="Confirm password"
+                      value={rePassword}
+                      onChange={(e) => setRePassword(e.target.value)}
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
 
