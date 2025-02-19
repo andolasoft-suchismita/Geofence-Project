@@ -5,22 +5,12 @@ import Calender from './pages/Dashboard/Calender';
 import Attendance from './pages/Dashboard/Attendance';
 import User from './pages/Dashboard/User';
 import Dashboard from './pages/Dashboard/Dashboard';
-// import ECommerce from './pages/Dashboard/ECommerce';
 import Analytics from './pages/Dashboard/Analytics';
-import Marketing from './pages/Dashboard/Marketing';
-import CRM from './pages/Dashboard/CRM';
-import Stocks from './pages/Dashboard/Stocks';
-// import Calendar from './pages/Calendar';
 import Profile from './pages/Profile';
-import TaskKanban from './pages/Task/TaskKanban';
-import TaskList from './pages/Task/TaskList';
-import FormElements from './pages/Form/FormElements';
-import FormLayout from './pages/Form/FormLayout';
+// import FormElements from './pages/Form/FormElements';
+// import FormLayout from './pages/Form/FormLayout';
 import Tables from './pages/Tables/Tables';
 import Settings from './pages/Pages/Settings';
-import FileManager from './pages/Pages/FileManager';
-import DataTables from './pages/Pages/DataTables';
-import PricingTables from './pages/Pages/PricingTables';
 import ErrorPage from './pages/Pages/ErrorPage';
 import MailSuccess from './pages/Pages/MailSuccess';
 import Messages from './pages/Messages';
@@ -31,38 +21,20 @@ import AdvancedChart from './pages/Chart/AdvancedChart';
 import Alerts from './pages/UiElements/Alerts';
 import Buttons from './pages/UiElements/Buttons';
 import ButtonsGroup from './pages/UiElements/ButtonsGroup';
-import Badge from './pages/UiElements/Badge';
 import Breadcrumbs from './pages/UiElements/Breadcrumbs';
 import Cards from './pages/UiElements/Cards';
 import Dropdowns from './pages/UiElements/Dropdowns';
 import Modals from './pages/UiElements/Modals';
 import Tabs from './pages/UiElements/Tabs';
 import Tooltips from './pages/UiElements/Tooltips';
-import Popovers from './pages/UiElements/Popovers';
-import Accordion from './pages/UiElements/Accordion';
 import Notifications from './pages/UiElements/Notifications';
 import Pagination from './pages/UiElements/Pagination';
-import Progress from './pages/UiElements/Progress';
-import Carousel from './pages/UiElements/Carousel';
-import Images from './pages/UiElements/Images';
-import Videos from './pages/UiElements/Videos';
 import ResetPassword from './pages/Authentication/ResetPassword';
 import SignIn from './pages/Authentication/SignIn';
 import SignUp from './pages/Authentication/SignUp';
 import Loader from './common/Loader';
 import PageTitle from './components/PageTitle';
-import ProFormElements from './pages/Form/ProFormElements';
-import ProFormLayout from './pages/Form/ProFormLayout';
-import ProTables from './pages/Tables/ProTables';
-import TermsConditions from './pages/Pages/TermsConditions';
-import Faq from './pages/Pages/Faq';
-import Teams from './pages/Pages/Teams';
-import Avatars from './pages/UiElements/Avatars';
 import List from './pages/UiElements/List';
-import Spinners from './pages/UiElements/Spinners';
-import ComingSoon from './pages/Authentication/ComingSoon';
-import TwoStepVerification from './pages/Authentication/TwoStepVerification';
-import UnderMaintenance from './pages/Authentication/UnderMaintenance';
 import WeeklyReport from './pages/Dashboard/WeeklyReport';
 
 function App() {
@@ -109,7 +81,7 @@ function App() {
             </>
           }
         />
-         <Route
+        <Route
           path="/attendance"
           element={
             <>
@@ -154,35 +126,8 @@ function App() {
             </>
           }
         />
-        <Route
-          path="/dashboard/marketing"
-          element={
-            <>
-              <PageTitle title="Marketing Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Marketing />
-            </>
-          }
-        />
-        <Route
-          path="/dashboard/crm"
-          element={
-            <>
-              <PageTitle title="CRM Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <CRM />
-            </>
-          }
-        />
-        <Route
-          path="/dashboard/stocks"
-          element={
-            <>
-              <PageTitle title="Stocks Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Stocks />
-            </>
-          }
-        />
-        
-        <Route
+      
+      <Route
           path="/profile"
           element={
             <>
@@ -191,39 +136,12 @@ function App() {
             </>
           }
         />
-        <Route
-          path="/tasks/task-list"
-          element={
-            <>
-              <PageTitle title="Task List | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <TaskList />
-            </>
-          }
-        />
-        <Route
-          path="/tasks/task-kanban"
-          element={
-            <>
-              <PageTitle title="Task Kanban | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <TaskKanban />
-            </>
-          }
-        />
-        <Route
+        {/* <Route
           path="/forms/form-elements"
           element={
             <>
               <PageTitle title="Form Elements | TailAdmin - Tailwind CSS Admin Dashboard Template" />
               <FormElements />
-            </>
-          }
-        />
-        <Route
-          path="/forms/pro-form-elements"
-          element={
-            <>
-              <PageTitle title="Pro Form Elements | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <ProFormElements />
             </>
           }
         />
@@ -235,31 +153,13 @@ function App() {
               <FormLayout />
             </>
           }
-        />
-        <Route
-          path="/forms/pro-form-layout"
-          element={
-            <>
-              <PageTitle title="Pro Form Layout | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <ProFormLayout />
-            </>
-          }
-        />
+        /> */}
         <Route
           path="/tables/tables"
           element={
             <>
               <PageTitle title="Tables | TailAdmin - Tailwind CSS Admin Dashboard Template" />
               <Tables />
-            </>
-          }
-        />
-        <Route
-          path="/tables/pro-tables"
-          element={
-            <>
-              <PageTitle title="Pro Tables | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <ProTables />
             </>
           }
         />
@@ -282,65 +182,11 @@ function App() {
           }
         />
         <Route
-          path="/pages/file-manager"
-          element={
-            <>
-              <PageTitle title="File Manager | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <FileManager />
-            </>
-          }
-        />
-        <Route
-          path="/pages/data-tables"
-          element={
-            <>
-              <PageTitle title="Data Tables | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <DataTables />
-            </>
-          }
-        />
-        <Route
-          path="/pages/pricing-tables"
-          element={
-            <>
-              <PageTitle title="Pricing Tables | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <PricingTables />
-            </>
-          }
-        />
-        <Route
           path="/pages/error-page"
           element={
             <>
               <PageTitle title="Error Page | TailAdmin - Tailwind CSS Admin Dashboard Template" />
               <ErrorPage />
-            </>
-          }
-        />
-        <Route
-          path="/pages/faq"
-          element={
-            <>
-              <PageTitle title="Faq's | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Faq />
-            </>
-          }
-        />
-        <Route
-          path="/pages/team"
-          element={
-            <>
-              <PageTitle title="Terms & Conditions | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Teams />
-            </>
-          }
-        />
-        <Route
-          path="/pages/terms-conditions"
-          element={
-            <>
-              <PageTitle title="Terms & Conditions | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <TermsConditions />
             </>
           }
         />
@@ -399,38 +245,11 @@ function App() {
           }
         />
         <Route
-          path="/ui/accordion"
-          element={
-            <>
-              <PageTitle title="Accordion | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Accordion />
-            </>
-          }
-        />
-        <Route
           path="/ui/alerts"
           element={
             <>
               <PageTitle title="Alerts | TailAdmin - Tailwind CSS Admin Dashboard Template" />
               <Alerts />
-            </>
-          }
-        />
-        <Route
-          path="/ui/avatars"
-          element={
-            <>
-              <PageTitle title="Avatars | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Avatars />
-            </>
-          }
-        />
-        <Route
-          path="/ui/badge"
-          element={
-            <>
-              <PageTitle title="Badge | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Badge />
             </>
           }
         />
@@ -471,29 +290,11 @@ function App() {
           }
         />
         <Route
-          path="/ui/carousel"
-          element={
-            <>
-              <PageTitle title="Carousel | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Carousel />
-            </>
-          }
-        />
-        <Route
           path="/ui/dropdowns"
           element={
             <>
               <PageTitle title="Dropdowns | TailAdmin - Tailwind CSS Admin Dashboard Template" />
               <Dropdowns />
-            </>
-          }
-        />
-        <Route
-          path="/ui/images"
-          element={
-            <>
-              <PageTitle title="Images | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Images />
             </>
           }
         />
@@ -534,33 +335,6 @@ function App() {
           }
         />
         <Route
-          path="/ui/popovers"
-          element={
-            <>
-              <PageTitle title="Popovers | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Popovers />
-            </>
-          }
-        />
-        <Route
-          path="/ui/progress"
-          element={
-            <>
-              <PageTitle title="Progress | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Progress />
-            </>
-          }
-        />
-        <Route
-          path="/ui/spinners"
-          element={
-            <>
-              <PageTitle title="Spinners | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Spinners />
-            </>
-          }
-        />
-        <Route
           path="/ui/tabs"
           element={
             <>
@@ -579,15 +353,6 @@ function App() {
           }
         />
         <Route
-          path="/ui/videos"
-          element={
-            <>
-              <PageTitle title="Videos | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Videos />
-            </>
-          }
-        />
-        <Route
           path="/auth/signin"
           element={
             <>
@@ -596,9 +361,7 @@ function App() {
             </>
           }
         />
-        
-          
-        
+
         <Route
           path="/auth/signup"
           element={
@@ -614,33 +377,6 @@ function App() {
             <>
               <PageTitle title="Reset Password | TailAdmin - Tailwind CSS Admin Dashboard Template" />
               <ResetPassword />
-            </>
-          }
-        />
-        <Route
-          path="/auth/coming-soon"
-          element={
-            <>
-              <PageTitle title="Coming Soon | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <ComingSoon />
-            </>
-          }
-        />
-        <Route
-          path="/auth/two-step-verification"
-          element={
-            <>
-              <PageTitle title="2 Step Verification | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <TwoStepVerification />
-            </>
-          }
-        />
-        <Route
-          path="/auth/under-maintenance"
-          element={
-            <>
-              <PageTitle title="Under Maintenance | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <UnderMaintenance />
             </>
           }
         />
