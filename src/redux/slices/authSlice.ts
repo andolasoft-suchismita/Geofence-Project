@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface AuthState {
     isAuthenticated: boolean;
+    token: string | null;
     user: {
         name: string;
         email: string;
@@ -10,6 +11,7 @@ interface AuthState {
 
 const initialState: AuthState = {
     isAuthenticated: false,
+    token: null,
     user: null,
 };
 
@@ -17,14 +19,16 @@ const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-        login: (state, action: PayloadAction<{ name: string; email: string }>) => {
+        login: (state, action: PayloadAction<{token: string}>) =>
+             {
             state.isAuthenticated = true;
-            state.user = action.payload;
-            localStorage.setItem("authToken", JSON.stringify(action.payload));
+            state.token = action.payload.token; // Replace with actual token
+            localStorage.setItem("authToken", JSON.stringify(action.payload))
         },
         logout: (state) => {
             state.isAuthenticated = false;
             state.user = null;
+            state.token = null
             localStorage.removeItem("authToken");
         },
     },

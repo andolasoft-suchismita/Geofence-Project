@@ -1,8 +1,8 @@
-import API from "../axiosInstance";
+import  { FormAPI } from "../axiosInstance";
 
-export const loginUser = async (email: string, password: string) => {
+export const loginUser = async (username: string, password: string) => {
     try {
-        const response = await API.post("/auth/login", { email, password });
+        const response = await FormAPI.post("/auth/jwt/login", { username, password });
         return response.data;
     } catch (error) {
         throw error;
