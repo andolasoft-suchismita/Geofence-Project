@@ -1,7 +1,7 @@
 import React from 'react';
-import CoverThree from '../../images/cover/cover-03.jpg';
-import CoverFour from '../../images/cover/cover-04.jpg';
-import CoverFive from '../../images/cover/cover-05.jpg'
+import CoverThree from '../../assets/cover/cover-03.jpg';
+import CoverFour from '../../assets/cover/cover-04.jpg';
+import CoverFive from '../../assets/cover/cover-05.jpg'
 
 const ImagesTwo: React.FC = () => {
   return (

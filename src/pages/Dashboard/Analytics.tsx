@@ -8,7 +8,7 @@ import MapTwo from '../../components/Maps/MapTwo';
 import TableTwo from '../../components/Tables/TableTwo';
 import TopChannels from '../../components/TopChannels';
 import TopContent from '../../components/TopContent';
-import DefaultLayout from '../../layout/DefaultLayout';
+import from '../..//';
 // import Logout from '../Authentication/Logout';
 
 const Analytics: React.FC = () => {
@@ -42,7 +42,7 @@ const Analytics: React.FC = () => {
   }, []);
 
   return (
-    <DefaultLayout>
+    <>
       <div className="2xl:gap-7.5 grid grid-cols-12 gap-4 md:gap-6">
         <div className="col-span-12 flex flex-wrap items-center justify-between gap-3">
           {/* <!-- Datepicker built with flatpickr --> */}
@@ -131,14 +131,14 @@ const Analytics: React.FC = () => {
           {/* <!-- ====== Top Channels End --> */}
         </div>
         <ChartThree />
-       
+
         {/* <!-- ====== Table Two Start --> */}
         <div className="col-span-12 xl:col-span-7">
           <TableTwo />
         </div>
         {/* <!-- ====== Table Two End --> */}
       </div>
-    </DefaultLayout>
+    </>
   );
 };
 
