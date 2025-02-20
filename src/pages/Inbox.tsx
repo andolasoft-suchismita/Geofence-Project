@@ -1,29 +1,25 @@
 import React, { useState } from 'react';
 import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
-import DropdownDefault from '../components/Dropdowns/DropdownDefault';
 import InboxList from '../components/Inbox/InboxList';
 import InboxMenuList from '../components/Inbox/InboxMenuList';
-import DefaultLayout from '../layout/DefaultLayout';
 
 const Inbox: React.FC = () => {
   const [inboxSidebarToggle, setInboxSidebarToggle] = useState(false);
 
   return (
-    <DefaultLayout>
+    <>
       <Breadcrumb pageName="Inbox" />
 
       <div className="sm:h-[calc(100vh-174px)] h-[calc(100vh-186px)] overflow-hidden">
         <div className="h-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark lg:flex">
           <div
-            className={`lg:w-1/5 fixed bottom-0 top-22.5 z-999 flex w-[230px] -translate-x-[120%] flex-col rounded-md border border-stroke bg-white dark:border-strokedark dark:bg-boxdark lg:static lg:translate-x-0 lg:border-none ${
-              inboxSidebarToggle && '!translate-x-0 duration-300 ease-linear'
-            }`}
+            className={`lg:w-1/5 fixed bottom-0 top-22.5 z-999 flex w-[230px] -translate-x-[120%] flex-col rounded-md border border-stroke bg-white dark:border-strokedark dark:bg-boxdark lg:static lg:translate-x-0 lg:border-none ${inboxSidebarToggle && '!translate-x-0 duration-300 ease-linear'
+              }`}
           >
             <button
               onClick={() => setInboxSidebarToggle(!inboxSidebarToggle)}
-              className={`absolute -right-20 z-99999 block rounded-md border border-stroke bg-white p-1.5 shadow-sm dark:border-strokedark dark:bg-boxdark lg:hidden ${
-                inboxSidebarToggle && '!-right-9'
-              }`}
+              className={`absolute -right-20 z-99999 block rounded-md border border-stroke bg-white p-1.5 shadow-sm dark:border-strokedark dark:bg-boxdark lg:hidden ${inboxSidebarToggle && '!-right-9'
+                }`}
             >
               <svg
                 className="h-5 w-5 fill-current"
@@ -116,10 +112,6 @@ const Inbox: React.FC = () => {
                     />
                   </svg>
                 </button>
-
-                <div className="text-right">
-                  <DropdownDefault />
-                </div>
               </div>
 
               <div className="relative">
@@ -274,7 +266,7 @@ const Inbox: React.FC = () => {
           </div>
         </div>
       </div>
-    </DefaultLayout>
+    </>
   );
 };
 

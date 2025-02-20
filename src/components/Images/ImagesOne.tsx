@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import CoverTwo from '../../images/cover/cover-02.jpg';
+import CoverTwo from '../../assets/cover/cover-02.jpg';
 import ImageResize from '../../js/image-resize';
 
 const ImagesOne: React.FC = () => {

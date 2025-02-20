@@ -9,11 +9,17 @@ import 'jsvectormap/dist/css/jsvectormap.css';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'nouislider/dist/nouislider.css';
 import 'dropzone/dist/dropzone.css';
+import { Provider } from "react-redux";
+import store from "./redux/store";
+import { ToastContainer } from 'react-toastify';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <Router>
-      <App />
-    </Router>
+    <Provider store={store}>
+      <ToastContainer />
+      <Router>
+        <App />
+      </Router>
+    </Provider>
   </React.StrictMode>
 );

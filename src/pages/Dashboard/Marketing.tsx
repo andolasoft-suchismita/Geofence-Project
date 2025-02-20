@@ -6,11 +6,11 @@ import ExternalLink from '../../components/ExternalLink';
 import FeaturedCampaigns from '../../components/FeaturedCampaigns';
 import Feedback from '../../components/Feedback';
 import TableFour from '../../components/Tables/TableFour';
-import DefaultLayout from '../../layout/DefaultLayout';
+import from '../..//';
 
 const Marketing: React.FC = () => {
   return (
-    <DefaultLayout>
+    <>
       <DataStatsTwo />
 
       <div className="mt-7.5 grid grid-cols-12 gap-4 md:gap-6 2xl:gap-7.5">
@@ -23,7 +23,7 @@ const Marketing: React.FC = () => {
         <FeaturedCampaigns />
         <Feedback />
       </div>
-    </DefaultLayout>
+    </>
   );
 };
 

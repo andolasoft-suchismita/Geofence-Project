@@ -349,10 +349,10 @@ input[type="search"]::-webkit-search-cancel-button {
   background-size: 20px;
 }
 .custom-input-date-1::-webkit-calendar-picker-indicator {
-  background-image: url(./images/icon/icon-calendar.svg);
+  background-image: url(./assets/icon/icon-calendar.svg);
 }
 .custom-input-date-2::-webkit-calendar-picker-indicator {
-  background-image: url(./images/icon/icon-arrow-down.svg);
+  background-image: url(./assets/icon/icon-arrow-down.svg);
 }
 
 [x-cloak] {

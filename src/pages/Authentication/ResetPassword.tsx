@@ -1,13 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
-import LogoDark from '../../images/logo/logo-dark.svg';
-import Logo from '../../images/logo/logo.svg';
-import DefaultLayout from '../../layout/DefaultLayout';
+import LogoDark from '../../assets/logo/logo-dark.svg';
+import Logo from '../../assets/logo/logo.svg';
 
 const ResetPassword: React.FC = () => {
   return (
-    <DefaultLayout>
+    <>
       <Breadcrumb pageName="Reset Password" />
 
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -201,7 +200,7 @@ const ResetPassword: React.FC = () => {
           </div>
         </div>
       </div>
-    </DefaultLayout>
+    </>
   );
 };
 
