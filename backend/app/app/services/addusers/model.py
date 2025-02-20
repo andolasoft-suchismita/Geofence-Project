@@ -12,5 +12,7 @@ import uuid
 
 Base = declarative_base()
 
-class AddUser(Base):
-    __tablename__ = "adduser"
+# class AddUser(Base):
+#     __tablename__ = "adduser"
+
+    

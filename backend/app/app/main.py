@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from services.users2.router import MyUserRouter
 from services.company.router import MyCompanyRouter
+from services.addusers.router import AddUserRouter
 from config.settings import settings
 from services.auth.manager import (
     auth_backend,
@@ -109,11 +110,15 @@ MyUserApp.include_router(MyUserRouter)
 MyCompanyApp = FastAPI()
 MyCompanyApp.include_router(MyCompanyRouter)
 
+MyAddUserApp = FastAPI()
+MyAddUserApp.include_router(AddUserRouter)
+
 
 app.mount("/registeredusersapi", registeredusers_app)
 app.mount("/usersapi", users_app)
 app.mount("/users2api", MyUserApp)
 app.mount("/companyapi", MyCompanyApp)
+app.mount("/adduserapi", MyAddUserApp)
 
 
 # Run `init_db()` on app startup

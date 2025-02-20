@@ -34,7 +34,12 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     time_format = Column(String(255))
     phone_number = Column(String(255))
     language = Column(String(255))
-    ##### rest item add here 
+    ##### rest item add here
+    roletype = Column(String(255), nullable=False)
+    designation = Column(String(255), nullable=False)
+    doj = Column(TIMESTAMP, nullable=False)
+    dob = Column(TIMESTAMP, nullable=False)
+    profile_pic = Column(String(255), nullable=True)
    
  
     oauth_accounts: Mapped[List[OAuthAccount]] = relationship(
