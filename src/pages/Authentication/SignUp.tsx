@@ -3,7 +3,8 @@ import { Link ,useNavigate} from 'react-router-dom';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 // import LogoDark from '../../images/logo/logo-dark.svg';
 // import Logo from '../../images/logo/logo.svg';
-import DefaultLayout from '../../layout/DefaultLayout';
+// import DefaultLayout from '../../layout/DefaultLayout';
+import DefaultLayout from '../../signlayout/DefaultLayout';
 
 const SignUp: React.FC = () => {
   
@@ -41,9 +42,9 @@ const SignUp: React.FC = () => {
   
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Sign Up" />
+      {/* <Breadcrumb pageName="Sign Up" /> */}
 
-      <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+      <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark ">
         <div className="flex flex-wrap items-center">
           <div className="hidden w-full xl:block xl:w-1/2">
             <div className="px-26 py-17.5 text-center">
@@ -332,7 +333,7 @@ const SignUp: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="mb-5">
+                <div className="mb-4">
                   <input
                     type="submit"
                     value="Create account"
@@ -340,7 +341,7 @@ const SignUp: React.FC = () => {
                   />
                 </div>
 
-                <div className="mt-6 text-center">
+                <div className=" text-center">
                   <p>
                     Already have an account?{' '}
                     <Link to="/auth/signin" className="text-primary">

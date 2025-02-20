@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
+
 import Setting from './pages/Dashboard/Setting';
 import Calender from './pages/Dashboard/Calender';
 import Attendance from './pages/Dashboard/Attendance';
