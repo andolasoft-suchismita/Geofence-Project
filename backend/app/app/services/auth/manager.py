@@ -19,6 +19,7 @@ from fastapi_users.authentication import (
     JWTStrategy,
 )
 from fastapi_users.db import SQLAlchemyUserDatabase
+from services.company.service import CompanyService
 from db.database import get_user_db
 from services.users.model import User
 from httpx_oauth.clients.google import GoogleOAuth2
@@ -48,58 +49,13 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     #     # Call the parent create method after successful verification
     #     return await super().create(user_create, safe, request)
     
-    # async def on_after_register(self, user: User, request: Optional[Request] = None):
-    #     registered_email = user.email
-    #     # Check inivted user
-    #     invite_token = user.invite_token
-    #     if invite_token:
-    #         # Verify user invitation and add to Tenant
-    #         tenant = await UserInvitationService().verify_from_signup(user, invite_token)
-    #         existing_invitation = await UserInvitationRepository().get_by_token(invite_token)
-    #         role = existing_invitation.invite_role
-    #     else: 
-    #         # Create new Tenant and add User to Tenant
-    #         tenant = await TenantService().create_from_user(user)
-    #         organization = await OrganizationService().create_at_signup(user,tenant)
-    #         await ResourceService().create_from_user(user, tenant)
-    #         tenant_subscription = await Tenant_SubscriptionService().create_user_tenant_subscription(user)
-    #         role = TenantUserTypeEnum.OWNER
-
-    #     # Create an instance of WorkspaceNameDeterminer and determine workspace name
-    #     workspace_name_determiner = WorkspaceNameDeterminer()
-    #     workspace_name = workspace_name_determiner(registered_email) 
-    #     workspace_repository = WorkspaceRepository()
-    #     workspace_service = WorkspaceService(workspace_repository)
-    #     workspace_body = WorkspaceBaseCreate(name=workspace_name,is_default=True)
-    #     workspace = await workspace_service.create(workspace_body, tenant.id, user)
-        
+    async def on_after_register(self, user: User, request: Optional[Request] = None):
+        registered_email = user.email
+        # Create new Tenant and add User to Tenant
+        tenant = await CompanyService().create_from_user(user)
 
         
-    #     # Get the first name or use the part before the '@' symbol in the email
-    #     name = user.first_name if user.first_name else user.email.split('@')[0]
-    #     user_role= await User_roleService().create_user_role(user, role,tenant)
-    #     frontend_url = settings.FRONTEND_URL
-    #     link = f"{frontend_url}signin"
-    #     email_sender = EmailSender()
-    #     email_sender.send_email(registered_email, "registration_template", {"link": link ,"name":name ,"subject":"Welcome to Orangescrum!"})
-
         
-    
-    # async def on_after_forgot_password(
-    #     self, user: User, token: str, request: Optional[Request] = None
-    # ):
-
-    #     frontend_url = settings.FRONTEND_URL
-    #     reset_link = f"{frontend_url}resetpassword?token={token}"
-    #     template = "forget_password"
-    #     # Get the first name or use the part before the '@' symbol in the email
-    #     name = user.first_name if user.first_name else user.email.split('@')[0]
-
-    #     email_sender = EmailSender()
-    #     email_sender.send_email(user.email, template, {"link": reset_link,"name":name ,"subject": "Reset Your Orangescrum Password"})
-
-    #     return f"Reset token {token} sent to {user.email}"
-
     async def on_after_request_verify(
         self, user: User, token: str, request: Optional[Request] = None
     ):
