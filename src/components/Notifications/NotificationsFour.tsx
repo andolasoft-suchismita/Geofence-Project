@@ -1,10 +1,10 @@
 import React from 'react'
 
-import userOne from '../../images/user/user-03.png';
-import userTwo from '../../images/user/user-22.png';
-import userThree from '../../images/user/user-23.png';
-import userFour from '../../images/user/user-24.png';
-import userFive from '../../images/user/user-25.png';
+import userOne from '../../assets/user/user-03.png';
+import userTwo from '../../assets/user/user-22.png';
+import userThree from '../../assets/user/user-23.png';
+import userFour from '../../assets/user/user-24.png';
+import userFive from '../../assets/user/user-25.png';
 
 interface Notification {
   active: boolean;
@@ -72,18 +72,16 @@ const NotificationsFour: React.FC = () => {
           {notificationList.map((item, index) => (
             <div
               key={index}
-              className={`rounded-[10px] border-l-[5px] bg-white px-4 py-6 shadow-13 dark:bg-boxdark sm:px-5 xl:px-7.5 ${
-                item.active ? 'border-meta-3' : 'border-red'
-              }`}
+              className={`rounded-[10px] border-l-[5px] bg-white px-4 py-6 shadow-13 dark:bg-boxdark sm:px-5 xl:px-7.5 ${item.active ? 'border-meta-3' : 'border-red'
+                }`}
             >
               <div className="flex flex-wrap items-center justify-between gap-5">
                 <div className="flex gap-5">
                   <div className="max-w-11.5 relative h-11.5 w-full rounded-full">
                     <img src={item.image} alt="user" />
                     <span
-                      className={`absolute -top-0.5 right-0.5 h-4 w-full max-w-4 rounded-full border-[2.3px] border-white ${
-                        item.active ? 'bg-[#219653]' : 'bg-red'
-                      }`}
+                      className={`absolute -top-0.5 right-0.5 h-4 w-full max-w-4 rounded-full border-[2.3px] border-white ${item.active ? 'bg-[#219653]' : 'bg-red'
+                        }`}
                     ></span>
                   </div>
 

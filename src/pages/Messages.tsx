@@ -1,13 +1,11 @@
 import React from 'react';
 
 import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
-import DropdownDefault from '../components/Dropdowns/DropdownDefault';
-import DefaultLayout from '../layout/DefaultLayout';
-import UserOne from '../images/user/user-01.png';
-import UserTwo from '../images/user/user-02.png';
-import UserThree from '../images/user/user-03.png';
-import UserFour from '../images/user/user-04.png';
-import UserFive from '../images/user/user-05.png';
+import UserOne from '../assets/user/user-01.png';
+import UserTwo from '../assets/user/user-02.png';
+import UserThree from '../assets/user/user-03.png';
+import UserFour from '../assets/user/user-04.png';
+import UserFive from '../assets/user/user-05.png';
 
 const Messages: React.FC = () => {
   const chatList = [
@@ -39,7 +37,7 @@ const Messages: React.FC = () => {
   ];
 
   return (
-    <DefaultLayout>
+    <>
       <Breadcrumb pageName="Messages" />
 
       <div className="h-[calc(100vh-186px)] overflow-hidden sm:h-[calc(100vh-174px)]">
@@ -131,9 +129,6 @@ const Messages: React.FC = () => {
                   </h5>
                   <p className="text-sm">Reply to message</p>
                 </div>
-              </div>
-              <div>
-                <DropdownDefault />
               </div>
             </div>
             <div className="no-scrollbar max-h-full space-y-3.5 overflow-auto px-6 py-7.5">
@@ -282,7 +277,7 @@ const Messages: React.FC = () => {
           </div>
         </div>
       </div>
-    </DefaultLayout>
+    </>
   );
 };
 
