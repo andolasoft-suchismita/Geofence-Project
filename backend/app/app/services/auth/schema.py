@@ -17,10 +17,10 @@ class UserRead(schemas.BaseUser[uuid.UUID]):
     pass
 
 
-class UserCreate(schemas.BaseUserCreate):
-    invite_token: Optional[str] = None # For invite user
-    first_name : Optional[str] = None 
-    last_name : Optional[str] = None
+# class UserCreate(schemas.BaseUserCreate):
+#     invite_token: Optional[str] = None # For invite user
+#     first_name : Optional[str] = None 
+#     last_name : Optional[str] = None
     
 
     @validator("password")

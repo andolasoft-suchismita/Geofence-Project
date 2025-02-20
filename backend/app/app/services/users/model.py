@@ -34,6 +34,7 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     time_format = Column(String(255))
     phone_number = Column(String(255))
     language = Column(String(255))
+    ##### rest item add here 
    
  
     oauth_accounts: Mapped[List[OAuthAccount]] = relationship(
