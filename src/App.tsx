@@ -1,16 +1,24 @@
 import { useEffect, useState } from 'react';
-import { Route, BrowserRouter as Router, Routes, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { Route, Routes } from 'react-router-dom';
+import { RootState } from './redux/store';
 import PrivateRoutes from './routes/PrivateRoutes';
 import PublicRoutes from './routes/PublicRoutes';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from './redux/store';
-import { showToast } from './utils/toast';
 
 const App = () => {
-  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const authToken = useSelector((state: RootState) => state?.authSlice?.token);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  console.log(authToken);
 
-  console.log(isAuthenticated)
+  useEffect(() => {
+    if (authToken) {
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
+    }
+  }, [authToken]);
 
+  console.log('isAuthenticated', isAuthenticated);
 
   return (
     <>
@@ -24,5 +32,4 @@ const App = () => {
     </>
   );
 };
-
 export default App;

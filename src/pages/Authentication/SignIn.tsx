@@ -1,31 +1,40 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { showToast } from '../../utils/toast';
 import { loginUser } from '../../api/services/authService';
+import { login } from '../../redux/slices/authSlice';
+import { showToast } from '../../utils/toast';
 
 const SignIn: React.FC = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const dispatch = useDispatch();
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+  const handleSignin = async (e: any) => {
+    e.preventDefault();
 
-  const handleSignin = async () => {
     try {
-      const userData = await loginUser(email, password);
-      console.log({ userData })
-      showToast("Login Successful!", "success");
-      navigate("/dashboard");
+      const userData = await loginUser(username, password);
+
+      dispatch(
+        login({
+          token: userData.access_token,
+        })
+      );
+
+      showToast('Login Successful!', 'success');
+      navigate('/calendar');
     } catch (error) {
-      showToast("Invalid credentials", "error");
+      showToast('Invalid credentials', 'error');
     }
   };
 
-
   return (
-    <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark h-screen">
-      <div className="flex flex-wrap items-center h-full">
-        <div className="hidden w-full xl:block xl:w-1/2 h-full">
-          <div className="py-17.5 px-26 text-center">
+    <div className="h-screen rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+      <div className="flex h-full flex-wrap items-center">
+        <div className="hidden h-full w-full xl:block xl:w-1/2">
+          <div className="px-26 py-17.5 text-center">
             <Link className="mb-5.5 inline-block" to="/">
               {/* <img className="hidden dark:block" src={Logo} alt="Logo" /> */}
               {/* <img className="dark:hidden" src={LogoDark} alt="Logo" /> */}
@@ -161,14 +170,14 @@ const SignIn: React.FC = () => {
           </div>
         </div>
 
-        <div className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2 h-full">
-          <div className="w-full p-4 sm:p-12.5 xl:p-17.5 h-full flex items-center justify-start">
+        <div className="h-full w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
+          <div className="flex h-full w-full items-center justify-start p-4 sm:p-12.5 xl:p-17.5">
             {/* <span className="mb-1.5 block font-medium">Start for free</span> */}
             {/* <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
                 Sign In to OGeo
               </h2> */}
 
-            <form onSubmit={handleSignin} className='bg-white w-full'>
+            <form onSubmit={(e) => handleSignin(e)} className="w-full bg-white">
               <div className="mb-4">
                 <label className="mb-2.5 block font-medium text-black dark:text-white">
                   Email
@@ -177,8 +186,8 @@ const SignIn: React.FC = () => {
                   <input
                     type="email"
                     placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                   />
 
@@ -243,7 +252,6 @@ const SignIn: React.FC = () => {
                 <input
                   type="submit"
                   value="Sign In"
-
                   className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
                 />
               </div>
