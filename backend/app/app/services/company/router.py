@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Depends, Request
+from services.company.model import Company
 from services.company.repository import CompanyRepository
 from services.company.schema import CompanyBaseCreate
 from services.company.service import CompanyService
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_query.pagination import Paginate, PaginationParams, Paginated
+from services.auth.manager import current_super_user
 
 
 MyCompanyRouter = APIRouter(prefix="/company", tags=["Company-Management"])
@@ -13,6 +15,7 @@ MyCompanyRouter = APIRouter(prefix="/company", tags=["Company-Management"])
 @MyCompanyRouter.post("/create", description="Create a new Company")
 async def create_company(
     company_body: CompanyBaseCreate,
+    current_iuser :Company= Depends(current_super_user),
     company_service: CompanyService = Depends(lambda: CompanyService(company_repository=CompanyRepository())),
 ):
     return await company_service.create_company(company_body)
@@ -22,6 +25,7 @@ async def create_company(
 @MyCompanyRouter.get("/{company_id}", description="Get Company by ID")
 async def get_company(
     company_id: int,
+    current_iuser :Company= Depends(current_super_user),
     company_service: CompanyService = Depends(lambda: CompanyService(company_repository=CompanyRepository())),
 ):
     company = await company_service.get_company(company_id)
@@ -46,6 +50,7 @@ async def get_company(
 async def update_company(
     company_id: int,
     company_body: CompanyBaseCreate,
+    current_iuser :Company= Depends(current_super_user),
     company_service: CompanyService = Depends(lambda: CompanyService(company_repository=CompanyRepository())),
 ):
     updated_company = await company_service.update_company(company_id, company_body)
@@ -58,6 +63,7 @@ async def update_company(
 @MyCompanyRouter.delete("/{company_id}/delete", description="Delete a Company")
 async def delete_company(
     company_id: int,
+    current_iuser :Company= Depends(current_super_user),
     company_service: CompanyService = Depends(lambda: CompanyService(company_repository=CompanyRepository())),
 ):
     deleted = await company_service.delete_company(company_id)

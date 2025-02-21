@@ -1,8 +1,7 @@
 from sqlalchemy import BigInteger, String, Boolean, DateTime, Text
 from sqlalchemy.orm import mapped_column, declarative_base
 from datetime import datetime
-
-Base = declarative_base()
+from db.database import Base 
 
 class Company(Base):
     __tablename__ = 'company'
@@ -23,5 +22,6 @@ class Company(Base):
     state = mapped_column(String(255))
     country = mapped_column(String(255))
     zip_code = mapped_column(String(255))
+    
     
 

@@ -35,10 +35,10 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     phone_number = Column(String(255))
     language = Column(String(255))
     ##### rest item add here
-    roletype = Column(String(255), nullable=False)
-    designation = Column(String(255), nullable=False)
-    doj = Column(TIMESTAMP, nullable=False)
-    dob = Column(TIMESTAMP, nullable=False)
+    roletype = Column(String(255), nullable=True)
+    designation = Column(String(255), nullable=True)
+    doj = Column(TIMESTAMP, nullable=True)
+    dob = Column(TIMESTAMP, nullable=True)
     profile_pic = Column(String(255), nullable=True)
    
  

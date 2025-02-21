@@ -7,6 +7,7 @@ from typing import List, Optional
 from services.addusers.schema import AddUserSchema, UpdateUserSchema
 from uuid import UUID
 from fastapi_query.pagination import PaginationParams
+from passlib.context import CryptContext
 
 
 class AddUserService:
@@ -16,6 +17,7 @@ class AddUserService:
 
     def __init__(self, adduser_repository: AddUserRepository = Depends()) -> None:
         self.adduser_repository = adduser_repository
+        self.pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
     async def create_adduser(self, adduser_data: AddUserSchema) -> User:
         """
@@ -23,7 +25,11 @@ class AddUserService:
         :param adduser_data: Data required to create a user.
         :return: The created User object.
         """
+        db_hashed_password = self.pwd_context.hash(adduser_data.hashed_password)
+        adduser_data.hashed_password = db_hashed_password
+        
         adduser_instance = User(**adduser_data.dict())
+        
         return await self.adduser_repository.create_user(adduser_instance)
 
     async def get_user(self, user_id: UUID) -> Optional[User]:
