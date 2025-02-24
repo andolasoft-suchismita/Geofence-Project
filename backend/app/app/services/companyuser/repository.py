@@ -15,7 +15,9 @@ from services.users.model import User
 from db.database import get_db
 from services.companyuser.model import CompanyUser
 from fastapi_query.pagination.utils import prepare_response
-
+from sqlalchemy import cast
+from sqlalchemy.dialects.postgresql import UUID
+from uuid import UUID as PyUUID
 
 class CompanyUserRepository:
     """Repository responsible for performing operations (CRUD, etc) on Tenant_Users table."""
@@ -106,16 +108,27 @@ class CompanyUserRepository:
                 await session.commit()
         return updated_users
     
-    async def get_tenant_user_detail(self, user_id: int) -> CompanyUser:
+    async def get_tenant_user_detail(self, user_id: str) -> List[CompanyUser]:
         """
-        Retrieves the Milestone_Task object associated with a specific task ID.
+        Retrieves the CompanyUser objects associated with a specific user ID.
 
-        :param task_id: The ID of the task
-        :return: The Milestone_Task object associated with the task ID
+        :param user_id: The ID of the user
+        :return: The list of CompanyUser objects associated with the user ID
         """
-        async for session in get_db():
-            async with session.begin():
-                stmt = (select(CompanyUser, User).join(User, User.id == CompanyUser.user_id).where(User.id == user_id))
-                result = await session.execute(stmt)
-                tenant_user = result.scalars().all()
-        return tenant_user
+        try:
+            # Ensure user_id is a valid UUID
+            user_uuid = PyUUID(user_id, version=4)  # Validate and convert to UUID
+
+            async for session in get_db():
+                async with session.begin():
+                    stmt = (
+                        select(CompanyUser, User)
+                        .join(User, cast(CompanyUser.user_id, UUID) == User.id)  # ✅ Correctly cast to UUID
+                        .where(User.id == user_uuid)  # ✅ Ensure proper comparison
+                    )
+                    result = await session.execute(stmt)
+                    return result.scalars().first()
+
+        except ValueError:
+            print(f"Invalid UUID format: {user_id}")
+            return []

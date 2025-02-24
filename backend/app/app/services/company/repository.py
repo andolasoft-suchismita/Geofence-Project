@@ -1,10 +1,15 @@
+from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from services.companyuser.model import CompanyUser
+from services.users.model import User
 from db.database import get_db
 from services.company.model import Company
 from fastapi_query.pagination import Paginate, PaginationParams, Paginated
 from fastapi_pagination.ext.sqlalchemy import paginate
 from typing import List 
+from sqlalchemy import cast
+from sqlalchemy.dialects.postgresql import UUID
 
 class CompanyRepository:
     """Repository responsible for performing operations (CRUD, etc) on Company table."""
@@ -95,3 +100,22 @@ class CompanyRepository:
                     order_by=order_by
                 )
                 return results
+    
+    async def get_employees_by_company(self, company_id: int) -> List[User]:
+        async for session in get_db():
+            query = (
+               select(User)
+               .join(CompanyUser, cast(CompanyUser.user_id, UUID) == User.id)  # Cast user_id to UUID
+               .filter(CompanyUser.company_id == company_id)
+            )
+            result = await session.execute(query)
+            return result.scalars().all()
+        
+    async def get_company_by_name(self, company_name: str) -> Optional[Company]:
+        """
+        Fetches a company by name if it exists.
+        """
+        async for session in get_db():
+            query = select(Company).where(Company.name == company_name)
+            result = await session.execute(query)
+            return result.scalars().first()

@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from services.company.model import Company
 from db.database import get_db
 from services.users.model import User
 from fastapi_query.pagination import PaginationParams
@@ -60,23 +61,19 @@ class AddUserRepository:
             await session.refresh(updated_user)
         return updated_user
 
-    async def list_users(self, filter_params, pagination_params: PaginationParams, order_by) -> List[User]:
-        """
-        Retrieve a paginated list of users.
-        :return: A list of User objects.
-        """
-        async for session in get_db():
-            async with session.begin():
-                stmt = select(User)
-                results = await paginate(
-                    db=session,
-                    model_class=User,
-                    stmt=stmt,
-                    pagination_params=pagination_params,
-                    filter_params=filter_params,
-                    ordering_params=order_by
-                )
-        return results
+    async def list_users(self) -> List[User]:  # Removed pagination params
+       """
+       Retrieve all users from the database.
+       :return: A list of all User objects.
+       """
+       async for session in get_db():
+           async with session.begin():
+               stmt = select(User)  # No pagination, select all users
+               result = await session.execute(stmt)
+               return result.scalars().all()  # Fetch all users
+
+
+
 
     async def delete_user(self, user_id: UUID) -> bool:
         """

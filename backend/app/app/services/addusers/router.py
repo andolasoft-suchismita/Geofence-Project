@@ -12,9 +12,9 @@ AddUserRouter = APIRouter(prefix="/addusers", tags=["Add-User-Management"])
 # Create a new User
 @AddUserRouter.post("/", response_model=UserResponseSchema, status_code=201)
 async def create_user(user: AddUserSchema, 
-                      current_iuser :User= Depends(current_super_user),
+                      current_user :User= Depends(current_super_user),
                       service: AddUserService = Depends()):
-    return await service.create_adduser(user)
+    return await service.create_adduser(user,current_user)
 
 # Get User by ID
 @AddUserRouter.get("/{user_id}", response_model=UserResponseSchema)

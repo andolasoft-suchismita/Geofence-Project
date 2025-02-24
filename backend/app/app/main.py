@@ -13,6 +13,7 @@ from services.users2.router import MyUserRouter
 from services.company.router import MyCompanyRouter
 from services.addusers.router import AddUserRouter
 from services.companyholiday.router import CompanyHolidayRouter
+from services.attendancetable.router import MyAttendanceRouter
 from config.settings import settings
 from services.auth.manager import (
     auth_backend,
@@ -117,13 +118,17 @@ MyAddUserApp.include_router(AddUserRouter)
 MyCompanyHolidayApp = FastAPI()
 MyCompanyHolidayApp.include_router(CompanyHolidayRouter)
 
+MyAttendanceApp = FastAPI()
+MyAttendanceApp.include_router(MyAttendanceRouter)
+
 
 app.mount("/registeredusersapi", registeredusers_app)
 app.mount("/usersapi", users_app)
 app.mount("/users2api", MyUserApp)
 app.mount("/companyapi", MyCompanyApp)
-app.mount("/adduserapi", MyAddUserApp)
-app.mount("/companyholidayapi", MyCompanyHolidayApp)
+app.mount("/addusersapi", MyAddUserApp)
+app.mount("/companyholidaysapi", MyCompanyHolidayApp)
+app.mount("/attendanceapi", MyAttendanceApp)
 
 
 # Run `init_db()` on app startup

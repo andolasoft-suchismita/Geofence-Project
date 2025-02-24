@@ -81,3 +81,10 @@ class CompanyService:
         tenantUserRepository = CompanyUserRepository()
         tenant_user = await tenantUserRepository.create(tenant_user_instance)
         return tenant
+    
+    async def get_employees_by_company(self, company_id: int) -> List[User]:
+        """
+        Retrieves a list of employees associated with a company.
+        """
+        return await self.company_repository.get_employees_by_company(company_id)
+

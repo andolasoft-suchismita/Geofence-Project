@@ -70,3 +70,14 @@ async def delete_company(
     if not deleted:
         raise HTTPException(status_code=404, detail="Company not found")
     return {"message": "Company deleted successfully"}
+
+@MyCompanyRouter.get("/{company_id}/employees", description="Get all employees of a specific company")
+async def get_company_employees(
+    company_id: int,
+    current_iuser: Company = Depends(current_super_user),
+    comapny_service: CompanyService = Depends(lambda: CompanyService(company_repository=CompanyRepository())),
+):
+    employees = await comapny_service.get_employees_by_company(company_id)
+    if not employees:
+        raise HTTPException(status_code=404, detail="No employees found for this company")
+    return employees
