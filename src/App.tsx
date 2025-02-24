@@ -8,6 +8,7 @@ import PublicRoutes from './routes/PublicRoutes';
 const App = () => {
   const authToken = useSelector((state: RootState) => state?.authSlice?.token);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // console.log(authToken);
 
   // useEffect(() => {
   //   if (authToken) {

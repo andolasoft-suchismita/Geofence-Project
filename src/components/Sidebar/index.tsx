@@ -191,8 +191,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import SidebarLinkGroup from './SidebarLinkGroup';
 import Logo from '../../assets/logo/logo.svg';
-import { FiHome, FiUsers, FiClock, FiFileText, FiSettings } from 'react-icons/fi'; // Importing icons
-
+import { FiHome, FiUsers, FiClock, FiFileText, FiSettings} from 'react-icons/fi'; // Importing icons
+import { CiUser } from "react-icons/ci";
 interface SidebarProps {
   sidebarOpen: boolean;
   setSidebarOpen: (arg: boolean) => void;
@@ -286,6 +286,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           {/* <!-- Menu Group --> */}
           <div>
             <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
+              
               MENU
             </h3>
 
