@@ -1,11 +1,19 @@
 import { Route, Routes } from 'react-router-dom';
 import DashboardHome from '../pages/dashboard';
+import { useEffect, useState } from 'react';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import PageTitle from '../components/PageTitle';
+import Profile from '../pages/Profile';
 import Calendar from '../pages/Calendar';
 import Attendance from '../pages/Attendance';
 import WeeklyReport from '../pages/WeeklyReport';
 import CompanySettings from '../pages/CompanySettings';
 import DefaultLayout from '../layout/DefaultLayout';
 import NotFoundPage from '../pages/NotFoundPage';
+
+// import Users from '../pages/dashboard/Users';
+// import Attendance from '../pages/dashboard/Attendance';
+// import WeeklyReport from '../pages/dashboard/WeeklyReport';
 
 const PrivateRoutes = () => {
   return (
@@ -17,6 +25,13 @@ const PrivateRoutes = () => {
         <Route path="weeklyreport" element={<WeeklyReport />} />
         <Route path="companysettings" element={<CompanySettings />} />
         <Route path="*" element={<DashboardHome />} />
+        <Route path="/calendar" element={<Calendar />} />
+        <Route path="/profile" element={< Profile />} />
+       
+        {/* <Route path="/dashboard/users" element={<Users />} />
+                <Route path="/dashboard/attendance" element={<Attendance />} />
+                <Route path="/dashboard/weeklyreport" element={<WeeklyReport />} /> */}
+        <Route path="*" element={<Navigate to="/calendar" replace />} />
       </Routes>
     </DefaultLayout>
   );
