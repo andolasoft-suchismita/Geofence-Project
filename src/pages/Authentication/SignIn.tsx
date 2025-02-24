@@ -24,7 +24,7 @@ const SignIn: React.FC = () => {
       );
 
       showToast('Login Successful!', 'success');
-      navigate('/calendar');
+      navigate('/dashboard');
     } catch (error) {
       showToast('Invalid credentials', 'error');
     }

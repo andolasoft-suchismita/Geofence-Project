@@ -1,21 +1,22 @@
-import { useEffect, useState } from 'react';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import PageTitle from '../components/PageTitle';
+import { Route, Routes } from 'react-router-dom';
+import DashboardHome from '../pages/dashboard';
 import Calendar from '../pages/Calendar';
+import Attendance from '../pages/Attendance';
+import WeeklyReport from '../pages/WeeklyReport';
+import CompanySettings from '../pages/CompanySettings';
 import DefaultLayout from '../layout/DefaultLayout';
-// import Users from '../pages/dashboard/Users';
-// import Attendance from '../pages/dashboard/Attendance';
-// import WeeklyReport from '../pages/dashboard/WeeklyReport';
+import NotFoundPage from '../pages/NotFoundPage';
 
 const PrivateRoutes = () => {
   return (
     <DefaultLayout>
       <Routes>
-        <Route path="/calendar" element={<Calendar />} />
-        {/* <Route path="/dashboard/users" element={<Users />} />
-                <Route path="/dashboard/attendance" element={<Attendance />} />
-                <Route path="/dashboard/weeklyreport" element={<WeeklyReport />} /> */}
-        <Route path="*" element={<Navigate to="/calendar" replace />} />
+        <Route path="dashboard" element={<DashboardHome />} />
+        <Route path="calendar" element={<Calendar />} />
+        <Route path="attendance" element={<Attendance />} />
+        <Route path="weeklyreport" element={<WeeklyReport />} />
+        <Route path="companysettings" element={<CompanySettings />} />
+        <Route path="*" element={<DashboardHome />} />
       </Routes>
     </DefaultLayout>
   );
