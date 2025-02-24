@@ -10,21 +10,22 @@ const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   // console.log(authToken);
 
-  useEffect(() => {
-    if (authToken) {
-      setIsAuthenticated(true);
-    } else {
-      setIsAuthenticated(false);
-    }
-  }, [authToken]);
+  // useEffect(() => {
+  //   if (authToken) {
+  //     setIsAuthenticated(true);
+  //   } else {
+  //     setIsAuthenticated(false);
+  //   }
+  // }, [authToken]);
 
-  console.log('isAuthenticated', isAuthenticated);
+  // console.log({ authToken });
 
   return (
     <>
       <Routes>
-        {isAuthenticated ? (
+        {authToken ? (
           <Route path="/*" element={<PrivateRoutes />} />
+         
         ) : (
           <Route path="/*" element={<PublicRoutes />} />
         )}
