@@ -34,8 +34,8 @@ async def getTenantInfo(user_id, all_list=False) -> Company:
                     select(Company, User)
                     .select_from(CompanyUser)
                     .join(Company, CompanyUser.company_id == Company.id)
-                    .join(User, cast(CompanyUser.user_id, UUID) == User.id)  # ✅ Cast to UUID
-                    .where(User.id == user_uuid)  # ✅ Use correctly formatted UUID
+                    .join(User, cast(CompanyUser.user_id, UUID) == User.id)  #  Cast to UUID
+                    .where(User.id == user_uuid)  # Use correctly formatted UUID
                 )
 
                 result = await session.execute(stmt_tenant)
@@ -46,5 +46,5 @@ async def getTenantInfo(user_id, all_list=False) -> Company:
                     return result.unique().scalars().first()
 
     except ValueError:
-        print(f"❌ Invalid UUID format: {user_id}")
+        print(f"Invalid UUID format: {user_id}")
         return None
