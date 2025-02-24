@@ -329,7 +329,7 @@ const SignUp: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="mb-5">
+                <div className="mb-4">
                   <input
                     type="submit"
                     value="Create account"
@@ -337,7 +337,7 @@ const SignUp: React.FC = () => {
                   />
                 </div>
 
-                <div className="mt-6 text-center">
+                <div className=" text-center">
                   <p>
                     Already have an account?{' '}
                     <Link to="/auth/signin" className="text-primary">

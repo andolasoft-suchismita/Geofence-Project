@@ -25,6 +25,7 @@ const App = () => {
       <Routes>
         {isAuthenticated ? (
           <Route path="/*" element={<PrivateRoutes />} />
+         
         ) : (
           <Route path="/*" element={<PublicRoutes />} />
         )}
