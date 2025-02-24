@@ -21,14 +21,17 @@
     "axios": "^1.7.9",
     "dropzone": "^6.0.0-beta.2",
     "flatpickr": "^4.6.13",
+    "formik": "^2.4.6",
     "jsvectormap": "^1.5.1",
     "leaflet": "^1.9.4",
     "leaflet-control-geocoder": "^3.1.0",
     "localforage": "^1.10.0",
+    "lucide-react": "^0.475.0",
     "match-sorter": "^6.3.1",
     "nouislider": "^15.7.1",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.0",
+    "react-calendar": "^5.1.0",
     "react-dom": "^18.2.0",
     "react-flatpickr": "^3.10.13",
     "react-google-maps": "^9.4.5",
@@ -40,7 +43,8 @@
     "react-toastify": "^11.0.3",
     "recharts": "^2.15.1",
     "sort-by": "^0.0.2",
-    "swiper": "^9.4.1"
+    "swiper": "^9.4.1",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "@types/node": "^22.13.4",
