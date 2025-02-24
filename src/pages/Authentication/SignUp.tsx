@@ -5,7 +5,6 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 // import Logo from '../../assets/logo/logo.svg';
 
 const SignUp: React.FC = () => {
-
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -22,7 +21,9 @@ const SignUp: React.FC = () => {
 
     // Check if the email already exists in localStorage
     const existingUser = JSON.parse(localStorage.getItem('user') || '[]');
-    const emailExists = existingUser.some((user: { email: string }) => user.email === email);
+    const emailExists = existingUser.some(
+      (user: { email: string }) => user.email === email
+    );
 
     if (emailExists) {
       // setError('You already have an account with this email.');
@@ -35,22 +36,23 @@ const SignUp: React.FC = () => {
 
     alert('Account created successfully! Please sign in.');
     // Redirect to sign in page
-    navigate('/auth/signin');
+    navigate('/signin');
   };
 
   return (
     <>
-      <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark h-screen">
-        <div className="flex flex-wrap items-center h-full">
-          <div className="hidden w-full xl:block xl:w-1/2 h-full">
+      <div className="h-screen rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+        <div className="flex h-full flex-wrap items-center">
+          <div className="hidden h-full w-full xl:block xl:w-1/2">
             <div className="px-26 py-17.5 text-center">
               <Link className="mb-5.5 inline-block" to="/">
                 {/* <img className="hidden dark:block" src={Logo} alt="Logo" />
                 <img className="dark:hidden" src={LogoDark} alt="Logo" /> */}
               </Link>
               <p className="2xl:px-120">
-                <b><strong> OGeo</strong></b>
-
+                <b>
+                  <strong> OGeo</strong>
+                </b>
               </p>
 
               <span className="mt-15 inline-block">
@@ -178,8 +180,8 @@ const SignUp: React.FC = () => {
             </div>
           </div>
 
-          <div className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2 h-full">
-            <div className="w-full p-4 sm:p-12.5 xl:p-17.5 h-full">
+          <div className="h-full w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
+            <div className="h-full w-full p-4 sm:p-12.5 xl:p-17.5">
               {/* <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
                 Sign Up to OGeo
               </h2> */}
@@ -340,7 +342,7 @@ const SignUp: React.FC = () => {
                 <div className=" text-center">
                   <p>
                     Already have an account?{' '}
-                    <Link to="/auth/signin" className="text-primary">
+                    <Link to="/signin" className="text-primary">
                       Sign in
                     </Link>
                   </p>

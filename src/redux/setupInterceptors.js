@@ -29,7 +29,7 @@ const setup = (store, router) => {
         if (err.response.status === 401 && !originalConfig._retry) {
           originalConfig._retry = true;
         //   dispatch(userActions.logout());
-          router.push("/signin");
+          // router.push("/signin");
           // const rs = await instance.post("users/refresh", {
           //   refresh_token: TokenService.getLocalRefreshToken(),
           // });
@@ -37,7 +37,6 @@ const setup = (store, router) => {
           // if (rs?.data?.detail === "Token has expired") {
  
           //   dispatch(userActions.logout());
-          //   router.push("/signin");
           // } else {
           //   TokenService?.updateLocalAccessToken(access_token);
           //   return instance(originalConfig);
