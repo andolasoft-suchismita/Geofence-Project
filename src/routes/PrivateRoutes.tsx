@@ -1,4 +1,3 @@
-import { Route, Routes } from 'react-router-dom';
 import DashboardHome from '../pages/dashboard';
 import { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
@@ -26,9 +25,10 @@ const PrivateRoutes = () => {
         <Route path="*" element={<DashboardHome />} />
         <Route path="/calendar" element={<Calendar />} />
         <Route path="/users" element={<Users />} />
-                {/* <Route path="/dashboard/attendance" element={<Attendance />} />
+        <Route path="/profile" element={<Profile />} />
+        {/* <Route path="/dashboard/attendance" element={<Attendance />} />
                 <Route path="/dashboard/weeklyreport" element={<WeeklyReport />} /> */}
-        <Route path="*" element={<Navigate to="/calendar" replace />} />
+        {/* <Route path="*" element={<Navigate to="/calendar" replace />} /> */}
       </Routes>
     </DefaultLayout>
   );

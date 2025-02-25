@@ -333,7 +333,7 @@ const SignUp: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="mb-4">
+                {/* <div className="mb-4">
                   <input
                     type="submit"
                     value="Create account"
@@ -341,7 +341,7 @@ const SignUp: React.FC = () => {
                   />
                 </div> */}
 
-                <div className=" text-center">
+                {/* <div className=" text-center">
                   <p>
                     Already have an account?{' '}
                     <Link to="/signin" className="text-primary">
@@ -349,7 +349,7 @@ const SignUp: React.FC = () => {
                     </Link>
                   </p>
                 </div> */}
-                <div className="flex justify-center mt-6 cursor-pointer" onClick={() => navigate('../companyinfo')}>
+                <div className="flex justify-center mt-6 cursor-pointer" onClick={() => navigate('/companyinfo')}>
       < FaArrowAltCircleRight size={30} className="text-gray-600 hover:text-black" />
     </div>
               </form>
