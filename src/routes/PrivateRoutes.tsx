@@ -30,7 +30,7 @@ const PrivateRoutes = () => {
         <Route path="/profile" element={<Profile />} />
                 {/* <Route path="/dashboard/attendance" element={<Attendance />} />
                 <Route path="/dashboard/weeklyreport" element={<WeeklyReport />} /> */}
-        <Route path="*" element={<Navigate to="/calendar" replace />} />
+        {/* <Route path="*" element={<Navigate to="/calendar" replace />} /> */}
       </Routes>
     </DefaultLayout>
   );
