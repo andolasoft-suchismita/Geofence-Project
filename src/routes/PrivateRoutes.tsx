@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 // import { Route, Routes } from 'react-router-dom';
 import DashboardHome from '../pages/dashboard';
+=======
+>>>>>>> 058659090f4999f1971d2340c9666dbbe216aeb0
 import { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import PageTitle from '../components/PageTitle';
@@ -10,7 +13,11 @@ import WeeklyReport from '../pages/WeeklyReport';
 import CompanySettings from '../pages/CompanySettings';
 import DefaultLayout from '../layout/DefaultLayout';
 import Users from '../pages/Users';
+<<<<<<< HEAD
 
+=======
+import DashboardHome from '../pages/Dashboard';
+>>>>>>> 058659090f4999f1971d2340c9666dbbe216aeb0
 // import Users from '../pages/dashboard/Users';
 // import Attendance from '../pages/dashboard/Attendance';
 // import WeeklyReport from '../pages/dashboard/WeeklyReport';
