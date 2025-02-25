@@ -1,4 +1,3 @@
-import DashboardHome from '../pages/dashboard';
 import { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import PageTitle from '../components/PageTitle';
@@ -9,6 +8,7 @@ import WeeklyReport from '../pages/WeeklyReport';
 import CompanySettings from '../pages/CompanySettings';
 import DefaultLayout from '../layout/DefaultLayout';
 import Users from '../pages/Users';
+import DashboardHome from '../pages/Dashboard';
 // import Users from '../pages/dashboard/Users';
 // import Attendance from '../pages/dashboard/Attendance';
 // import WeeklyReport from '../pages/dashboard/WeeklyReport';
