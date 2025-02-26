@@ -25,7 +25,6 @@ const App = () => {
       <Routes>
         {authToken ? (
           <Route path="/*" element={<PrivateRoutes />} />
-         
         ) : (
           <Route path="/*" element={<PublicRoutes />} />
         )}

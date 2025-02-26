@@ -191,7 +191,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import SidebarLinkGroup from './SidebarLinkGroup';
 import Logo from '../../assets/logo/logo.svg';
-import { FiHome, FiUsers, FiClock, FiFileText, FiSettings} from 'react-icons/fi'; // Importing icons
+import { FiHome, FiUsers, FiClock, FiFileText, FiSettings } from 'react-icons/fi'; // Importing icons
 import { CiUser } from "react-icons/ci";
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -250,12 +250,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     >
       {/* <!-- SIDEBAR HEADER --> */}
       <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 text-white text-4xl ">
-        <NavLink to="/">
+        <NavLink to="/dashboard">
           {/* <img src={Logo} alt="Logo" /> */}
-          
+
           OGeo
         </NavLink>
-        
+
         <button
           ref={trigger}
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -286,7 +286,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           {/* <!-- Menu Group --> */}
           <div>
             <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
-              
+
               MENU
             </h3>
 
@@ -321,7 +321,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </NavLink>
               </li>
 
-              <li>
+              {/* <li>
                 <NavLink
                   to="/weekly-report"
                   className="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
@@ -329,7 +329,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   <FiFileText size={18} />
                   Weekly Report
                 </NavLink>
-              </li>
+              </li> */}
 
               <li>
                 <NavLink
@@ -341,7 +341,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </NavLink>
               </li>
 
-              <li>
+              {/* <li>
                 <NavLink
                   to="/settings"
                   className="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4"
@@ -349,7 +349,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   <FiSettings size={18} />
                   Settings
                 </NavLink>
-              </li>
+              </li> */}
             </ul>
           </div>
         </nav>
@@ -358,4 +358,4 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   );
 };
 
-export default Sidebar;
+export default Sidebar;
