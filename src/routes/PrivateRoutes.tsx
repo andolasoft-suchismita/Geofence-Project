@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-import PageTitle from '../components/PageTitle';
 import Profile from '../pages/Profile';
 import Calendar from '../pages/Calendar';
 import Attendance from '../pages/Attendance';
