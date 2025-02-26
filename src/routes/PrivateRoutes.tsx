@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import PageTitle from '../components/PageTitle';
 import Profile from '../pages/Profile';
-import Calendar from '../pages/Calendar';
+import MyCalendar from '../pages/Calendar';
 import Attendance from '../pages/Attendance';
 import WeeklyReport from '../pages/WeeklyReport';
 import CompanySettings from '../pages/CompanySettings';
@@ -18,12 +18,12 @@ const PrivateRoutes = () => {
     <DefaultLayout>
       <Routes>
         <Route path="dashboard" element={<DashboardHome />} />
-        <Route path="calendar" element={<Calendar />} />
+        <Route path="calendar" element={<MyCalendar />} />
         <Route path="attendance" element={<Attendance />} />
         <Route path="weeklyreport" element={<WeeklyReport />} />
         <Route path="companysettings" element={<CompanySettings />} />
         <Route path="*" element={<DashboardHome />} />
-        <Route path="/calendar" element={<Calendar />} />
+        <Route path="/calendar" element={<MyCalendar />} />
         <Route path="/users" element={<Users />} />
         <Route path="/profile" element={<Profile />} />
         {/* <Route path="/dashboard/attendance" element={<Attendance />} />
