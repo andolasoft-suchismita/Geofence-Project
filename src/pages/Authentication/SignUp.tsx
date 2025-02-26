@@ -1,37 +1,44 @@
-import React, { useState } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { motion } from "framer-motion";
-import CompanyInfo from "./companyinfo";
+import React, { useState } from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { motion } from 'framer-motion';
+import CompanyInfo from './companyinfo';
 
 const SignUp: React.FC = () => {
   const [isCompanyInfoVisible, setIsCompanyInfoVisible] = useState(false);
 
   // Form validation schema using Yup
   const validationSchema = Yup.object({
-    name: Yup.string().required("Name is required"),
-    email: Yup.string().email("Invalid email").required("Email is required"),
-    password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+    name: Yup.string().required('Name is required'),
+    email: Yup.string().email('Invalid email').required('Email is required'),
+    password: Yup.string()
+      .min(6, 'Password must be at least 6 characters')
+      .required('Password is required'),
     rePassword: Yup.string()
-      .oneOf([Yup.ref("password"), ""], "Passwords must match")
-      .required("Confirm Password is required"),
+      .oneOf([Yup.ref('password'), ''], 'Passwords must match')
+      .required('Confirm Password is required'),
   });
 
   return (
-    <div className="h-screen flex items-center justify-center">
-      <div className="relative w-[500px] h-[600px] overflow-hidden bg-white shadow-lg rounded-lg">
+    <div className="flex h-screen items-center justify-center">
+      <div className="relative h-[600px] w-[500px] overflow-hidden rounded-lg bg-white shadow-lg">
         {/* Slide Container */}
         <motion.div
-          className="flex w-[1000px] h-full"
-          animate={{ x: isCompanyInfoVisible ? "-50%" : "0%" }} // Slide Effect
-          transition={{ type: "tween", duration: 0.5 }}
+          className="flex h-full w-[1000px]"
+          animate={{ x: isCompanyInfoVisible ? '-50%' : '0%' }} // Slide Effect
+          transition={{ type: 'tween', duration: 0.5 }}
         >
           {/* Sign-up Form */}
           <div className="w-[500px] p-8">
-            <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
+            <h2 className="mb-4 text-2xl font-bold">Sign Up</h2>
 
             <Formik
-              initialValues={{ name: "", email: "", password: "", rePassword: "" }}
+              initialValues={{
+                name: '',
+                email: '',
+                password: '',
+                rePassword: '',
+              }}
               validationSchema={validationSchema}
               onSubmit={(values) => {
                 alert(JSON.stringify(values, null, 2));
@@ -41,29 +48,64 @@ const SignUp: React.FC = () => {
               <Form>
                 <div className="mb-4">
                   <label className="block">Name</label>
-                  <Field name="name" type="text" className="w-full p-2 border rounded" />
-                  <ErrorMessage name="name" component="div" className="text-red-500 text-sm" />
+                  <Field
+                    name="name"
+                    type="text"
+                    className="w-full rounded border p-2"
+                  />
+                  <ErrorMessage
+                    name="name"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
                 </div>
 
                 <div className="mb-4">
                   <label className="block">Email</label>
-                  <Field name="email" type="email" className="w-full p-2 border rounded" />
-                  <ErrorMessage name="email" component="div" className="text-red-500 text-sm" />
+                  <Field
+                    name="email"
+                    type="email"
+                    className="w-full rounded border p-2"
+                  />
+                  <ErrorMessage
+                    name="email"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
                 </div>
 
                 <div className="mb-4">
                   <label className="block">Password</label>
-                  <Field name="password" type="password" className="w-full p-2 border rounded" />
-                  <ErrorMessage name="password" component="div" className="text-red-500 text-sm" />
+                  <Field
+                    name="password"
+                    type="password"
+                    className="w-full rounded border p-2"
+                  />
+                  <ErrorMessage
+                    name="password"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
                 </div>
 
                 <div className="mb-4">
                   <label className="block">Confirm Password</label>
-                  <Field name="rePassword" type="password" className="w-full p-2 border rounded" />
-                  <ErrorMessage name="rePassword" component="div" className="text-red-500 text-sm" />
+                  <Field
+                    name="rePassword"
+                    type="password"
+                    className="w-full rounded border p-2"
+                  />
+                  <ErrorMessage
+                    name="rePassword"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
                 </div>
 
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded w-full">
+                <button
+                  type="submit"
+                  className="w-full rounded bg-blue-500 px-4 py-2 text-white"
+                >
                   Next ➡️
                 </button>
               </Form>
@@ -71,11 +113,11 @@ const SignUp: React.FC = () => {
           </div>
 
           {/* Company Info Slide */}
-          <div className="w-[500px] p-8 bg-gray-100">
+          <div className="bg-gray-100 w-[500px] p-8">
             <CompanyInfo />
             <button
               onClick={() => setIsCompanyInfoVisible(false)}
-              className="bg-red-500 text-white px-4 py-2 rounded w-full mt-4"
+              className="bg-red-500 mt-4 w-full rounded px-4 py-2 text-white"
             >
               ⬅️ Back
             </button>
@@ -88,73 +130,7 @@ const SignUp: React.FC = () => {
 
 export default SignUp;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import React, { useState } from 'react'; 
+// import React, { useState } from 'react';
 // import { Link, useNavigate } from 'react-router-dom';
 // import { FaArrowAltCircleRight } from "react-icons/fa";
 // import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
@@ -212,11 +188,10 @@ export default SignUp;
 //                   <strong> OGeo</strong>
 //                 </b>
 //               </p>
-              
+
 //               <span className="mt-15 inline-block">
 //                 <img src="" alt="" />
 //               </span>
-
 
 //             </div>
 //           </div>
@@ -400,40 +375,6 @@ export default SignUp;
 //   );
 // };
 // export default SignUp;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import React, { useState } from 'react';
 // import { Link, useNavigate } from 'react-router-dom';
