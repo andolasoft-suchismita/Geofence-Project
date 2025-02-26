@@ -5,30 +5,20 @@ import {
   ColumnDef,
   flexRender,
 } from '@tanstack/react-table';
-import DeleteConfirmationModal from './components/Modal/DeleteConfirmationModal';
-import EditUserModal from './components/Modal/EditUserModal';
 import ViewUserDetails from './components/Modal/ViewUserDetails';
 import { User } from './components/AddUser'; // Import User type
-import { useDispatch } from 'react-redux';
-import { deleteUserThunk, updateUserThunk } from './redux/slices/userSlice';
 import { MdDelete, MdEdit } from 'react-icons/md';
 import { FaEye } from 'react-icons/fa';
-import { showToast } from './utils/toast';
-import { AppDispatch } from './redux/store';
-import { deleteUser, fetchUsersAPI } from './api/services/userService';
 import moment from 'moment';
 
 interface UsersTableProps {
   users: User[];
-  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
-  onUpdate: (id: string, updatedUser: Partial<User>) => void; //  Add this
+  setSelectedItem: any;
+  setFormType: any;
 }
 
-const UsersTable: React.FC<UsersTableProps> = ({ users, setUsers, }) => {
+const UsersTable: React.FC<UsersTableProps> = ({ users, setSelectedItem, setFormType }) => {
   const [dropdownIndex, setDropdownIndex] = useState<number | null>(null);
-  const [deleteIndex, setDeleteIndex] = useState<string | null>(null); // Track user being deleted
-  const [editUser, setEditUser] = useState<User | null>(null); // Track user being edited
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // Track edit modal visibility
   const [viewUser, setViewUser] = useState<User | null>(null); // Track user being viewed
   const [isViewModalOpen, setIsViewModalOpen] = useState(false); // Track view modal visibility
 
@@ -44,47 +34,6 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, setUsers, }) => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [dropdownIndex]);
-
-  const dispatch = useDispatch<AppDispatch>(); // Use AppDispatch to avoid TypeScript errors
-
-  const handleDelete = async (id: string) => {
-    try {
-      await deleteUser(id);
-      const updatedData = await fetchUsersAPI();
-      if (updatedData) setUsers(updatedData);
-      showToast('User deleted successfully', 'success');
-    } catch (error) {
-      showToast('Failed to delete user', 'error');
-      console.error('Delete error:', error);
-    } finally {
-      setDeleteIndex(null);
-      setDropdownIndex(null);
-    }
-  };
-
-  const handleSaveEdit = async (updatedUser: User) => {
-    try {
-      await dispatch(
-        updateUserThunk({ id: updatedUser.email, userData: updatedUser })
-      ).unwrap();
-      setUsers(
-        users.map((user) =>
-          user.email === updatedUser.email ? updatedUser : user
-        )
-      ); // Update state
-      setIsEditModalOpen(false);
-      showToast('User updated successfully', 'success');
-    } catch (error) {
-      showToast('Failed to update user', 'error');
-      console.error('Update error:', error);
-    }
-  };
-
-  const handleEdit = (id: string) => {
-    // setEditUser(users[index]); // Set selected user
-    // setIsEditModalOpen(true);
-    // setDropdownIndex(null);
-  };
 
   //Handle View
   const handleView = (index: string) => {
@@ -114,12 +63,6 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, setUsers, }) => {
 
             {dropdownIndex === index && (
               <div className="dropdown-menu absolute  z-10 flex rounded border bg-white shadow-md">
-                {/* <button
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-200"
-                  onClick={() => setDropdownIndex(null)}
-                >
-                  View
-                </button> */}
                 <button
                   title="View User Details"
                   className="hover:bg-gray-200 block w-full px-4 py-2 text-left"
@@ -130,7 +73,10 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, setUsers, }) => {
                 <button
                   title="Edit User Details"
                   className="hover:bg-gray-200 block w-full px-4 py-2 text-left"
-                  onClick={() => handleEdit(row.original.id)} // Calls the function to open the modal
+                  onClick={() => {
+                    setSelectedItem(row.original)
+                    setFormType('edit')
+                  }}
                 >
                   <MdEdit />
                 </button>
@@ -139,7 +85,8 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, setUsers, }) => {
                   title="Delete User"
                   onClick={() => {
                     setDropdownIndex(null); //  Close dropdown first
-                    setDeleteIndex(row.original.id); //  Then open delete confirmation modal
+                    setSelectedItem(row.original)
+                    setFormType('delete')
                   }}
                   className="text-red-600 hover:bg-red-100 block w-full px-4 py-2 text-left"
                 >
@@ -215,23 +162,12 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, setUsers, }) => {
         </tbody>
       </table>
 
-      {/* <DeleteConfirmationModal
-        isOpen={deleteIndex !== null}
-        onConfirm={handleDelete}
-        onCancel={() => setDeleteIndex(null)}
-      /> */}
-      <DeleteConfirmationModal
-        isOpen={deleteIndex !== null}
-        onConfirm={() => handleDelete(deleteIndex)} // Pass ID properly
-        onCancel={() => setDeleteIndex(null)}
-      />
-
-      <EditUserModal
+      {/* <EditUserModal
         isOpen={isEditModalOpen}
         user={editUser}
         onClose={() => setIsEditModalOpen(false)}
         onSave={handleSaveEdit}
-      />
+      /> */}
       <ViewUserDetails
         isOpen={isViewModalOpen}
         user={viewUser}
