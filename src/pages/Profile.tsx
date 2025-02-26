@@ -26,7 +26,7 @@ const Profile: React.FC = () => {
       {/* Full Name Section */}
       <div className="mt-6">
         <p className="text-base text-gray-700 font-semibold">Name</p>
-        <div className="flex gap-4 mt-2">
+        <div className="flex gap-4">
           <input
             type="text"
             placeholder="First name"
@@ -60,7 +60,7 @@ const Profile: React.FC = () => {
       {/* Password Section */}
       <div className="mt-6">
         <p className="text-gray-700 font-semibold text-base">Password</p>
-        <div className="flex gap-4 mt-2">
+        <div className="flex gap-4">
           <div className="relative w-full">
             <input
               type={showPassword ? "text" : "password"}
@@ -92,7 +92,7 @@ const Profile: React.FC = () => {
         </div>
 
         <div className="mt-6" >
-        <p className="text-gray-700 font-semibold text-base">Date Of Birth</p>
+        <p className="text-gray-700 font-semibold text-base">Date of Birth</p>
         <input
             type="Date"
             placeholder="DD/MM/YY"
@@ -101,7 +101,7 @@ const Profile: React.FC = () => {
           />
           </div>
           <div className="mt-6">
-        <p className="text-gray-700 font-semibold text-base">Date Of Joining</p>
+        <p className="text-gray-700 font-semibold text-base">Date of Joining</p>
         <input
             type="Date"
             placeholder="DD/MM/YY"
