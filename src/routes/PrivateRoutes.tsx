@@ -1,5 +1,5 @@
 import Profile from '../pages/Profile';
-import Calendar from '../pages/Calendar';
+import MyCalendar from '../pages/Calendar';
 import Attendance from '../pages/Attendance';
 import WeeklyReport from '../pages/WeeklyReport';
 import CompanySettings from '../pages/CompanySettings';
@@ -16,24 +16,23 @@ import { useEffect } from 'react';
 const PrivateRoutes = () => {
   const location = useLocation();
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (location.pathname === "/") {
-      navigate("/dashboard")
+    if (location.pathname === '/') {
+      navigate('/dashboard');
     }
-  }, [location.pathname])
-
+  }, [location.pathname]);
 
   return (
     <DefaultLayout>
       <Routes>
         <Route path="dashboard" element={<DashboardHome />} />
-        
+
         <Route path="attendance" element={<Attendance />} />
         <Route path="weeklyreport" element={<WeeklyReport />} />
         <Route path="companysettings" element={<CompanySettings />} />
-        <Route path="/calendar" element={<Calendar />} />
+        <Route path="/calendar" element={<MyCalendar />} />
         <Route path="/users" element={<Users />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="*" element={<NotFoundPage />} />
