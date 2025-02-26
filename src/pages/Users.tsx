@@ -3,14 +3,14 @@ import UserForm from '../components/AddUser';
 import { User } from '../components/AddUser';
 import { FiUser, FiPlus } from 'react-icons/fi';
 import UsersTable from '../UserTable';
-import { createUserAPI, fetchUsersAPI } from '../api/services/userService';
+import { fetchUsersAPI } from '../api/services/userService';
 
 import { showToast } from '../utils/toast';
 
 const Users: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
   const [users, setUsers] = useState<User[]>([]);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [formType, setFormType] = useState<string>('create');
 
   async function fetchUserList() {
     try {
@@ -24,41 +24,6 @@ const Users: React.FC = () => {
     fetchUserList();
   }, []);
   ///////////////////////////////////////////
-
-  // Function to handle adding a user
-  const handleAddUser = async (newUser: User) => {
-    const updatedUsers = [...users, newUser];
-    setUsers(updatedUsers);
-    localStorage.setItem('users', JSON.stringify(updatedUsers));
-
-    const userData = {
-      // first_name: 'string',
-      // last_name: 'string',
-      // email: 'string',
-      // hashed_password: 'string',
-      // roletype: 'string',
-      // designation: 'junior_engineer',
-      // doj: '2025-02-24',
-      // dob: '2025-02-24',
-      // first_name: 'string',
-      // last_name: 'string',
-      // email: 'string',
-      // password: 'string', // Added missing password
-      // employee_id: 'string', //  Added missing employee_id
-      // roletype: 'string',
-      // designation: 'junior_engineer',
-      // doj: '2025-02-24',
-      // dob: '2025-02-24',
-    };
-    // try {
-    //   const res = await createUserAPI
-
-    //   (userData);
-
-    // } catch (error) {
-    //   // showToast('Something went wrong', 'error');
-    // }
-  };
 
   // Function to handle updating a user
   const handleUpdateUser = (id: string, updatedUser: Partial<User>) => {
@@ -84,13 +49,18 @@ const Users: React.FC = () => {
       </h2>
 
       {isFormOpen && (
-        <UserForm onClose={() => setIsFormOpen(false)} setUsers={setUsers} />
+        <UserForm
+          formType={formType}
+          onClose={() => setIsFormOpen(false)}
+          setUsers={setUsers}
+        />
       )}
 
       <UsersTable
         users={users}
         setUsers={setUsers}
         onUpdate={handleUpdateUser}
+        // setFormType={setFormType}
       />
     </div>
   );

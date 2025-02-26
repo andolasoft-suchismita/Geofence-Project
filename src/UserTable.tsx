@@ -15,11 +15,7 @@ import { MdDelete, MdEdit } from 'react-icons/md';
 import { FaEye } from 'react-icons/fa';
 import { showToast } from './utils/toast';
 import { AppDispatch } from './redux/store';
-import {
-  createUserAPI,
-  deleteUser,
-  fetchUsersAPI,
-} from './api/services/userService';
+import { deleteUser, fetchUsersAPI } from './api/services/userService';
 import moment from 'moment';
 
 interface UsersTableProps {
@@ -28,7 +24,7 @@ interface UsersTableProps {
   onUpdate: (id: string, updatedUser: Partial<User>) => void; //  Add this
 }
 
-const UsersTable: React.FC<UsersTableProps> = ({ users, setUsers }) => {
+const UsersTable: React.FC<UsersTableProps> = ({ users, setUsers, }) => {
   const [dropdownIndex, setDropdownIndex] = useState<number | null>(null);
   const [deleteIndex, setDeleteIndex] = useState<string | null>(null); // Track user being deleted
   const [editUser, setEditUser] = useState<User | null>(null); // Track user being edited
@@ -84,14 +80,14 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, setUsers }) => {
     }
   };
 
-  const handleEdit = (index: number) => {
-    setEditUser(users[index]); // Set selected user
-    setIsEditModalOpen(true);
-    setDropdownIndex(null);
+  const handleEdit = (id: string) => {
+    // setEditUser(users[index]); // Set selected user
+    // setIsEditModalOpen(true);
+    // setDropdownIndex(null);
   };
 
   //Handle View
-  const handleView = (index: number) => {
+  const handleView = (index: string) => {
     setViewUser(users[index]);
     setIsViewModalOpen(true);
     setDropdownIndex(null);
@@ -127,14 +123,14 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, setUsers }) => {
                 <button
                   title="View User Details"
                   className="hover:bg-gray-200 block w-full px-4 py-2 text-left"
-                  onClick={() => handleView(index)}
+                  onClick={() => handleView(row.original.id)}
                 >
                   <FaEye />
                 </button>
                 <button
                   title="Edit User Details"
                   className="hover:bg-gray-200 block w-full px-4 py-2 text-left"
-                  onClick={() => handleEdit(index)} // Calls the function to open the modal
+                  onClick={() => handleEdit(row.original.id)} // Calls the function to open the modal
                 >
                   <MdEdit />
                 </button>

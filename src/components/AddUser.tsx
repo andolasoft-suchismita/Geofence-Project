@@ -1,11 +1,16 @@
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { createUserAPI, fetchUsersAPI } from '../api/services/userService';
+import {
+  createUserAPI,
+  fetchUsersAPI,
+  updateUser,
+} from '../api/services/userService';
 import { showToast } from '../utils/toast';
 interface UserFormProps {
   onClose: () => void;
   setUsers: (updatedData: any) => void;
+  formType: string;
 }
 
 export interface User {
@@ -40,9 +45,11 @@ export enum CompanyDesignation {
   INTERN = 'intern',
 }
 
-const users = JSON.parse(localStorage.getItem('users') || '[]');
-
-const UserForm: React.FC<UserFormProps> = ({ onClose, setUsers }) => {
+const UserForm: React.FC<UserFormProps> = ({
+  onClose,
+  setUsers,
+  formType = 'create',
+}) => {
   const addUser = async (values: any) => {
     try {
       await createUserAPI(values);
@@ -52,6 +59,18 @@ const UserForm: React.FC<UserFormProps> = ({ onClose, setUsers }) => {
       showToast('User created successfully', 'success');
     } catch (error) {
       showToast('Failed to create user', 'error');
+    }
+  };
+
+  const updateUserApi = async (id: string, values: any) => {
+    try {
+      await updateUser(id, values);
+      const updatedData = await fetchUsersAPI();
+      if (updatedData) setUsers(updatedData);
+      onClose();
+      showToast('User updated successfully', 'success');
+    } catch (error) {
+      showToast('Failed to update user', 'error');
     }
   };
 
@@ -92,28 +111,13 @@ const UserForm: React.FC<UserFormProps> = ({ onClose, setUsers }) => {
               .required('Password is required'),
           })}
           onSubmit={(values, { resetForm }) => {
-            // const existingUsers = JSON.parse(
-            //   localStorage.getItem('users') || '[]'
-            // ); // Get existing users or empty array
-            // const updatedUsers = [...existingUsers, values]; // Append new user
-            // localStorage.setItem('users', JSON.stringify(updatedUsers)); // Save to localStorage
-            // onAddUser(values); // ⬅️ Update the state immediately in parent
-            // console.log('User Data Saved:', values);
-            // // const resp = createUserAPI(values);
-            // // console.log(resp, 'resp');
-            // // showToast('User added successfully', 'success');
-
-            // try {
-            //   const resp = createUserAPI(values);
-            //   console.log(resp, 'resp');
-            //   showToast('User added successfully', 'success');
-            // } catch (error) {
-            //   showToast('Something went wrong', 'error');
-            // }
-
-            // resetForm();
-            // setTimeout(() => onClose(), 300); // Close form after submission
-            addUser(values);
+            if (formType?.toLowerCase() === 'edit') {
+              // updateUserApi(id,values);
+              resetForm();
+            } else {
+              addUser(values);
+              resetForm();
+            }
           }}
         >
           {({}) => (
