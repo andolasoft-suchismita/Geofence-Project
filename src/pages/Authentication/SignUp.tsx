@@ -339,7 +339,7 @@ const SignUp: React.FC = () => {
                     value="Create account"
                     className="w-full cursor-pointer rounded-lg border border-primary bg-blue-500 p-4 text-white transition hover:bg-opacity-90"
                   />
-                </div> */}
+                </div>
 
                 <div className=" text-center">
                   <p>
@@ -348,7 +348,7 @@ const SignUp: React.FC = () => {
                       Sign in
                     </Link>
                   </p>
-                </div> */}
+                </div> 
                 <div className="flex justify-center mt-6 cursor-pointer" onClick={() => navigate('../companyinfo')}>
       < FaArrowAltCircleRight size={30} className="text-gray-600 hover:text-black" />
     </div>

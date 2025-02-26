@@ -8,13 +8,12 @@ interface ViewUserDetailsProps {
 interface User {
   first_name: string;
   last_name: string;
-  employee_id: string;
   email: string;
   roletype: string;
   doj: string;
   dob: string;
   designation: string;
-  password: string;
+  hashed_password: string;
 }
 
 const ViewUserDetails: React.FC<ViewUserDetailsProps> = ({ user, isOpen, onClose }) => {
@@ -26,7 +25,7 @@ const ViewUserDetails: React.FC<ViewUserDetailsProps> = ({ user, isOpen, onClose
         <h2 className="text-xl font-semibold mb-4 text-blue-900">User Details</h2>
         <div className="space-y-2 text-gray-800">
           <p><strong>Name:</strong> {user.first_name} {user.last_name}</p>
-          <p><strong>Employee ID:</strong> {user.employee_id}</p>
+          
           <p><strong>Email:</strong> {user.email}</p>
           <p><strong>Role Type:</strong> {user.roletype}</p>
           <p><strong>Designation:</strong> {user.designation}</p>
