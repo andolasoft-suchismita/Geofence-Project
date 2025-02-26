@@ -22,7 +22,7 @@ export const createUserAPI = async (userData: User) => {
   }
 };
 //  Update User
-export const updateUser = async (id: string, userData: Partial<User>) => {
+export const updateUserAPI = async (id: string, userData: Partial<User>) => {
   try {
     const response = await API.put(`/updateuserapi/${id}`, userData);
     return response.data;
@@ -32,7 +32,7 @@ export const updateUser = async (id: string, userData: Partial<User>) => {
 };
 
 //  Delete User
-export const deleteUser = async (id: string) => {
+export const deleteUserAPI = async (id: string) => {
   try {
     await API.delete(`/addusersapi/addusers/${id}`);
     return id; // Return deleted user ID for Redux state update

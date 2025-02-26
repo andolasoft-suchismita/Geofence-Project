@@ -1,16 +1,13 @@
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import {
-  createUserAPI,
-  fetchUsersAPI,
-  updateUser,
-} from '../api/services/userService';
-import { showToast } from '../utils/toast';
+
 interface UserFormProps {
   onClose: () => void;
-  setUsers: (updatedData: any) => void;
   formType: string;
+  selectedItem: any;
+  addUser: (values: any) => {};
+  updateUser: (id: string, values: any) => {};
 }
 
 export interface User {
@@ -47,49 +44,29 @@ export enum CompanyDesignation {
 
 const UserForm: React.FC<UserFormProps> = ({
   onClose,
-  setUsers,
   formType = 'create',
+  selectedItem = null,
+  addUser,
+  updateUser,
 }) => {
-  const addUser = async (values: any) => {
-    try {
-      await createUserAPI(values);
-      const updatedData = await fetchUsersAPI();
-      if (updatedData) setUsers(updatedData);
-      onClose();
-      showToast('User created successfully', 'success');
-    } catch (error) {
-      showToast('Failed to create user', 'error');
-    }
-  };
 
-  const updateUserApi = async (id: string, values: any) => {
-    try {
-      await updateUser(id, values);
-      const updatedData = await fetchUsersAPI();
-      if (updatedData) setUsers(updatedData);
-      onClose();
-      showToast('User updated successfully', 'success');
-    } catch (error) {
-      showToast('Failed to update user', 'error');
-    }
-  };
+
+
 
   return (
     <div className="fixed inset-0 mt-15 flex items-center justify-center bg-black bg-opacity-50">
       <div className="w-[500px] rounded-lg bg-gray px-6 py-8 text-black shadow-lg">
         <Formik
           initialValues={{
-            first_name: '',
-            last_name: '',
+            first_name: selectedItem ? selectedItem?.first_name : '',
+            last_name: selectedItem ? selectedItem?.last_name : '',
             // employee_id: '',
-            email: '',
-            roletype: '',
-            doj: '',
-            dob: '',
-            // idNo: "",
-            // profilePicture: null,
-            designation: '',
-            hashed_password: '',
+            email: selectedItem ? selectedItem?.email : '',
+            roletype: selectedItem ? selectedItem?.roletype : '',
+            doj: selectedItem ? selectedItem?.doj : '',
+            dob: selectedItem ? selectedItem?.dob : '',
+            designation: selectedItem ? selectedItem?.designation : '',
+            hashed_password: selectedItem ? selectedItem?.hashed_password : '',
           }}
           validationSchema={Yup.object({
             first_name: Yup.string().required('First name is required'),
@@ -104,23 +81,16 @@ const UserForm: React.FC<UserFormProps> = ({
             designation: Yup.string()
               .oneOf(Object.values(CompanyDesignation), 'Invalid designation')
               .required('Designation is required'),
-            // idNo: Yup.string().required("ID No. is required"),
-            // profilePicture: Yup.mixed().required("Profile Picture is required"),
             hashed_password: Yup.string()
               .min(6, 'Password must be at least 6 characters')
               .required('Password is required'),
           })}
           onSubmit={(values, { resetForm }) => {
-            if (formType?.toLowerCase() === 'edit') {
-              // updateUserApi(id,values);
-              resetForm();
-            } else {
-              addUser(values);
-              resetForm();
-            }
+            (formType?.toLowerCase() === 'edit' && selectedItem) ? updateUser(selectedItem?.id, values) : addUser(values);
+            resetForm();
           }}
         >
-          {({}) => (
+          {({ }) => (
             <Form className="">
               <h2 className="mb-6 text-center text-xl font-semibold">
                 Add User
