@@ -49,10 +49,10 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     #     # Call the parent create method after successful verification
     #     return await super().create(user_create, safe, request)
     
-    async def on_after_register(self, user: User, request: Optional[Request] = None):
-        registered_email = user.email
-        # Create new Tenant and add User to Tenant
-        tenant = await CompanyService().create_from_user(user)
+    # async def on_after_register(self, user: User, request: Optional[Request] = None):
+    #     registered_email = user.email
+    #     # Create new Tenant and add User to Tenant
+    #     tenant = await CompanyService().create_from_user(user)
 
         
         

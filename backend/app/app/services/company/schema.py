@@ -5,6 +5,8 @@ from pydantic import BaseModel, HttpUrl
 
 class CompanyBaseCreate(BaseModel):
     # name: str
+    name: str
+    email: str
     website: Optional[str] = None
     phone: Optional[str] = None
     is_active: Optional[bool] = True  # Defaulting to True

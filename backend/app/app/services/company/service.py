@@ -13,12 +13,27 @@ class CompanyService:
     def __init__(self, company_repository: CompanyRepository = Depends()) -> None:
         self.company_repository = company_repository
 
-    async def create_company(self, company: CompanyBaseCreate) -> Company:
+    async def create_company(self, company: CompanyBaseCreate, user: User) -> Company:
         """
         Creates a new company record.
         """
-        company_instance = Company(**company.dict())
-        return await self.company_repository.create(company_instance)
+        tenant_instance = Company(
+            name = company.name,
+            email = company.email,
+            is_active = 1
+        )
+        tenantRepository = CompanyRepository()
+
+        tenant = await tenantRepository.create(tenant_instance)
+        tenant_user_instance = CompanyUser(
+            company_id = tenant.id, 
+            user_id = str(user.id),
+            user_type = 'owner', 
+            status = 'active',
+        )
+        tenantUserRepository = CompanyUserRepository()
+        tenant_user = await tenantUserRepository.create(tenant_user_instance)
+        return tenant
 
     async def get_company(self, company_id: int) -> Company:
         """
@@ -54,7 +69,7 @@ class CompanyService:
     def list_companies(self, filter_params, pagination_params, order_by) -> List[Company]:
         return self.company_repository.list(filter_params, pagination_params, order_by)
     
-    async def create_from_user(self, user : User) -> Company:
+    async def create_from_user(self, company : CompanyBaseCreate, user: User) -> Company:
         """
         Creates a tenant from a user.
 
@@ -64,9 +79,10 @@ class CompanyService:
         Returns:
             Tenant: The created tenant.
         """
-        name = generateSubDomain(user.email)
+        # name = generateSubDomain(user.email)
         tenant_instance = Company(
-            name = name,
+            name = company.name,
+            email = company.email,
             is_active = 1
         )
         tenantRepository = CompanyRepository()
@@ -74,7 +90,7 @@ class CompanyService:
         tenant = await tenantRepository.create(tenant_instance)
         tenant_user_instance = CompanyUser(
             company_id = tenant.id, 
-            user_id = str(user.id), 
+            user_id = str(user.id),
             user_type = 'owner', 
             status = 'active',
         )

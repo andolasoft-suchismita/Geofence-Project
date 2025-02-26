@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Request
+from services.users.model import User
 from services.company.model import Company
 from services.company.repository import CompanyRepository
 from services.company.schema import CompanyBaseCreate
@@ -15,17 +16,17 @@ MyCompanyRouter = APIRouter(prefix="/company", tags=["Company-Management"])
 @MyCompanyRouter.post("/create", description="Create a new Company")
 async def create_company(
     company_body: CompanyBaseCreate,
-    # current_iuser :Company= Depends(current_super_user),
+    current_iuser :Company= Depends(current_super_user),
     company_service: CompanyService = Depends(lambda: CompanyService(company_repository=CompanyRepository())),
 ):
-    return await company_service.create_company(company_body)
+    return await company_service.create_company(company_body, current_iuser)
 
 
 # Get Company by ID
 @MyCompanyRouter.get("/{company_id}", description="Get Company by ID")
 async def get_company(
     company_id: int,
-    # current_iuser :Company= Depends(current_super_user),
+    current_iuser :Company= Depends(current_super_user),
     company_service: CompanyService = Depends(lambda: CompanyService(company_repository=CompanyRepository())),
 ):
     company = await company_service.get_company(company_id)
@@ -50,7 +51,7 @@ async def get_company(
 async def update_company(
     company_id: int,
     company_body: CompanyBaseCreate,
-    # current_iuser :Company= Depends(current_super_user),
+    current_iuser :Company= Depends(current_super_user),
     company_service: CompanyService = Depends(lambda: CompanyService(company_repository=CompanyRepository())),
 ):
     updated_company = await company_service.update_company(company_id, company_body)
@@ -63,7 +64,7 @@ async def update_company(
 @MyCompanyRouter.delete("/{company_id}/delete", description="Delete a Company")
 async def delete_company(
     company_id: int,
-    # current_iuser :Company= Depends(current_super_user),
+    current_iuser :Company= Depends(current_super_user),
     company_service: CompanyService = Depends(lambda: CompanyService(company_repository=CompanyRepository())),
 ):
     deleted = await company_service.delete_company(company_id)
@@ -74,7 +75,7 @@ async def delete_company(
 @MyCompanyRouter.get("/{company_id}/employees", description="Get all employees of a specific company")
 async def get_company_employees(
     company_id: int,
-    # current_iuser: Company = Depends(current_super_user),
+    current_iuser: Company = Depends(current_super_user),
     comapny_service: CompanyService = Depends(lambda: CompanyService(company_repository=CompanyRepository())),
 ):
     employees = await comapny_service.get_employees_by_company(company_id)
