@@ -106,7 +106,7 @@ const SignUp = () => {
               className="w-full bg-red-500 text-white rounded-lg hover:bg-red-600 transition ">
                 ⬅️ Back
               </button>
-              <CompanyInfo className="mt-0"/>
+              <CompanyInfo/>
             </div>
           )}
         </div>
