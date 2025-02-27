@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel
 from fastapi_query.filtering import BaseFilterParams
@@ -27,3 +28,15 @@ class CompanyBasedUpdate(BaseModel):
     state : Optional[str] = None
     country : Optional[str] = None
     zip_code : Optional[str] = None
+    
+class CompanyBaseResponse(BaseModel):
+    id: Optional[int] = None
+    name : Optional[str] = None
+    website : Optional[str] = None
+    phone : Optional[str] = None
+    is_active : Optional[int] = 0
+    created_at  : Optional[datetime] = None
+    updated_at  : Optional[datetime] = None
+    tenant_description: Optional[str] = None
+    currency_code: Optional[str] = None
+    api_key: Optional[str] = None
