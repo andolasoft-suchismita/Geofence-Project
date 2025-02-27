@@ -1,0 +1,22 @@
+export const weeklyReportData = [
+  {"employee_name":"Pippo Gegg","employee_id":1,"total_leave":7,"applied_leave":27,"remaining_leave":1,"hours_clocked":16.17,"absent":3,"halfday":2},
+  {"employee_name":"Alexandr Raphael","employee_id":2,"total_leave":28,"applied_leave":25,"remaining_leave":26,"hours_clocked":8.97,"absent":4,"halfday":1},
+  {"employee_name":"Georgiana Unwin","employee_id":3,"total_leave":3,"applied_leave":26,"remaining_leave":5,"hours_clocked":22.47,"absent":5,"halfday":0},
+  {"employee_name":"Florri Zanotti","employee_id":4,"total_leave":7,"applied_leave":12,"remaining_leave":15,"hours_clocked":8.35,"absent":0,"halfday":0},
+  {"employee_name":"Ileane Scoullar","employee_id":5,"total_leave":5,"applied_leave":24,"remaining_leave":9,"hours_clocked":16.46,"absent":1,"halfday":1},
+  {"employee_name":"Ellery Lassells","employee_id":6,"total_leave":23,"applied_leave":23,"remaining_leave":26,"hours_clocked":4.18,"absent":0,"halfday":0},
+  {"employee_name":"Kenneth Mossom","employee_id":7,"total_leave":30,"applied_leave":18,"remaining_leave":17,"hours_clocked":15.34,"absent":0,"halfday":0},
+  {"employee_name":"Gabriell Coates","employee_id":8,"total_leave":24,"applied_leave":28,"remaining_leave":9,"hours_clocked":21.15,"absent":1,"halfday":1},
+  {"employee_name":"Golda Ellen","employee_id":9,"total_leave":23,"applied_leave":4,"remaining_leave":3,"hours_clocked":2.38,"absent":0,"halfday":0},
+  {"employee_name":"Celie Ferrige","employee_id":10,"total_leave":11,"applied_leave":4,"remaining_leave":12,"hours_clocked":17.6,"absent":0,"halfday":1},
+  {"employee_name":"Kally Hilland","employee_id":11,"total_leave":13,"applied_leave":5,"remaining_leave":7,"hours_clocked":10.21,"absent":1,"halfday":0},
+  {"employee_name":"Kale Craigie","employee_id":12,"total_leave":15,"applied_leave":20,"remaining_leave":4,"hours_clocked":7.12,"absent":0,"halfday":1},
+  {"employee_name":"Loria Guy","employee_id":13,"total_leave":18,"applied_leave":5,"remaining_leave":21,"hours_clocked":9.23,"absent":0,"halfday":0},
+  {"employee_name":"Torre Jouhandeau","employee_id":14,"total_leave":15,"applied_leave":3,"remaining_leave":22,"hours_clocked":17.35,"absent":1,"halfday":1},
+  {"employee_name":"Babita Wadman","employee_id":15,"total_leave":23,"applied_leave":9,"remaining_leave":28,"hours_clocked":8.42,"absent":1,"halfday":0},
+  {"employee_name":"Ervin Dance","employee_id":16,"total_leave":11,"applied_leave":29,"remaining_leave":22,"hours_clocked":22.44,"absent":0,"halfday":1},
+  {"employee_name":"Wynn Hun","employee_id":17,"total_leave":15,"applied_leave":14,"remaining_leave":7,"hours_clocked":0.5,"absent":0,"halfday":0},
+  {"employee_name":"Vivie Babinski","employee_id":18,"total_leave":8,"applied_leave":23,"remaining_leave":28,"hours_clocked":20.45,"absent":0,"halfday":1},
+  {"employee_name":"Ilise Stening","employee_id":19,"total_leave":22,"applied_leave":30,"remaining_leave":30,"hours_clocked":9.82,"absent":0,"halfday":0},
+  {"employee_name":"Patrica Adamowicz","employee_id":20,"total_leave":30,"applied_leave":9,"remaining_leave":6,"hours_clocked":10.17,"absent":1,"halfday":0}
+];

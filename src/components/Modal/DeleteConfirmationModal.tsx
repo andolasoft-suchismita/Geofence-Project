@@ -1,13 +1,11 @@
 import React from "react";
 
 interface DeleteConfirmationModalProps {
-  isOpen: boolean;
   onConfirm: () => void;
   onCancel: () => void;
 }
 
-const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({ isOpen, onConfirm, onCancel }) => {
-  if (!isOpen) return null; // Don't render if modal is not open
+const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({ onConfirm, onCancel }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
