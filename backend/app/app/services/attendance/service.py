@@ -1,8 +1,8 @@
 from typing import List, Optional
 from fastapi import Depends
-from services.attendancetable.model import Attendance
-from services.attendancetable.repository import AttendanceRepository
-from services.attendancetable.schema import AttendanceSchema, AttendanceUpdateSchema, AttendanceResponseSchema
+from services.attendance.model import Attendance
+from services.attendance.repository import AttendanceRepository
+from services.attendance.schema import AttendanceSchema, AttendanceUpdateSchema, AttendanceResponseSchema
 from uuid import UUID
 from datetime import date
 

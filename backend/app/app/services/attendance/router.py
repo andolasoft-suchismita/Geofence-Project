@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from typing import List, Optional
 from uuid import UUID
 from datetime import date
-from services.attendancetable.service import AttendanceService
-from services.attendancetable.schema import (
+from services.attendance.service import AttendanceService
+from services.attendance.schema import (
     AttendanceSchema, AttendanceUpdateSchema, AttendanceResponseSchema
 )
 
