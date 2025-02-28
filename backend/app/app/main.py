@@ -14,7 +14,7 @@ from services.users2.router import MyUserRouter
 from services.company.router import MyCompanyRouter
 from services.addusers.router import AddUserRouter
 from services.companyholiday.router import CompanyHolidayRouter
-from services.attendancetable.router import MyAttendanceRouter
+from services.attendance.router import MyAttendanceRouter
 from config.settings import settings
 from services.auth.manager import (
     auth_backend,
