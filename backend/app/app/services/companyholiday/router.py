@@ -13,7 +13,7 @@ CompanyHolidayRouter = APIRouter(prefix="/company-holidays", tags=["Company-Holi
 @CompanyHolidayRouter.post("/", response_model=CompanyHolidayResponse, status_code=201)
 async def create_holiday(
     holiday: CompanyHolidayBase,
-    current_iuser: CompanyHoliday = Depends(current_super_user),
+    # current_iuser: CompanyHoliday = Depends(current_super_user),
     service: CompanyHolidayService = Depends(),
 ):
     return await service.create_holiday(holiday)
@@ -22,7 +22,7 @@ async def create_holiday(
 @CompanyHolidayRouter.get("/{holiday_id}", response_model=CompanyHolidayResponse)
 async def get_holiday(
     holiday_id: int,
-    current_iuser: CompanyHoliday = Depends(current_super_user),
+    # current_iuser: CompanyHoliday = Depends(current_super_user),
     service: CompanyHolidayService = Depends(),
 ):
     holiday = await service.get_holiday(holiday_id)
@@ -34,7 +34,7 @@ async def get_holiday(
 @CompanyHolidayRouter.get("/company/{company_id}", response_model=List[CompanyHolidayResponse])
 async def get_holidays_by_company(
     company_id: int,
-    current_iuser: CompanyHoliday = Depends(current_super_user),
+    # current_iuser: CompanyHoliday = Depends(current_super_user),
     service: CompanyHolidayService = Depends(),
 ):
     return await service.get_holidays_by_company(company_id)
@@ -44,7 +44,7 @@ async def get_holidays_by_company(
 async def update_holiday(
     holiday_id: int,
     holiday_data: CompanyHolidayUpdate,
-    current_iuser: CompanyHoliday = Depends(current_super_user),
+    # current_iuser: CompanyHoliday = Depends(current_super_user),
     service: CompanyHolidayService = Depends(),
 ):
     updated_holiday = await service.update_holiday(holiday_id, holiday_data)
@@ -66,7 +66,7 @@ async def update_holiday(
 @CompanyHolidayRouter.delete("/{holiday_id}", response_model=dict)
 async def delete_holiday(
     holiday_id: int,
-    current_iuser: CompanyHoliday = Depends(current_super_user),
+    # current_iuser: CompanyHoliday = Depends(current_super_user),
     service: CompanyHolidayService = Depends(),
 ):
     deleted = await service.delete_holiday(holiday_id)
