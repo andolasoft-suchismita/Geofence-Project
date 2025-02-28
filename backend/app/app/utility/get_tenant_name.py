@@ -1,3 +1,4 @@
+import uuid
 from sqlalchemy import select
 from db.database import get_db
 from services.company.model import Company
@@ -35,7 +36,7 @@ async def getTenantInfo(user_id, all_list=False) -> Company:
                     .select_from(CompanyUser)
                     .join(Company, CompanyUser.company_id == Company.id)
                     .join(User, cast(CompanyUser.user_id, UUID) == User.id)  #  Cast to UUID
-                    .where(User.id == user_uuid)  # Use correctly formatted UUID
+                    .where(User.id == uuid.UUID(user_id))  # Use correctly formatted UUID
                 )
 
                 result = await session.execute(stmt_tenant)
