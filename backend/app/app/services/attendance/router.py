@@ -6,6 +6,8 @@ from services.attendance.service import AttendanceService
 from services.attendance.schema import (
     AttendanceSchema, AttendanceUpdateSchema, AttendanceResponseSchema
 )
+from services.auth.manager import current_active_user
+
 
 MyAttendanceRouter = APIRouter(prefix="/attendance", tags=["Attendance"])
 
@@ -13,9 +15,10 @@ MyAttendanceRouter = APIRouter(prefix="/attendance", tags=["Attendance"])
 @MyAttendanceRouter.post("/create", response_model=AttendanceResponseSchema, status_code=201)
 async def create_attendance(
     attendance: AttendanceSchema, 
+    current_user: UUID = Depends(current_active_user),
     service: AttendanceService = Depends()
 ):
-    return await service.create_attendance(attendance)
+    return await service.create_attendance(attendance,current_user)
 
 ### **Get Attendance by ID**
 @MyAttendanceRouter.get("/{attendance_id}", response_model=AttendanceResponseSchema)

@@ -1,50 +1,106 @@
 from typing import List, Optional
 from fastapi import Depends
+from uuid import UUID
+from datetime import date, datetime, timedelta
+
+import pytz
 from services.attendance.model import Attendance
 from services.attendance.repository import AttendanceRepository
 from services.attendance.schema import AttendanceSchema, AttendanceUpdateSchema, AttendanceResponseSchema
-from uuid import UUID
-from datetime import date
-
+from services.users.model import User
 
 class AttendanceService:
-    def __init__(self, repository: AttendanceRepository = Depends()) -> None:
-        self.repository = repository
+    """
+    Service class responsible for handling business logic related to attendance.
+    """
 
-    async def create_attendance(self, attendance: AttendanceSchema) -> AttendanceResponseSchema:
-        """
-        Create a new attendance record.
-        """
-        attendance_record = await self.repository.create_attendance(attendance)
-        return AttendanceResponseSchema.from_orm(attendance_record)
+    def __init__(self, attendance_repository: AttendanceRepository = Depends()) -> None:
+        self.attendance_repository = attendance_repository
 
-    async def get_attendance_by_id(self, attendance_id: int) -> Optional[AttendanceResponseSchema]:
+    async def create_attendance(self, attendance_data: AttendanceSchema, current_user: User) -> AttendanceResponseSchema:
         """
-        Retrieve a single attendance record by ID.
+        Creates a new attendance record.
+        :param attendance_data: Data required to create an attendance record.
+        :param current_user: The user for whom attendance is being recorded.
+        :return: The created AttendanceResponseSchema object.
         """
-        attendance_record = await self.repository.get_attendance_by_id(attendance_id)
-        if attendance_record:
-            return AttendanceResponseSchema.from_orm(attendance_record)
-        return None
+
+        attendance_dict = attendance_data.model_dump() if hasattr(attendance_data, "model_dump") else attendance_data.dict()
+
+        # Ensure required fields are provided by the user
+        if not attendance_dict.get("date") or not attendance_dict.get("check_in"):
+            raise ValueError("Date and check-in time are required.")
+
+        attendance_dict["user_id"] = current_user.id  # Assign user ID
+
+        # Compute status if check-out is provided
+        if attendance_dict.get("check_out"):
+            check_in_time = datetime.combine(attendance_dict["date"], attendance_dict["check_in"])
+            check_out_time = datetime.combine(attendance_dict["date"], attendance_dict["check_out"])
+            work_duration = check_out_time - check_in_time
+            attendance_dict["status"] = "Full Day" if work_duration < timedelta(hours=6) else "Half Day"
+        # else:
+        #     attendance_dict["status"] = "Pending"
+
+        # ✅ Directly pass dictionary (don't wrap in `Attendance(**attendance_dict)`)
+        created_attendance = await self.attendance_repository.create_attendance(attendance_dict)
+
+        return AttendanceResponseSchema.model_validate(created_attendance)
+
+    async def get_attendance(self, attendance_id: int) -> Optional[AttendanceResponseSchema]:
+        """
+        Retrieves an attendance record by its ID.
+        :param attendance_id: ID of the attendance record.
+        :return: The AttendanceResponseSchema object if found, otherwise None.
+        """
+        attendance_record = await self.attendance_repository.get_attendance_by_id(attendance_id)
+        return AttendanceResponseSchema.model_validate(attendance_record) if attendance_record else None
 
     async def get_attendance_by_user(self, user_id: UUID, date: Optional[date] = None) -> List[AttendanceResponseSchema]:
         """
-        Retrieve attendance records for a specific user. If a date is provided, filter by date.
+        Retrieves attendance records for a specific user. If a date is provided, filter by date.
+        :param user_id: UUID of the user.
+        :param date: (Optional) Date filter for attendance records.
+        :return: A list of AttendanceResponseSchema objects.
         """
-        attendance_records = await self.repository.get_attendance_by_user(user_id, date)
-        return [AttendanceResponseSchema.from_orm(record) for record in attendance_records]
+        attendance_records = await self.attendance_repository.get_attendance_by_user(user_id, date)
+        return [AttendanceResponseSchema.model_validate(record) for record in attendance_records]
 
-    async def update_attendance(self, attendance_id: int, update_data: AttendanceUpdateSchema) -> Optional[AttendanceResponseSchema]:
+    async def update_attendance(self, attendance_id: int, attendance_data: AttendanceUpdateSchema) -> Optional[AttendanceResponseSchema]:
         """
-        Update an attendance record.
+        Updates an existing attendance record.
+        :param attendance_id: ID of the attendance record.
+        :param attendance_data: Data required for the update.
+        :return: The updated AttendanceResponseSchema object if found, otherwise None.
         """
-        attendance_record = await self.repository.update_attendance(attendance_id, update_data)
-        if attendance_record:
-            return AttendanceResponseSchema.from_orm(attendance_record)
-        return None
+        existing_attendance = await self.attendance_repository.update_attendance(attendance_id, attendance_data)
+        if not existing_attendance:
+            return None  # Attendance record not found
+
+        # ✅ Use model_dump() if available, otherwise fallback to .dict()
+        update_dict = attendance_data.model_dump(exclude_unset=True) if hasattr(attendance_data, "model_dump") else attendance_data.dict(exclude_unset=True)
+
+        for key, value in update_dict.items():
+            setattr(existing_attendance, key, value)
+
+        # Recalculate status if check-out is updated
+        if existing_attendance.check_in and existing_attendance.check_out:
+           # Convert `existing_attendance.date` to a timezone-aware datetime
+           timezone = pytz.UTC  # Change this to the correct timezone if needed
+
+           check_in_time = datetime.combine(existing_attendance.date, existing_attendance.check_in).replace(tzinfo=timezone)
+           check_out_time = datetime.combine(existing_attendance.date, existing_attendance.check_out).replace(tzinfo=timezone)
+
+           work_duration = check_out_time - check_in_time
+           existing_attendance.status = "half-day" if work_duration < timedelta(hours=6) else "full-day"
+        updated_attendance = await self.attendance_repository.update_attendance(attendance_id , existing_attendance)
+
+        return AttendanceResponseSchema.model_validate(updated_attendance)
 
     async def delete_attendance(self, attendance_id: int) -> bool:
         """
-        Delete an attendance record.
+        Deletes an attendance record by its ID.
+        :param attendance_id: ID of the attendance record.
+        :return: True if deleted successfully, otherwise False.
         """
-        return await self.repository.delete_attendance(attendance_id)
+        return await self.attendance_repository.delete_attendance(attendance_id)

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 import datetime
 from typing import Optional
 from uuid import UUID
@@ -13,25 +13,19 @@ class AttendanceSchema(BaseModel):
     """
     Schema for creating an attendance record.
     """
-    user_id: UUID
     date: datetime.date
     check_in: Optional[datetime.time] = None
-    check_out: Optional[datetime.time] = None
-    status: AttendanceStatus
+    status: Optional[AttendanceStatus] = AttendanceStatus.FULL_DAY 
 
-    class Config:
-        from_attributes = True  # ✅ Fix the issue
+    model_config = ConfigDict(from_attributes=True)  # ✅ Ensures compatibility with ORM
 
 class AttendanceUpdateSchema(BaseModel):
     """
     Schema for updating an attendance record. All fields are optional.
     """
-    check_in: Optional[datetime.time] = None
     check_out: Optional[datetime.time] = None
-    status: Optional[AttendanceStatus] = None
 
-    class Config:
-        from_attributes = True  # ✅ Fix the issue
+    model_config = ConfigDict(from_attributes=True)  # ✅ Ensures compatibility with ORM
 
 class AttendanceResponseSchema(BaseModel):
     """
@@ -44,5 +38,4 @@ class AttendanceResponseSchema(BaseModel):
     check_out: Optional[datetime.time] = None
     status: AttendanceStatus
 
-    class Config:
-        from_attributes = True  # ✅ Fix the issue
+    model_config = ConfigDict(from_attributes=True)  # ✅ Ensures compatibility with ORM

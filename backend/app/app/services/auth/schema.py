@@ -18,10 +18,10 @@ class UserRead(schemas.BaseUser[uuid.UUID]):
 
 
 class UserCreate(schemas.BaseUserCreate):
-    pass
     # invite_token: Optional[str] = None # For invite user
     # first_name : Optional[str] = None 
     # last_name : Optional[str] = None
+    pass
     
     
 
