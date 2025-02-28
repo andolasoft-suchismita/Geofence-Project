@@ -9,6 +9,7 @@ or distributed without prior written permission from AndolaSoft.
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
+from services.users.router import UserRouter
 from services.users2.router import MyUserRouter
 from services.company.router import MyCompanyRouter
 from services.addusers.router import AddUserRouter
@@ -105,7 +106,7 @@ registeredusers_app = FastAPI()
 registeredusers_app.include_router(Registered_UsersRouter)
 
 users_app = FastAPI()
-# users_app.include_router(UserRouter)
+users_app.include_router(UserRouter)
 MyUserApp = FastAPI()
 MyUserApp.include_router(MyUserRouter)
 
