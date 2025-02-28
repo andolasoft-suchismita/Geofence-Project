@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services.companyholiday.model import CompanyHoliday
 from services.companyholiday.service import CompanyHolidayService
-from services.companyholiday.schema import CompanyHolidayCreate, CompanyHolidayUpdate, CompanyHolidayResponse
+from services.companyholiday.schema import CompanyHolidayBase, CompanyHolidayCreate, CompanyHolidayUpdate, CompanyHolidayResponse
 from typing import List, Optional
 from uuid import UUID
 from fastapi_query.pagination import PaginationParams
@@ -12,7 +12,7 @@ CompanyHolidayRouter = APIRouter(prefix="/company-holidays", tags=["Company-Holi
 # Create a new Company Holiday
 @CompanyHolidayRouter.post("/", response_model=CompanyHolidayResponse, status_code=201)
 async def create_holiday(
-    holiday: CompanyHolidayCreate,
+    holiday: CompanyHolidayBase,
     current_iuser: CompanyHoliday = Depends(current_super_user),
     service: CompanyHolidayService = Depends(),
 ):

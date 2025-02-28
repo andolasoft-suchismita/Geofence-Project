@@ -14,8 +14,8 @@ class CompanyHolidayBase(BaseModel):
         """Ensure holiday date is a valid date and not in the past"""
         if isinstance(value, str):  # If input is a string, convert it to date
             value = datetime.strptime(value, "%Y-%m-%d").date()
-        if value < date.today():
-            raise ValueError("Holiday date cannot be in the past")
+        # if value < date.today():
+        #     raise ValueError("Holiday date cannot be in the past")
         return value
 
 

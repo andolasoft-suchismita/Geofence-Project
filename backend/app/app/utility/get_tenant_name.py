@@ -3,6 +3,7 @@ from db.database import get_db
 from services.company.model import Company
 from services.companyuser.model import CompanyUser
 from services.users.model import User
+from sqlalchemy.ext.asyncio import AsyncSession 
 
 
 from sqlalchemy import cast
@@ -23,27 +24,38 @@ async def getTenantInfo(user_id, all_list=False) -> Company:
     """
     try:
         # If user_id is already a UUID, use it directly, otherwise, convert it
-        if isinstance(user_id, PyUUID):
-            user_uuid = user_id
-        else:
-            user_uuid = PyUUID(str(user_id), version=4)  # Convert to valid UUID format
+        user_uuid = PyUUID(str(user_id), version=4) if not isinstance(user_id, PyUUID) else user_id
 
-        async for session in get_db():
-            async with session.begin():
-                stmt_tenant = (
-                    select(Company, User)
-                    .select_from(CompanyUser)
-                    .join(Company, CompanyUser.company_id == Company.id)
-                    .join(User, cast(CompanyUser.user_id, UUID) == User.id)  #  Cast to UUID
-                    .where(User.id == user_uuid)  # Use correctly formatted UUID
-                )
+        # async for session in get_db():
+        #     async with session.begin():
+        #         stmt_tenant = (
+        #             select(Company, User)
+        #             .select_from(CompanyUser)
+        #             .join(Company, CompanyUser.company_id == Company.id)
+        #             .join(User, cast(CompanyUser.user_id, UUID) == User.id)  #  Cast to UUID
+        #             .where(User.id == user_uuid)  # Use correctly formatted UUID
+        #         )
 
-                result = await session.execute(stmt_tenant)
+        #         result = await session.execute(stmt_tenant)
 
-                if all_list:
-                    return result.unique().scalars().all()
-                else:
-                    return result.unique().scalars().first()
+        #         if all_list:
+        #             return result.unique().scalars().all()
+        #         else:
+        #             return result.unique().scalars().first()
+        async with get_db() as session:  # Fetch the session only once
+            assert isinstance(session, AsyncSession)  # Ensure it's an async session
+            
+            stmt_tenant = (
+                select(Company, User)
+                .join(Company, CompanyUser.company_id == Company.id)
+                .join(User, CompanyUser.user_id == User.id)
+                .where(User.id == user_uuid)  # Ensure user_id is UUID
+            )
+
+            result = await session.execute(stmt_tenant)
+
+            return result.unique().scalars().all() if all_list else result.unique().scalars().first()
+
 
     except ValueError:
         print(f"Invalid UUID format: {user_id}")
