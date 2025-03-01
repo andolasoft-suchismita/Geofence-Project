@@ -26,23 +26,25 @@ class AttendanceService:
         """
 
         attendance_dict = attendance_data.model_dump() if hasattr(attendance_data, "model_dump") else attendance_data.dict()
+        
+        attendance_dict["date"] = date.today()
 
         # Ensure required fields are provided by the user
-        if not attendance_dict.get("date") or not attendance_dict.get("check_in"):
-            raise ValueError("Date and check-in time are required.")
+        if not attendance_dict.get("check_in"):
+           raise ValueError("Check-in time is required.")
 
         attendance_dict["user_id"] = current_user.id  # Assign user ID
 
-        # Compute status if check-out is provided
-        if attendance_dict.get("check_out"):
-            check_in_time = datetime.combine(attendance_dict["date"], attendance_dict["check_in"])
-            check_out_time = datetime.combine(attendance_dict["date"], attendance_dict["check_out"])
-            work_duration = check_out_time - check_in_time
-            attendance_dict["status"] = "Full Day" if work_duration < timedelta(hours=6) else "Half Day"
-        # else:
-        #     attendance_dict["status"] = "Pending"
-
-        # ✅ Directly pass dictionary (don't wrap in `Attendance(**attendance_dict)`)
+        # ✅ Check if the user has already checked in on the same date
+        existing_attendance = await self.attendance_repository.get_attendance_by_date_user(
+           user_id=current_user.id, date=attendance_dict["date"]
+        )
+        
+        if existing_attendance:
+           raise ValueError("User has already checked in for this date.")
+       
+        attendance_dict["status"] = "half-day"
+        
         created_attendance = await self.attendance_repository.create_attendance(attendance_dict)
 
         return AttendanceResponseSchema.model_validate(created_attendance)
@@ -56,7 +58,7 @@ class AttendanceService:
         attendance_record = await self.attendance_repository.get_attendance_by_id(attendance_id)
         return AttendanceResponseSchema.model_validate(attendance_record) if attendance_record else None
 
-    async def get_attendance_by_user(self, user_id: UUID, date: Optional[date] = None) -> List[AttendanceResponseSchema]:
+    async def get_attendance_by_user(self, user_id: UUID, start_date: Optional[date] = None, end_date: Optional[date] = None) -> List[AttendanceResponseSchema]:
         """
         Retrieves attendance records for a specific user. If a date is provided, filter by date.
         :param user_id: UUID of the user.

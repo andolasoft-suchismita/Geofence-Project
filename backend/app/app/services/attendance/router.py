@@ -35,7 +35,8 @@ async def get_attendance_by_id(
 @MyAttendanceRouter.get("/user/{user_id}", response_model=List[AttendanceResponseSchema])
 async def get_attendance_by_user(
     user_id: UUID, 
-    date: Optional[date] = None, 
+    start_date: Optional[date] = None,
+    end_date: Optional[date] = None,
     service: AttendanceService = Depends()
 ):
     return await service.get_attendance_by_user(user_id, date)

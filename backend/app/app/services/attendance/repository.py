@@ -16,6 +16,11 @@ class AttendanceRepository:
 
     def __init__(self, db: AsyncSession = Depends(get_db)):
         self.db = db
+        
+    async def get_attendance_by_date_user(self, user_id: UUID, date: date):
+       query = select(Attendance).filter(Attendance.user_id == user_id, Attendance.date == date)
+       result = await self.db.execute(query)
+       return result.scalars().first()
 
     async def create_attendance(self, attendance_data: AttendanceSchema) -> Attendance:
         """

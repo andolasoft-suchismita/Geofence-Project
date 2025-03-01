@@ -13,7 +13,7 @@ class AttendanceSchema(BaseModel):
     """
     Schema for creating an attendance record.
     """
-    date: datetime.date
+    # date: datetime.date
     check_in: Optional[datetime.time] = None
     # status: Optional[AttendanceStatus] = AttendanceStatus.FULL_DAY 
 
