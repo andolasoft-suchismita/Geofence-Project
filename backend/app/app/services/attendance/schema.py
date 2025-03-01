@@ -15,7 +15,7 @@ class AttendanceSchema(BaseModel):
     """
     date: datetime.date
     check_in: Optional[datetime.time] = None
-    status: Optional[AttendanceStatus] = AttendanceStatus.FULL_DAY 
+    # status: Optional[AttendanceStatus] = AttendanceStatus.FULL_DAY 
 
     model_config = ConfigDict(from_attributes=True)  # ✅ Ensures compatibility with ORM
 
