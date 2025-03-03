@@ -23,7 +23,7 @@ const App = () => {
   return (
     <>
       <Routes>
-        {authToken ? (
+        {true ? (
           <Route path="/*" element={<PrivateRoutes />} />
         ) : (
           <Route path="/*" element={<PublicRoutes />} />
