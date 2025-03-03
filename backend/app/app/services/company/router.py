@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Request
 from services.users.model import User
 from services.company.model import Company
 from services.company.repository import CompanyRepository
-from services.company.schema import CompanyBaseCreate
+from services.company.schema import CompanyBaseCreate, CompanyBasedUpdate
 from services.company.service import CompanyService
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_query.pagination import Paginate, PaginationParams, Paginated
@@ -50,7 +50,7 @@ async def get_company(
 @MyCompanyRouter.put("/{company_id}/update", description="Update Company Details")
 async def update_company(
     company_id: int,
-    company_body: CompanyBaseCreate,
+    company_body: CompanyBasedUpdate,
     current_iuser :Company= Depends(current_super_user),
     company_service: CompanyService = Depends(lambda: CompanyService(company_repository=CompanyRepository())),
 ):

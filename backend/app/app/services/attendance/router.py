@@ -7,6 +7,7 @@ from services.attendance.schema import (
     AttendanceSchema, AttendanceUpdateSchema, AttendanceResponseSchema
 )
 from services.auth.manager import current_active_user
+from fastapi import Request
 
 
 MyAttendanceRouter = APIRouter(prefix="/attendance", tags=["Attendance"])
@@ -14,11 +15,12 @@ MyAttendanceRouter = APIRouter(prefix="/attendance", tags=["Attendance"])
 ### **Create Attendance**
 @MyAttendanceRouter.post("/create", response_model=AttendanceResponseSchema, status_code=201)
 async def create_attendance(
+    request: Request,
     attendance: AttendanceSchema, 
     current_user: UUID = Depends(current_active_user),
     service: AttendanceService = Depends()
 ):
-    return await service.create_attendance(attendance,current_user)
+    return await service.create_attendance(request,attendance,current_user)
 
 ### **Get Attendance by ID**
 @MyAttendanceRouter.get("/{attendance_id}", response_model=AttendanceResponseSchema)

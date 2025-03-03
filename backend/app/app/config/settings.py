@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     POSTGRES_PORT: str
     POSTGRES_DATABASE: str
     DATABASE_URI: Optional[str] = None
+    
+    #geofence radius
+    GEOFENCE_RADIUS: float
 
     @validator("DATABASE_URI", pre=True)
     def assemble_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:

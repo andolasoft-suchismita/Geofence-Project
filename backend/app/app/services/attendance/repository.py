@@ -1,3 +1,5 @@
+from services.companyuser.model import CompanyUser
+from services.company.model import Company
 from db.database import get_db
 from services.attendance.model import Attendance
 from services.attendance.schema import AttendanceSchema, AttendanceUpdateSchema
@@ -7,6 +9,7 @@ from uuid import UUID
 from datetime import date
 from typing import List, Optional
 from fastapi import Depends
+from sqlalchemy.future import select
 
 
 class AttendanceRepository:
@@ -16,11 +19,6 @@ class AttendanceRepository:
 
     def __init__(self, db: AsyncSession = Depends(get_db)):
         self.db = db
-        
-    async def get_attendance_by_date_user(self, user_id: UUID, date: date):
-       query = select(Attendance).filter(Attendance.user_id == user_id, Attendance.date == date)
-       result = await self.db.execute(query)
-       return result.scalars().first()
 
     async def create_attendance(self, attendance_data: AttendanceSchema) -> Attendance:
         """
@@ -43,13 +41,13 @@ class AttendanceRepository:
         result = await self.db.execute(select(Attendance).filter(Attendance.id == attendance_id))
         return result.scalar_one_or_none()
 
-    async def get_attendance_by_user(self, user_id: UUID, date: Optional[date] = None) -> List[Attendance]:
+    async def get_attendance_by_user(self, user_id: UUID, start_date: Optional[date] = None, end_date: Optional[date] = None) -> List[Attendance]:
         """
         Fetches attendance records for a specific user. If a date is provided, filter by date.
         """
         query = select(Attendance).filter(Attendance.user_id == user_id)
-        if date:
-            query = query.filter(Attendance.date == date)
+        if start_date and end_date is not None:
+            query = query.filter(Attendance.date <= start_date, Attendance.date >= end_date)
 
         result = await self.db.execute(query)
         return result.scalars().all()
@@ -86,3 +84,27 @@ class AttendanceRepository:
         await self.db.commit()
 
         return True
+
+    async def get_attendance_by_date_user(self, user_id: UUID, date: date):
+        query = select(Attendance).filter(Attendance.user_id == user_id, Attendance.date == date)
+        result = await self.db.execute(query)
+        return result.scalars().first()
+    
+    async def get_company_coordinates(self, userId: UUID):
+        #get company_id
+        company_query = select(CompanyUser.company_id).filter(CompanyUser.user_id == str(userId))
+        result = await self.db.execute(company_query)
+        company_id = result.scalar()
+        
+        if company_id is None:
+            return None
+        
+        # get company coordinates
+        company_coordinates_query = select(Company.latitude, Company.longitude).filter(Company.id == company_id)
+        company_coordinates_result = await self.db.execute(company_coordinates_query)
+        company_coordinates = company_coordinates_result.fetchone()
+        
+        if company_coordinates:
+            return {"latitude": company_coordinates[0], "longitude": company_coordinates[1]}  # Extract values properly
+        return None
+        
