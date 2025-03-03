@@ -330,62 +330,62 @@
 // export default MyCalendar;
 
 
-import React, { useState } from "react";
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
-import DefaultLayout from "../../layout/DefaultLayout";
+// import React, { useState } from "react";
+// import Calendar from "react-calendar";
+// import "react-calendar/dist/Calendar.css";
+// import DefaultLayout from "../../layout/DefaultLayout";
 
-const MyCalendar: React.FC = () => {
-  const [date, setDate] = useState<Date>(new Date());
-  const [today, setToday] = useState<Date>(new Date());
+// const MyCalendar: React.FC = () => {
+//   const [date, setDate] = useState<Date>(new Date());
+//   const [today, setToday] = useState<Date>(new Date());
 
-  const handleDateChange = (newDate: Date | Date[]) => {
-    if (newDate instanceof Date) {
-      setDate(newDate);
-    }
-  };
+//   const handleDateChange = (newDate: Date | Date[]) => {
+//     if (newDate instanceof Date) {
+//       setDate(newDate);
+//     }
+//   };
 
-  const goToToday = () => {
-    const currentDate = new Date();
-    setDate(currentDate); // Set calendar to today's date
-    setToday(currentDate); // Update today's reference
-  };
+//   const goToToday = () => {
+//     const currentDate = new Date();
+//     setDate(currentDate); // Set calendar to today's date
+//     setToday(currentDate); // Update today's reference
+//   };
 
-  const isSameDay = (d1: Date, d2: Date) => {
-    return (
-      d1.getFullYear() === d2.getFullYear() &&
-      d1.getMonth() === d2.getMonth() &&
-      d1.getDate() === d2.getDate()
-    );
-  };
+//   const isSameDay = (d1: Date, d2: Date) => {
+//     return (
+//       d1.getFullYear() === d2.getFullYear() &&
+//       d1.getMonth() === d2.getMonth() &&
+//       d1.getDate() === d2.getDate()
+//     );
+//   };
 
-  const tileClassName = ({ date, view }: { date: Date; view: string }): string | undefined => {
-    if (view === "month" && isSameDay(date, today)) {
-      return "bg-red-500 text-white font-bold rounded-full"; // Highlight today's date
-    }
-  };
+//   const tileClassName = ({ date, view }: { date: Date; view: string }): string | undefined => {
+//     if (view === "month" && isSameDay(date, today)) {
+//       return "bg-red-500 text-white font-bold rounded-full"; // Highlight today's date
+//     }
+//   };
 
-  return (
-    <DefaultLayout>
-      <div className="p-6 max-w-xl mx-auto">
-        <h2 className="text-2xl font-semibold mb-4">{date.getFullYear()} Calendar</h2>
-        <div className="bg-white shadow-lg rounded-lg p-4">
-          <Calendar
-            onChange={handleDateChange}
-            value={date}
-            tileClassName={tileClassName}
-            className="react-calendar rounded-lg shadow-inner"
-          />
-        </div>
-        <button
-          onClick={goToToday}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-        >
-          Today
-        </button>
-      </div>
-    </DefaultLayout>
-  );
-};
+//   return (
+//     <DefaultLayout>
+//       <div className="p-6 max-w-xl mx-auto">
+//         <h2 className="text-2xl font-semibold mb-4">{date.getFullYear()} Calendar</h2>
+//         <div className="bg-white shadow-lg rounded-lg p-4">
+//           <Calendar
+//             onChange={handleDateChange}
+//             value={date}
+//             tileClassName={tileClassName}
+//             className="react-calendar rounded-lg shadow-inner"
+//           />
+//         </div>
+//         <button
+//           onClick={goToToday}
+//           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+//         >
+//           Today
+//         </button>
+//       </div>
+//     </DefaultLayout>
+//   );
+// };
 
-export default MyCalendar;
+// export default MyCalendar;

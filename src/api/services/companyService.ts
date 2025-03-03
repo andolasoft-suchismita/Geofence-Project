@@ -1,21 +1,36 @@
-// import API from "../axiosInstance";  
+import axios from "axios";
 
-// // Fetch company details
+const BASE_URL = "http://192.168.2.31:9009/companyapi/company";
+
+// ✅ Function to fetch company details
+export const getCompanyDetails = async (companyId: number) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/${companyId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching company details:", error);
+    throw error;
+  }
+};
+
+
+// import axios from "axios";
+
 // export const getCompanyDetails = async () => {
-//     try {
-//         const response = await API.get("/company/details"); // Adjust endpoint
-//         return response.data;
-//     } catch (error) {
-//         throw error;
-//     }
+//   try {
+//     const token = localStorage.getItem("authToken"); // Retrieve the token
+
+//     const response = await axios.get("http://localhost:8000/api/company-details", {
+//       headers: {
+//         Authorization: `Bearer ${token}`, // Include the token
+//         "Content-Type": "application/json",
+//       },
+//     });
+
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching company details:", error);
+//     throw error;
+//   }
 // };
 
-// // Save or Update company details
-// export const saveCompanyDetails = async (companyData) => {
-//     try {
-//         const response = await API.post("/company/save", companyData); // Adjust endpoint
-//         return response.data;
-//     } catch (error) {
-//         throw error;
-//     }
-// };

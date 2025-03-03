@@ -146,6 +146,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { useMap } from "react-leaflet";
 import "leaflet-control-geocoder";
+import { getCompanyDetails } from "../api/services/companyService";
 
 
 // ✅ Define a custom Leaflet icon
@@ -183,9 +184,24 @@ const LocationMarker = ({ position, setPosition }: { position: { lat: number; ln
 };
 
 const CompanySettings = () => {
+  const [companyName, setCompanyName] = useState("");
+  const [email, setEmail] = useState("");
   const [logo, setLogo] = useState<string | null>(null);
   const [position, setPosition] = useState<{ lat: number; lng: number }>({ lat: 28.6139, lng: 77.209 });
-  const [location, setLocation] = useState<string>("");
+  // const [location, setLocation] = useState<string>("");
+
+  const companyId = 24; // Change dynamically if needed
+  
+  useEffect(() => {
+    getCompanyDetails(companyId)
+      .then((data) => {
+        setCompanyName(data.company_name);
+        setEmail(data.email);
+        setPosition({ lat: data.latitude || 28.6139, lng: data.longitude || 77.209 });
+        setLogo(data.logo_url || null);
+      })
+      .catch((error) => console.error("Error:", error));
+  }, []);
 
   // ✅ Handle logo upload
   const handleLogoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
