@@ -27,7 +27,7 @@ const PrivateRoutes = () => {
   return (
     <DefaultLayout>
       <Routes>
-        <Route path="dashboard" element={<DashboardHome />} />
+        {/* <Route path="dashboard" element={<DashboardHome />} /> */}
 
         <Route path="attendance" element={<Attendance />} />
         <Route path="weeklyreport" element={<WeeklyReport />} />

@@ -30,8 +30,8 @@ const SignUp = () => {
       .min(6, 'Password must be at least 6 characters')
       .required('Password is required'),
     rePassword: Yup.string()
-      .oneOf([Yup.ref('password'), ''], 'Passwords must match')
-      .required('Confirm Password is required'),
+      .oneOf([Yup.ref("password"), ""], "Passwords must match")
+      .required(""),
   });
 
   const handleSignUp = async (values: any) => {
