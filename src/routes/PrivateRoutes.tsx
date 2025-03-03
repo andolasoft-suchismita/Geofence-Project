@@ -7,7 +7,7 @@ import DefaultLayout from '../layout/DefaultLayout';
 import Users from '../pages/Users';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import DashboardHome from '../pages/dashboard';
-import NotFoundPage from '../pages/NotFoundPage';
+// import NotFoundPage from '../pages/NotFoundPage';
 import { useEffect } from 'react';
 // import Users from '../pages/dashboard/Users';
 // import Attendance from '../pages/dashboard/Attendance';
@@ -35,7 +35,7 @@ const PrivateRoutes = () => {
         <Route path="/calendar" element={<MyCalendar />} />
         <Route path="/users" element={<Users />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="*" element={<NotFoundPage />} />
+        {/* <Route path="*" element={<NotFoundPage />} /> */}
         {/* <Route path="/dashboard/attendance" element={<Attendance />} />
                 <Route path="/dashboard/weeklyreport" element={<WeeklyReport />} /> */}
         {/* <Route path="*" element={<Navigate to="/calendar" replace />} /> */}

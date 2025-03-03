@@ -100,8 +100,8 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import {
   createUserAPI,
   fetchUsersAPI,
-  updateUser,
-  deleteUser,
+  updateUserAPI,
+  deleteUserAPI,
 } from '../../api/services/userService';
 
 // Define User Interface
@@ -164,7 +164,7 @@ export const updateUserThunk = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await updateUser(id, userData);
+      const response = await updateUserAPI(id, userData);
       return { id, ...response };
     } catch (error: any) {
       return rejectWithValue(error.response?.data || 'Failed to update user');
@@ -177,7 +177,7 @@ export const deleteUserThunk = createAsyncThunk(
   'users/deleteUser',
   async (id: string, { rejectWithValue }) => {
     try {
-      await deleteUser(id);
+      await deleteUserAPI(id);
       return id;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || 'Failed to delete user');

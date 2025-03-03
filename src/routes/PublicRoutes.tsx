@@ -9,7 +9,11 @@ const PublicRoutes = () => {
     <Routes>
       <Route path="/signin" element={<SignIn />} />
       <Route path="/signup" element={<SignUp />} />
-      <Route path="/companyinfo" element={< CompanyInfo/>} />
+      <Route path="/companyinfo" element={< CompanyInfo userData={{
+        email: '',
+        password: '',
+        rePassword: ''
+      }}/>} />
       <Route path="*" element={<Navigate to="/signin" replace />} />
     </Routes>
   );
@@ -18,7 +22,11 @@ const PublicRoutes = () => {
         <Routes>
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/companyinfo" element={< CompanyInfo/>} />
+            <Route path="/companyinfo" element={< CompanyInfo userData={{
+          email: '',
+          password: '',
+          rePassword: ''
+        }}/>} />
             <Route path="*" element={<Navigate to="/signin" replace />} />
         </Routes>
     );
