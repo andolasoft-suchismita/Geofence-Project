@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AttendanceTable from "../components/attendancetable";
+import AttendanceTable from "../components/Attendancetable";
 
 const employees = ["Dibyajyoti Mishra", "John Doe", "Jane Smith"];
 const months = [
@@ -52,7 +52,7 @@ const Attendance: React.FC = () => {
         </select>
       </div>
       
-      <AttendanceTable data={data} />
+      <AttendanceTable data={data} selectedMonth={selectedMonth} selectedYear={selectedYear}/>
     </div>
   );
 };

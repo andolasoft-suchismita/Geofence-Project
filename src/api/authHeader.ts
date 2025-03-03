@@ -5,6 +5,7 @@ export function authHeader() {
   const state = store.getState();
 
   let accessToken = state?.authSlice?.token;
+  
   if (accessToken) {
     return {
       Authorization: `Bearer ${accessToken}`,
