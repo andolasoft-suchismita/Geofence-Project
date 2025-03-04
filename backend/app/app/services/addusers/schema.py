@@ -1,7 +1,6 @@
-from datetime import datetime
+from datetime import datetime, date
 from typing import Optional
 from pydantic import BaseModel, field_validator
-from datetime import date
 from enum import Enum
 
 
@@ -21,21 +20,22 @@ class CompanyDesignation(str, Enum):
     SALES_MANAGER = "sales_manager"
     MARKETING_MANAGER = "marketing_manager"
     INTERN = "intern"
-    
+
+
 class AddUserSchema(BaseModel):
     first_name: str
     last_name: str
     email: str
     hashed_password: str
     roletype: str
-    designation: CompanyDesignation=CompanyDesignation.JUNIOR_ENGINEER
+    designation: CompanyDesignation = CompanyDesignation.JUNIOR_ENGINEER
     doj: date
     dob: date
 
     @field_validator("doj", "dob", mode="before")
-    def remove_timezone(cls, value):
-        if isinstance(value, datetime) and value.tzinfo is not None:
-            return value.replace(tzinfo=None)  # Convert to naive datetime
+    def validate_date(cls, value):
+        if isinstance(value, datetime):  # Convert datetime to date
+            return value.date()
         return value
 
     class Config:
@@ -51,9 +51,9 @@ class UpdateUserSchema(BaseModel):
     dob: Optional[date] = None
 
     @field_validator("doj", "dob", mode="before")
-    def remove_timezone(cls, value):
-        if isinstance(value, datetime) and value.tzinfo is not None:
-            return value.replace(tzinfo=None)
+    def validate_date(cls, value):
+        if isinstance(value, datetime):
+            return value.date()
         return value
 
     class Config:
@@ -69,9 +69,9 @@ class UserResponseSchema(BaseModel):
     dob: Optional[date] = None
 
     @field_validator("doj", "dob", mode="before")
-    def remove_timezone(cls, value):
-        if isinstance(value, datetime) and value.tzinfo is not None:
-            return value.replace(tzinfo=None)
+    def validate_date(cls, value):
+        if isinstance(value, datetime):
+            return value.date()
         return value
 
     class Config:
