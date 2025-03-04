@@ -2,6 +2,7 @@ from datetime import datetime, date
 from typing import Optional
 from pydantic import BaseModel, field_validator
 from enum import Enum
+from uuid import UUID
 
 
 class CompanyDesignation(str, Enum):
@@ -63,10 +64,13 @@ class UpdateUserSchema(BaseModel):
 class UserResponseSchema(BaseModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
+    email: Optional[str] = None
     roletype: Optional[str] = None
     designation: Optional[str] = None
     doj: Optional[date] = None
     dob: Optional[date] = None
+    address: Optional[str] = None
+    id: Optional[UUID] = None
 
     @field_validator("doj", "dob", mode="before")
     def validate_date(cls, value):
