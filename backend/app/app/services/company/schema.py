@@ -28,6 +28,7 @@ class CompanyBasedUpdate(BaseModel):
     state : Optional[str] = None
     country : Optional[str] = None
     zip_code : Optional[str] = None
+    logo:  Optional[str] = None
     
 class CompanyBaseResponse(BaseModel):
     id: Optional[int] = None
@@ -39,4 +40,5 @@ class CompanyBaseResponse(BaseModel):
     updated_at  : Optional[datetime] = None
     tenant_description: Optional[str] = None
     currency_code: Optional[str] = None
-    api_key: Optional[str] = None
+    # api_key: Optional[str] = None
+    logo: Optional[str] = None

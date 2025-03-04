@@ -5,12 +5,14 @@ All rights reserved. This code contains proprietary and confidential
 information of AndolaSoft Ince and is not to be disclosed, reproduced,
 or distributed without prior written permission from AndolaSoft.
 """
-from typing import List
-from sqlalchemy import BIGINT, CHAR, TIMESTAMP, Column, DateTime, Integer, String
+from typing import List, Text
+from sqlalchemy import BIGINT, CHAR, TIMESTAMP, Column, DateTime, Integer, String, Sequence
 from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column, relationship
 from sqlalchemy.orm.base import Mapped
 from fastapi_users.db import SQLAlchemyBaseUserTableUUID, SQLAlchemyBaseOAuthAccountTableUUID
 from datetime import datetime
+
+employee_id_seq = Sequence('user_employee_id_seq')
  
 # Base = declarative_base()
 class Base(DeclarativeBase):
@@ -40,6 +42,8 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     doj = Column(TIMESTAMP, nullable=True)
     dob = Column(TIMESTAMP, nullable=True)
     profile_pic = Column(String(255), nullable=True)
+    address = Column(String(255), nullable=True)  # New address field
+    employee_id = Column(Integer, server_default=employee_id_seq.next_value(), primary_key=False)
    
  
     oauth_accounts: Mapped[List[OAuthAccount]] = relationship(

@@ -70,7 +70,7 @@ class UserResponseSchema(BaseModel):
     doj: Optional[date] = None
     dob: Optional[date] = None
     address: Optional[str] = None
-    id: Optional[UUID] = None
+    employee_id: Optional[int] = None
 
     @field_validator("doj", "dob", mode="before")
     def validate_date(cls, value):

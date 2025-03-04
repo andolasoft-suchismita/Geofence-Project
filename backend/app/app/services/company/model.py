@@ -23,6 +23,7 @@ class Company(Base):
     country = mapped_column(String(255))
     zip_code = mapped_column(String(255))
     email = mapped_column(String(255))
+    logo = mapped_column(String(255))
     
     
 
