@@ -49,7 +49,7 @@ class AttendanceService:
         #Get company coordinates
         geofence_coordinates = await self.attendance_repository.get_company_coordinates(userId)
         print(geofence_coordinates)
-        if geofence_coordinates is None:
+        if geofence_coordinates["latitude"] is None or geofence_coordinates["longitude"] is None:
            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company coordinates not found or company is not created.")
         
         if not geofence_coordinates:
@@ -142,6 +142,8 @@ class AttendanceService:
         existing_attendance = await self.attendance_repository.update_attendance(attendance_id, attendance_data)
         if not existing_attendance:
             return None  # Attendance record not found
+        elif existing_attendance.check_out:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User has already been checked out.")
 
         # ✅ Use model_dump() if available, otherwise fallback to .dict()
         update_dict = attendance_data.model_dump(exclude_unset=True) if hasattr(attendance_data, "model_dump") else attendance_data.dict(exclude_unset=True)
