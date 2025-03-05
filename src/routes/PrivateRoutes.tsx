@@ -6,7 +6,7 @@ import CompanySettings from '../pages/CompanySettings';
 import DefaultLayout from '../layout/DefaultLayout';
 import Users from '../pages/Users';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import DashboardHome from '../pages/dashboard'; 
+import DashboardHome from '../pages/dashboard';
 import NotFoundPage from '../pages/NotFoundPage';
 import { useEffect } from 'react';
 // import Users from '../pages/dashboard/Users';

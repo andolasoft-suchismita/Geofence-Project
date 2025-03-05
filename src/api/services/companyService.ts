@@ -1,4 +1,5 @@
 import axios from "axios";
+import API from "../axiosInstance";
 
 const BASE_URL = "http://192.168.2.31:9009/companyapi/company";
 
@@ -34,3 +35,16 @@ export const getCompanyDetails = async (companyId: number) => {
 //   }
 // };
 
+// Update company location
+export const updateCompanyLocationAPI = async (companyId: number, latitude: number, longitude: number) => {
+  try {
+    const response = await API.put(`/companyapi/company/${companyId}/update`, {
+      latitude,
+      longitude,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating company location:", error);
+    throw error;
+  }
+};
