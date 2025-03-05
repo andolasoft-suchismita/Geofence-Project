@@ -4,6 +4,7 @@ import API from '../api/axiosInstance'; // Import axios instance
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/store';
 import { login } from '../redux/slices/authSlice';
+import { showToast } from '../utils/toast';
 
 const CompanyPopup = ({ onClose }: { onClose: () => void }) => {
   const dispatch = useDispatch();
@@ -36,9 +37,10 @@ const CompanyPopup = ({ onClose }: { onClose: () => void }) => {
 
       // Update Redux store with new company_id
       dispatch(login({ token, user_id, company_id: newCompanyId }));
-
+      showToast('Company created Successfully!')
       onClose(); // Close popup after successful creation
     } catch (error) {
+      showToast('Error creating company');
       console.error('Error creating company:', error);
     } finally {
       setSubmitting(false);

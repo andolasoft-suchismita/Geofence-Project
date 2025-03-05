@@ -6,7 +6,7 @@ import CompanySettings from '../pages/CompanySettings';
 import DefaultLayout from '../layout/DefaultLayout';
 import Users from '../pages/Users';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import DashboardHome from '../pages/dashboard';
+import Dashboard from '../pages/Dashboard';
 // import NotFoundPage from '../pages/NotFoundPage';
 import { useEffect } from 'react';
 // import Users from '../pages/dashboard/Users';
@@ -27,7 +27,7 @@ const PrivateRoutes = () => {
   return (
     <DefaultLayout>
       <Routes>
-        {/* <Route path="dashboard" element={<DashboardHome />} /> */}
+        <Route path="dashboard" element={<Dashboard />} />
 
         <Route path="attendance" element={<Attendance />} />
         <Route path="weeklyreport" element={<WeeklyReport />} />

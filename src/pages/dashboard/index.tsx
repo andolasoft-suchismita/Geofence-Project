@@ -1,41 +1,31 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CompanyPopup from '../CompanyPopup';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/rootReducers';
 
 const Dashboard = () => {
   const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
-
+ const company_id = useSelector(
+   (state: RootState) => state.authSlice.company_id
+ );
   useEffect(() => {
-    const companyCreated = localStorage.getItem('companyCreated');
-    console.log('companyCreated from localStorage:', companyCreated);
-
-    if (!companyCreated) {
-      console.log('Company not created, showing popup in 3 seconds...');
-      const timeout = setTimeout(() => {
-        console.log('showPopup is now:', true);
-        setShowPopup(true);
-      }, 3000);
-
-      return () => clearTimeout(timeout); // Cleanup timeout
+   if (!company_id) {
+      const timeout = setTimeout(() => setShowPopup(true), 3000);
+      return () => clearTimeout(timeout);
     }
-  }, []);
+  }, [company_id]); // Reacts to Redux state updates
 
+    
   const handleCompanyCreation = () => {
-    localStorage.setItem('companyCreated', 'true'); // ✅ Save that company is created
     setShowPopup(false);
-    navigate('/companysettings'); // ✅ Redirect to settings after creation
+    navigate('/companysettings'); // Redirect after creation
   };
 
+
   return (
-    <div>
-      <h1>Welcome to Dashboard</h1>
-      {showPopup ? (
-        <CompanyPopup onClose={handleCompanyCreation} />
-      ) : (
-        <p>Popup should appear in 3 seconds...</p> // Debugging
-      )}
-    </div>
+    <div>{showPopup && <CompanyPopup onClose={handleCompanyCreation} />}</div>
   );
 };
 
