@@ -6,6 +6,7 @@ import { login } from '../../redux/slices/authSlice';
 import { showToast } from '../../utils/toast';
 import {MdEmail} from 'react-icons/md';
 import{FaEye,FaEyeSlash} from 'react-icons/fa';
+import API from '../../api/axiosInstance';
 
 const SignIn: React.FC = () => {
   const navigate = useNavigate();
@@ -19,24 +20,45 @@ const SignIn: React.FC = () => {
   };
 
 
-  const handleSignin = async (e: any) => {
-    e.preventDefault();
+ const handleSignin = async (e: any) => {
+   e.preventDefault();
 
-    try {
-      const userData = await loginUser(username, password);
+   try {
+     // Step 1: Login and get the access token
+     const userData = await loginUser(username, password);
+     const token = userData.access_token;
 
-      dispatch(
-        login({
-          token: userData.access_token,
-        })
-      );
+     if (!token) {
+       showToast('Login failed: No token received!', 'error');
+       return;
+     }
 
-      showToast('Login Successful!', 'success');
-      navigate('/dashboard');
-    } catch (error) {
-      showToast('Invalid credentials', 'error');
-    }
-  };
+     // Step 2: Fetch user details from the tenants API
+     const userDetailsResponse = await API.get('/usersapi/users/tenants', {
+       headers: { Authorization: `Bearer ${token}` },
+     });
+
+     const user_id = userDetailsResponse.data?.user_id;
+     const company_id = userDetailsResponse.data?.tenants?.[0]?.id || null; // Take first company_id or null
+
+     // Step 3: Store data in Redux
+     dispatch(
+       login({
+         token,
+         user_id,
+         company_id,
+       })
+     );
+
+     // Step 4: Show success message and navigate
+     showToast('Login Successful!', 'success');
+     navigate('/dashboard');
+   } catch (error) {
+     console.error('Error during login:', error);
+     showToast('Invalid credentials', 'error');
+   }
+ };
+
 
   return (
 //     <div className="flex items-center justify-center min-h-screen bg-gray-50">
