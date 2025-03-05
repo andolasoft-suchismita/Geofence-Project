@@ -5,7 +5,7 @@ import { User } from '../../redux/slices/userSlice'; // Import User interface
 export const fetchUsersAPI = async () => {
   try {
     // const response = await API.get('/v1/users');
-    const response = await API.get('/companyapi/company/23/employees');
+    const response = await API.get('/companyapi/company/24/employees');
     return response.data;
   } catch (error) {
     throw error;
