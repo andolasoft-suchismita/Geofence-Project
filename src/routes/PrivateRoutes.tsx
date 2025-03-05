@@ -35,7 +35,7 @@ const PrivateRoutes = () => {
         <Route path="/calendar" element={<MyCalendar />} />
         <Route path="/users" element={<Users />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="*" element={<NotFoundPage />} />
+        {/* <Route path="*" element={<NotFoundPage />} /> */}
         {/* <Route path="/dashboard/attendance" element={<Attendance />} />
                 <Route path="/dashboard/weeklyreport" element={<WeeklyReport />} /> */}
         {/* <Route path="*" element={<Navigate to="/calendar" replace />} /> */}

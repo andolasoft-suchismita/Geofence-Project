@@ -66,7 +66,7 @@ const Users: React.FC = () => {
 
   return (
     <div className="p-4">
-      <h2 className="relative flex gap-2.5 text-xl font-bold">
+      {/* <h2 className="relative flex gap-2.5 text-xl font-bold">
         <FiUser />
         Users
         <button
@@ -76,9 +76,17 @@ const Users: React.FC = () => {
         >
           <FiPlus size={20} />
         </button>
-      </h2>
+      </h2> */}
+      <button
+        onClick={() => setFormType('create')}
+        className="flex items-center gap-2 rounded-md bg-blue-500 px-4 py-2 text-white shadow hover:bg-blue-600 "
+        title="click here to add users"
+      >
+        <FiPlus size={18} />
+        Add User
+      </button>
 
-      {formType && ["create", "edit"].includes(formType?.toLowerCase()) ?
+      {formType && ['create', 'edit'].includes(formType?.toLowerCase()) ? (
         <UserForm
           formType={formType}
           onClose={() => resetStates()}
@@ -86,22 +94,40 @@ const Users: React.FC = () => {
           updateUser={updateUser}
           selectedItem={selectedItem}
         />
-        : <></>
-      }
+      ) : null}
 
-      {formType?.toLowerCase() === "delete" ?
+      {formType?.toLowerCase() === 'delete' ? (
         <DeleteConfirmationModal
           onConfirm={() => handleDelete(selectedItem?.id)}
           onCancel={() => resetStates()}
         />
-        : <></>
-      }
+      ) : null}
 
-      <UsersTable
+      {/* <UsersTable
         users={users}
         setSelectedItem={setSelectedItem}
         setFormType={setFormType}
-      />
+      /> */}
+
+      {users.length === 0 ? (
+        <div className=" flex flex-col items-center justify-center gap-4">
+          <p className="text-gray-500 text-lg">No users found.</p>
+
+          <img
+            src="https://img.freepik.com/free-vector/no-data-concept-illustration_114360-536.jpg?t=st=1740732908~exp=1740736508~hmac=edc0862513c1a952fc51562e6185ef5440481a874293c00457d69c7bbfa6b713&w=900"
+            alt="No Data"
+            className="w-full max-w-xs sm:max-w-md md:max-w-lg"
+            title="No user Found . Click the Above Button to Add users"
+          />
+         
+        </div>
+      ) : (
+        <UsersTable
+          users={users}
+          setSelectedItem={setSelectedItem}
+          setFormType={setFormType}
+        />
+      )}
     </div>
   );
 };

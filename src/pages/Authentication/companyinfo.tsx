@@ -1,114 +1,120 @@
-import React  from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import { Link } from 'react-router-dom';
-import * as Yup from "yup";
-import SignUp from "./SignUp";
+// import React, { useState } from 'react';
+// import { useNavigate, Link } from 'react-router-dom';
+// import API, { FormAPI } from '../../api/axiosInstance';
+// import { showToast } from '../../utils/toast';
+// interface CompanyInfoProps {
+//   userData: {
+//     // name: string;
+//     email: string;
+//     password: string;
+//     rePassword: string;
+//   };
+// }
 
-const CompanyInfo = ({ setStep }) => {
-  const initialValues = {
-    companyName: "",
-    email: "",
-  };
+// const CompanyInfo: React.FC<CompanyInfoProps> = ({ userData }) => {
+//   const navigate = useNavigate();
+//   const [companyName, setCompanyName] = useState('');
+//   const [email, setEmail] = useState('');
 
-  const validationSchema = Yup.object({
-    companyName: Yup.string().required("Company Name is required"),
-    email: Yup.string().email("Invalid email").required("Email is required"),
-  });
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
 
-  const handleSubmit = (values) => {
-    console.log("Company Name:", values.companyName);
-    console.log("Email:", values.email);
-    // Navigate or perform the next action after successful submission
-  };
+//     const companyValues = {
+//       name: companyName,
+//       email: email,
+//     };
 
-  return (
-    <div className="flex items-center justify-center h-full bg-white w-full p-8 overflow-y-auto">
-      <div className="w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">
-          Company Information
-        </h2>
+//     const token = localStorage.getItem('token'); // Retrieve stored token
 
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
-          <Form className="space-y-4">
-            {/* Company Name Input */}
-            <div>
-              <label className="block text-gray-700 text-base">
-                Company Name
-              </label>
-              <div className="relative">
-                <Field
-                  type="text"
-                  name="companyName"
-                  placeholder="Enter Company Name"
-                  className="w-full p-3 border rounded-lg bg-gray-100"
-                />
-                <span className="absolute right-3 top-4 text-gray-500">🏢</span>
-              </div>
-              <ErrorMessage
-                name="companyName"
-                component="div"
-                className="text-red text-sm mt-1"
-              />
-            </div>
+//     if (!token) {
+//       showToast('Authentication failed. Please log in again.', 'error');
+//       return navigate('/signin'); // Redirect if token is missing
+//     }
 
-            {/* Email Input */}
-            <div>
-              <label className="block text-gray-700 text-base">Email</label>
-              <div className="relative">
-                <Field
-                  type="email"
-                  name="email"
-                  placeholder="Enter Email"
-                  className="w-full p-3 border rounded-lg bg-gray-100"
-                />
-                <span className="absolute right-3 top-4 text-gray-500">📧</span>
-              </div>
-              <ErrorMessage
-                name="email"
-                component="div"
-                className="text-red text-sm mt-1"
-              />
-            </div>
+//     try {
+//       const response = await API.post(
+//         '/companyapi/company/create',
+//         companyValues,
+//         {
+//           headers: { Authorization: `Bearer ${token}` },
+//         }
+//       );
 
-            {/* Buttons Section */}
-            <div className="flex flex-col md:flex-row gap-6">
-              {/* Previous Step Button */}
-              <button
-                type="button"
-                onClick={() => setStep(1)}
-                className="w-full md:w-1/2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-              >
-                ⬅️ Back...
-              
-              </button>
+//       if (response.status === 201 || response.status === 200) {
+//         showToast('Company created successfully!', 'success');
+//         navigate('/dashboard'); // Move to dashboard after success
+//       } else {
+//         showToast('Failed to create company. Try again!', 'error');
+//       }
+//     } catch (error: any) {
+//       console.error(
+//         'Error creating company:',
+//         error.response?.data || error.message
+//       );
+//       showToast('An error occurred. Please try again!', 'error');
+//     }
+//   };
 
-              {/* Submit Button */}
-              <button
-                type="submit"
-                className="w-full md:w-1/2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-              >
-                Create Account
-              </button>
-            </div>
-            
-               <div className="mt-6 text-center">
-                 <p>
-                   Already have an account?{' '}
-                   <Link to="/signin" className="text-blue-500 hover:underline">
-                    Sign In
-                   </Link>
-                 </p>
-               </div>
-          </Form>
-        </Formik>
-      </div>
-    </div>
-  );
-};
+//   return (
+//     <div className="bg-gray-100 flex h-screen items-center justify-center">
+//       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
+//         <h2 className="mb-6 text-center text-2xl font-bold text-blue-500">
+//           Company Information
+//         </h2>
 
-export default CompanyInfo;
+//         <form onSubmit={handleSubmit}>
+//           {/* Company Name Input */}
+//           <div className="mb-4">
+//             <label className="text-gray-700 block text-base">
+//               Company Name
+//             </label>
+//             <div className="relative">
+//               <input
+//                 type="text"
+//                 placeholder="Enter Company Name"
+//                 value={companyName}
+//                 onChange={(e) => setCompanyName(e.target.value)}
+//                 className="border-gray-300 w-full rounded-lg border p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+//               />
+//               <span className="text-gray-500 absolute right-4 top-4">🏢</span>
+//             </div>
+
+//           {/* Email Input */}
+//           <div className="mb-4">
+//             <label className="text-gray-700 block text-base">Email</label>
+//             <div className="relative">
+//               <input
+//                 type="email"
+//                 placeholder="Enter Email"
+//                 value={email}
+//                 onChange={(e) => setEmail(e.target.value)}
+//                 className="border-gray-300 w-full rounded-lg border p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+//               />
+//               <span className="text-gray-500 absolute right-4 top-4">📧</span>
+//             </div>
+
+//           {/* Submit Button */}
+//           <div className="mb-5">
+//             <button
+//               type="submit"
+//               className="w-full rounded-lg bg-blue-500 p-3 text-white transition hover:bg-blue-700"
+//             >
+//               Create Account
+//             </button>
+//             <div className="mt-6 text-center">
+//               <p>
+//                 Already have an account?{' '}
+//                 <Link to="/Authentication/SignIn" className="text-primary">
+//                   Sign in
+//                 </Link>
+//               </p>
+//             </div>
+//           </div>
+//         </form>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default CompanyInfo;
 

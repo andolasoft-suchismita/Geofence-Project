@@ -1,8 +1,13 @@
 import { FaUserFriends, FaClock, FaUserMinus } from "react-icons/fa";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from "recharts";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import CompanyPopup from '../CompanyPopup';
+
 
 const Dashboard = () => {
-  // Monthly Present vs Absent Data
+  // Monthly Present vs Absent Data;
+
   const employeeData = [
     { month: "Jan", present: 900, absent: 100 },
     { month: "Feb", present: 850, absent: 150 },
@@ -27,7 +32,32 @@ const Dashboard = () => {
     { name: "Absent", value: totalAbsent, color: "#60A5FA" }, // Light Blue
   ];
 
+  const [showPopup, setShowPopup] = useState(false);
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const companyCreated = localStorage.getItem('companyCreated');
+    console.log('companyCreated from localStorage:', companyCreated);
+
+    if (!companyCreated) {
+      console.log('Company not created, showing popup in 3 seconds...');
+      const timeout = setTimeout(() => {
+        console.log('showPopup is now:', true);
+        setShowPopup(true);
+      }, 3000);
+
+      return () => clearTimeout(timeout); // Cleanup timeout
+    }
+  }, []);
+
+  const handleCompanyCreation = () => {
+    localStorage.setItem('companyCreated', 'true'); // ✅ Save that company is created
+    setShowPopup(false);
+    navigate('/companysettings'); // ✅ Redirect to settings after creation
+  };
+
   return (
+    <>
     <div className="min-h-screen bg-gray-100 p-6">
       {/* Header */}
       <header className="flex justify-between items-center mb-6 bg-white p-4 rounded-md shadow">
@@ -108,6 +138,15 @@ const Dashboard = () => {
         </div>
       </div>
     </div>
+    <div>
+    <h1>Welcome to Dashboard</h1>
+    {showPopup ? (
+      <CompanyPopup onClose={handleCompanyCreation} />
+    ) : (
+      <p>Popup should appear in 3 seconds...</p> // Debugging
+    )}
+  </div>
+  </>
   );
 };
 
