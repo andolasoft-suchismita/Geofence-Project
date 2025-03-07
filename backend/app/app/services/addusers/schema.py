@@ -83,14 +83,17 @@ class UserResponseSchema(BaseModel):
     role_type: Optional[str] = None
     employee_type: Optional[str] = None
     department: Optional[str] = None
-    date_of_joining: Optional[date] = None
+    doj: Optional[date] = None
     dob: Optional[date] = None
     
-    @field_validator("doj", "dob", mode="before")
-    def validate_date(cls, value):
-        if isinstance(value, datetime):
-            return value.date()
-        return value
-
+    
+    @field_validator("dob", mode="before")
+    def validate_date(cls, v):
+        if isinstance(v, datetime):  # Convert datetime to date if needed
+            v = v.date()
+        if v and v > date.today():
+            raise ValueError("Date of birth cannot be in the future")
+        return v
+    
     class Config:
         orm_mode = True
