@@ -44,6 +44,12 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     profile_pic = Column(String(255), nullable=True)
     address = Column(String(255), nullable=True)  # New address field
     employee_id = Column(Integer, server_default=employee_id_seq.next_value(), primary_key=False)
+    gender = Column(String(50), nullable=True)
+    marital_status = Column(String(50), nullable=True)
+    blood_group = Column(String(10), nullable=True)
+    emergency_contact = Column(String(255), nullable=True)
+    employee_type = Column(String(255), nullable=True)
+    department = Column(String(255), nullable=True)
    
  
     oauth_accounts: Mapped[List[OAuthAccount]] = relationship(
