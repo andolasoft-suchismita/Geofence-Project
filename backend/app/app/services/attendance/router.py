@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Path, Query
 from typing import List, Optional
 from uuid import UUID
-from datetime import date
+from datetime import date, datetime
 from services.attendance.service import AttendanceService
 from services.attendance.schema import (
     AttendanceSchema, AttendanceUpdateSchema, AttendanceResponseSchema
@@ -43,6 +43,23 @@ async def get_attendance_by_user(
 ):
     return await service.get_attendance_by_user(user_id, date)
 
+# **Get Attendance by Date**
+@MyAttendanceRouter.get("/by-date/{attendance_date}", response_model=List[AttendanceResponseSchema])
+async def get_attendance_by_date(
+    attendance_date: str = Path(..., description="Date in YYYY-MM-DD format"),  # ✅ Use `str`
+    service: AttendanceService = Depends()
+):
+    try:
+        attendance_date = datetime.strptime(attendance_date, "%Y-%m-%d").date()  # ✅ Convert manually
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD.")
+
+    attendance_records = await service.get_attendance_by_date(attendance_date)
+
+    if not attendance_records:
+        raise HTTPException(status_code=404, detail="No attendance records found for this date")
+
+    return attendance_records
 ###  **Update Attendance**
 @MyAttendanceRouter.patch("/{attendance_id}", response_model=AttendanceResponseSchema)
 async def update_attendance(

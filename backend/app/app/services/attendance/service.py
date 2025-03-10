@@ -172,3 +172,15 @@ class AttendanceService:
         :return: True if deleted successfully, otherwise False.
         """
         return await self.attendance_repository.delete_attendance(attendance_id)
+
+    async def get_attendance_by_date(self, attendance_date: date) -> List[AttendanceResponseSchema]:
+        """
+        Retrieves attendance records by date.
+        :param attendance_date: Date of the attendance records.
+        :return: A list of AttendanceResponseSchema objects.
+        """
+        attendance_records = await self.attendance_repository.get_attendance_by_date(attendance_date)
+
+        # ✅ Convert each ORM object to AttendanceResponseSchema
+        return [AttendanceResponseSchema.model_validate(record) for record in attendance_records]
+

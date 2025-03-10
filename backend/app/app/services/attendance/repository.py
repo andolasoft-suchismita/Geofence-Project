@@ -107,4 +107,9 @@ class AttendanceRepository:
         if company_coordinates:
             return {"latitude": company_coordinates[0], "longitude": company_coordinates[1]}  # Extract values properly
         return None
+    
+    async def get_attendance_by_date(self, attendance_date: date):
+        query = select(Attendance).filter(Attendance.date == attendance_date)
+        result = await self.db.execute(query)
+        return result.scalars().all()
         
