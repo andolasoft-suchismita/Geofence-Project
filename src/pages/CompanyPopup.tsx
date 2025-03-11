@@ -12,7 +12,14 @@ const CompanyPopup = ({ onClose }: { onClose: () => void }) => {
 
   // Validation Schema
   const validationSchema = Yup.object({
-    companyName: Yup.string().required('Company Name is required'),
+    companyName: Yup.string()
+      .matches(
+        /^[A-Za-z0-9\s&.,'-]+$/,
+        "Company name can only contain letters, numbers, spaces, and common symbols (&, ., -, ')"
+      )
+      .min(2, 'Company name must be at least 2 characters')
+      .max(100, 'Company name cannot exceed 100 characters')
+      .required('Company Name is required'),
     companyEmail: Yup.string()
       .email('Invalid email')
       .required('Company Email is required'),
@@ -50,7 +57,9 @@ const CompanyPopup = ({ onClose }: { onClose: () => void }) => {
   return (
     <div className="fixed inset-0 mt-15 flex items-center justify-center bg-black bg-opacity-50 ">
       <div className="relative w-96 rounded-lg bg-white p-6 shadow-lg">
-        <h2 className="mb-4 text-lg font-semibold">Create Your Company</h2>
+        <h2 className="mb-4 text-center text-2xl font-bold text-blue-600">
+          Create Your Company
+        </h2>
 
         {/* Formik Form */}
         <Formik
@@ -61,28 +70,30 @@ const CompanyPopup = ({ onClose }: { onClose: () => void }) => {
           {({ isSubmitting }) => (
             <Form>
               <div className="mb-4">
-                <label className="text-gray-700 block text-sm font-medium">
+                <label className="text-gray-700 block text-lg font-semibold">
                   Company Name*
                 </label>
                 <Field
                   type="text"
                   name="companyName"
+                  title="Company Name"
                   className="mt-1 w-full rounded-md border p-2 focus:outline-blue-500"
                   placeholder="Enter company name"
                 />
                 <ErrorMessage
                   name="companyName"
                   component="div"
-                  className="text-sm text-orange-900"
+                  className="text-sm text-red"
                 />
               </div>
 
               <div className="mb-4">
-                <label className="text-gray-700 block text-sm font-medium">
+                <label className="text-gray-700 block text-lg font-semibold">
                   Company Email*
                 </label>
                 <Field
                   type="email"
+                  title="Company Email"
                   name="companyEmail"
                   className="mt-1 w-full rounded-md border p-2 focus:outline-blue-500"
                   placeholder="Enter company email"
@@ -90,12 +101,13 @@ const CompanyPopup = ({ onClose }: { onClose: () => void }) => {
                 <ErrorMessage
                   name="companyEmail"
                   component="div"
-                  className="text-sm text-orange-900"
+                  className="text-sm text-red"
                 />
               </div>
 
               <button
                 type="submit"
+                title="Click here to Create Company!"
                 className="w-full rounded-md bg-blue-600 py-2 text-white hover:bg-blue-700"
                 disabled={isSubmitting}
               >

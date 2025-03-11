@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/rootReducers';
 import { FaUserFriends, FaClock, FaUserMinus } from "react-icons/fa";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from "recharts";
+import PunchModal from '../../components/PunchModal';
+
 
 const Dashboard = () => {
   // Monthly Present vs Absent Data
@@ -47,11 +49,14 @@ const Dashboard = () => {
      setShowPopup(false);
      navigate('/companysettings'); // Redirect after creation
    };
+  
 
+  const { isPunchedIn } = useSelector((state: RootState) => state.attendance);
 
   return (
     <div className="bg-gray-100 min-h-screen p-6">
       {/* Header */}
+      <PunchModal /> {/* Always show modal after punch-out */}
       <header className="mb-6 flex items-center justify-between rounded-md bg-white p-4 shadow">
         <input
           type="text"
@@ -63,7 +68,6 @@ const Dashboard = () => {
           <div className="bg-gray-400 h-10 w-10 rounded-full"></div>
         </div>
       </header>
-
       {/* Stats Cards */}
       <div className="grid grid-cols-3 gap-6">
         <div className="rounded-md bg-white p-5 shadow">
@@ -97,7 +101,6 @@ const Dashboard = () => {
           {/* <p className="text-blue-500 text-sm">+5% from last month</p> */}
         </div>
       </div>
-
       {/* Charts Section */}
       <div className="mt-6 grid grid-cols-2 gap-6">
         {/* Updated Bar Chart - Present vs Absent */}
