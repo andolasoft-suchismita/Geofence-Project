@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { motion } from 'framer-motion';
 import { MdEmail } from 'react-icons/md';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 // import CompanyInfo from './companyinfo';
@@ -13,25 +12,25 @@ import { useDispatch } from 'react-redux';
 import { login } from '../../redux/slices/authSlice';
 
 const SignUp = () => {
-  const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [showRePassword, setShowRePassword] = useState(false);
-  const [userData, setUserData] = useState(null); // Store user data
   const navigate = useNavigate(); // Initialize navigation
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
   const toggleRePasswordVisibility = () => setShowRePassword((prev) => !prev);
   const dispatch = useDispatch();
 
-
   const validationSchema = Yup.object({
-    // name: Yup.string().required('Name is required'),
     email: Yup.string().email('Invalid email').required('Email is required'),
     password: Yup.string()
-      .min(6, 'Password must be at least 6 characters')
+      .min(8, 'Password must be at least 8 characters')
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        'At least 8 characters;must contain at least one uppercase,lowercase, digit,and special character.'
+      )
       .required('Password is required'),
     rePassword: Yup.string()
-      .oneOf([Yup.ref("password"), ""], "Passwords must match")
-      .required(""),
+      .oneOf([Yup.ref('password'), ''], 'Passwords must match')
+      .required('Confirm Password is required'),
   });
 
   const handleSignUp = async (values: any) => {
@@ -60,8 +59,6 @@ const SignUp = () => {
         showToast('Login failed. Please try again!', 'error');
         return;
       }
-
-      
 
       // Fetch user details for `user_id` and `company_id`
       const userDetailsResponse = await API.get('/usersapi/users/tenants', {
@@ -96,82 +93,78 @@ const SignUp = () => {
         {/* Left Side */}
         <div className="flex w-1/2 flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 p-6 text-white">
           <img src="/ogeo-logo.webp" alt="OGEO Logo" className="mb-3 w-16" />
-          <h2 className="text-2xl font-bold">Welcome to Spacer</h2>
+          <h2 className="text-2xl font-bold">Welcome to OGeo</h2>
           <p className="mt-2 text-center text-sm">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eget
-            vulputate velit.
+            Seamless Check-Ins, Powered by Geofence Magic!🌐
           </p>
         </div>
 
         {/* Right Side with Sliding Effect */}
         <div className="relative w-1/2 overflow-hidden">
-          <motion.div
-            animate={{ x: step === 1 ? 0 : '-100%' }}
-            transition={{ type: 'tween', duration: 0.5 }}
-            className="absolute left-0 top-0 h-full w-full"
-          >
-            {/* Sign Up Form */}
-            <div className="p-8">
-              <h2 className="text-center text-2xl font-bold text-blue-700">
-                Sign-up
-              </h2>
-              <Formik
-                initialValues={{
-                  email: '',
-                  password: '',
-                  rePassword: '',
-                }}
-                validationSchema={validationSchema}
-                onSubmit={handleSignUp}
-              >
-                <Form className="space-y-4">
-                  <div>
-                    <label className="text-gray-700 block text-base">
-                      Email
-                    </label>
-                    <div className="relative">
-                      <Field
-                        name="email"
-                        type="email"
-                        placeholder="Enter your email"
-                        className="bg-gray-100 w-full rounded-lg border p-3"
-                      />
-                      <MdEmail className="text-gray-500 absolute right-3 top-4" />
-                    </div>
-                    <ErrorMessage
+          {/* Sign Up Form */}
+          <div className="p-8">
+            <h2 className="text-center text-2xl font-bold text-blue-700">
+              Sign-up
+            </h2>
+            <Formik
+              initialValues={{
+                email: '',
+                password: '',
+                rePassword: '',
+              }}
+              validationSchema={validationSchema}
+              onSubmit={handleSignUp}
+            >
+              <Form className="space-y-4" autoComplete="off">
+                <div>
+                  <label className="text-gray-700 block text-base">Email</label>
+                  <div className="relative">
+                    <Field
                       name="email"
-                      component="div"
-                      className="text-red-500 mt-1 text-sm"
+                      type="email"
+                      placeholder="Enter your email"
+                      title="Email"
+                      className="bg-gray-100 w-full rounded-lg border p-3"
                     />
+                    <MdEmail className="text-gray-500 absolute right-3 top-4" />
                   </div>
+                  <ErrorMessage
+                    name="email"
+                    component="div"
+                    className="mt-1 text-xs text-red sm:text-sm md:text-sm lg:text-sm"
+                  />
+                </div>
 
-                  <div>
-                    <label className="text-gray-700 block text-base">
-                      Password
-                    </label>
-                    <div className="relative">
-                      <Field
-                        name="password"
-                        type={showPassword ? 'text' : 'password'}
-                        placeholder="Enter your password"
-                        className="bg-gray-100 w-full rounded-lg border p-3"
-                      />
-                      <button
-                        type="button"
-                        onClick={togglePasswordVisibility}
-                        className="text-gray-500 absolute right-3 top-4"
-                      >
-                        {showPassword ? <FaEyeSlash /> : <FaEye />}
-                      </button>
-                    </div>
-                    <ErrorMessage
+                <div>
+                  <label className="text-gray-700 block text-base">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Field
                       name="password"
-                      component="div"
-                      className="text-red-500 mt-1 text-sm"
+                      autoComplete="new-password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Enter your password"
+                      title="Password"
+                      className="bg-gray-100 w-full rounded-lg border p-3"
                     />
+                    <button
+                      type="button"
+                      onClick={togglePasswordVisibility}
+                      className="text-gray-500 absolute right-3 top-4"
+                    >
+                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
                   </div>
+                  <ErrorMessage
+                    name="password"
+                    component="div"
+                    className="mt-1 text-xs text-red sm:text-sm md:text-sm lg:text-sm"
+                  />
+                </div>
 
-                  <div>
+                <div>
+                  <div className="mb-4">
                     <label className="text-gray-700 block text-base">
                       Confirm Password
                     </label>
@@ -180,7 +173,8 @@ const SignUp = () => {
                         name="rePassword"
                         type={showRePassword ? 'text' : 'password'}
                         placeholder="Confirm your password"
-                        className="bg-gray-100 w-full rounded-lg border p-3"
+                        title="Re-enter your password to confirm!"
+                        className="bg-gray-100 w-full rounded-lg border p-3 "
                       />
                       <button
                         type="button"
@@ -193,20 +187,20 @@ const SignUp = () => {
                     <ErrorMessage
                       name="rePassword"
                       component="div"
-                      className="text-red-500 mt-1 text-sm"
+                      className="mt-1 text-xs text-red sm:text-sm md:text-sm lg:text-sm "
                     />
                   </div>
-
-                  <button
-                    type="submit"
-                    className="w-full rounded-lg bg-blue-600 p-3 text-white transition hover:bg-blue-700"
-                  >
-                    SignUp
-                  </button>
-                </Form>
-              </Formik>
-            </div>
-          </motion.div>
+                </div>
+                <button
+                  type="submit"
+                  title="Click here to signUp!"
+                  className="w-full rounded-lg bg-blue-600 p-3 text-white transition hover:bg-blue-700 "
+                >
+                  SignUp
+                </button>
+              </Form>
+            </Formik>
+          </div>
         </div>
       </div>
     </div>

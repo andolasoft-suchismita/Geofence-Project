@@ -74,8 +74,9 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, setSelectedItem, setForm
                   title="Edit User Details"
                   className="hover:bg-gray-200 block w-full px-4 py-2 text-left"
                   onClick={() => {
-                    setSelectedItem(row.original)
-                    setFormType('edit')
+                    setDropdownIndex(null); //  Close dropdown first
+                    setSelectedItem(row.original);
+                    setFormType('edit');
                   }}
                 >
                   <MdEdit />
