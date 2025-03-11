@@ -1,21 +1,27 @@
-// import API from "../axiosInstance";  
+import API from "../axiosInstance";
 
-// // Fetch company details
-// export const getCompanyDetails = async () => {
-//     try {
-//         const response = await API.get("/company/details"); // Adjust endpoint
-//         return response.data;
-//     } catch (error) {
-//         throw error;
-//     }
-// };
+export const getCompanyDetails = async (companyId: number) => {
+  try {
+    const response = await API.get(`/companyapi/company/${companyId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching company data:', error);
+    throw error;
+  }
+};
 
-// // Save or Update company details
-// export const saveCompanyDetails = async (companyData) => {
-//     try {
-//         const response = await API.post("/company/save", companyData); // Adjust endpoint
-//         return response.data;
-//     } catch (error) {
-//         throw error;
-//     }
-// };
+
+//Add Update API
+export const updateCompany = async (companyId: number, updatedData: any) => {
+  try {
+    const response = await API.put(
+      `/companyapi/company/${companyId}/update`,
+      updatedData
+    );
+    console.log('API Response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating company:', error);
+    throw error;
+  }
+};

@@ -1,16 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import {
-  createUserAPI,
-  fetchUsersAPI,
-  updateUser,
-} from '../api/services/userService';
-import { showToast } from '../utils/toast';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+
 interface UserFormProps {
   onClose: () => void;
-  setUsers: (updatedData: any) => void;
   formType: string;
+  selectedItem: any;
+  addUser: (values: any) => {};
+  updateUser: (id: string, values: any) => {};
 }
 
 export interface User {
@@ -47,31 +45,15 @@ export enum CompanyDesignation {
 
 const UserForm: React.FC<UserFormProps> = ({
   onClose,
-  setUsers,
   formType = 'create',
+  selectedItem = null,
+  addUser,
+  updateUser,
 }) => {
-  const addUser = async (values: any) => {
-    try {
-      await createUserAPI(values);
-      const updatedData = await fetchUsersAPI();
-      if (updatedData) setUsers(updatedData);
-      onClose();
-      showToast('User created successfully', 'success');
-    } catch (error) {
-      showToast('Failed to create user', 'error');
-    }
-  };
+  const [showPassword, setShowPassword] = useState(false);
 
-  const updateUserApi = async (id: string, values: any) => {
-    try {
-      await updateUser(id, values);
-      const updatedData = await fetchUsersAPI();
-      if (updatedData) setUsers(updatedData);
-      onClose();
-      showToast('User updated successfully', 'success');
-    } catch (error) {
-      showToast('Failed to update user', 'error');
-    }
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
   };
 
   return (
@@ -79,21 +61,33 @@ const UserForm: React.FC<UserFormProps> = ({
       <div className="w-[500px] rounded-lg bg-gray px-6 py-8 text-black shadow-lg">
         <Formik
           initialValues={{
-            first_name: '',
-            last_name: '',
+            first_name: selectedItem ? selectedItem?.first_name : '',
+            last_name: selectedItem ? selectedItem?.last_name : '',
             // employee_id: '',
-            email: '',
-            roletype: '',
-            doj: '',
-            dob: '',
-            // idNo: "",
-            // profilePicture: null,
-            designation: '',
-            hashed_password: '',
+            email: selectedItem ? selectedItem?.email : '',
+            roletype: selectedItem ? selectedItem?.roletype : '',
+            doj: selectedItem ? selectedItem?.doj : '',
+            dob: selectedItem ? selectedItem?.dob : '',
+            designation: selectedItem ? selectedItem?.designation : '',
+            hashed_password: selectedItem ? selectedItem?.hashed_password : '',
           }}
           validationSchema={Yup.object({
-            first_name: Yup.string().required('First name is required'),
-            last_name: Yup.string().required('Last name is required'),
+            first_name: Yup.string()
+              .matches(
+                /^[A-Za-z\s'-]+$/,
+                'First name can only contain letters, spaces, hyphens, and apostrophes'
+              )
+              .min(2, 'First name must be at least 2 characters')
+              .max(50, 'First name cannot exceed 50 characters')
+              .required('First name is required'),
+            last_name: Yup.string()
+              .matches(
+                /^[A-Za-z\s'-]+$/,
+                'Last name can only contain letters, spaces, hyphens, and apostrophes'
+              )
+              .min(2, 'Last name must be at least 2 characters')
+              .max(50, 'Last name cannot exceed 50 characters')
+              .required('Last name is required'),
             // employee_id: Yup.string().required('Employee ID is required'),
             email: Yup.string()
               .email('Invalid email')
@@ -104,55 +98,59 @@ const UserForm: React.FC<UserFormProps> = ({
             designation: Yup.string()
               .oneOf(Object.values(CompanyDesignation), 'Invalid designation')
               .required('Designation is required'),
-            // idNo: Yup.string().required("ID No. is required"),
-            // profilePicture: Yup.mixed().required("Profile Picture is required"),
             hashed_password: Yup.string()
-              .min(6, 'Password must be at least 6 characters')
+              .min(8, 'Password must be at least 8 characters')
+              .matches(
+                /[A-Z]/,
+                'Password must contain at least one uppercase letter'
+              )
+              .matches(
+                /[a-z]/,
+                'Password must contain at least one lowercase letter'
+              )
+              .matches(/\d/, 'Password must contain at least one number')
+              .matches(
+                /[@$!%*?&]/,
+                'Password must contain at least one special character'
+              )
               .required('Password is required'),
           })}
           onSubmit={(values, { resetForm }) => {
-            if (formType?.toLowerCase() === 'edit') {
-              // updateUserApi(id,values);
-              resetForm();
-            } else {
-              addUser(values);
-              resetForm();
-            }
+            formType?.toLowerCase() === 'edit' && selectedItem
+              ? updateUser(selectedItem?.id, values)
+              : addUser(values);
+            resetForm();
           }}
         >
           {({}) => (
             <Form className="">
               <h2 className="mb-6 text-center text-xl font-semibold">
-                Add User
+                {formType === 'edit' ? 'Edit User' : 'Add User'}
               </h2>
+
               {/* First Name & Last Name */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block">
-                    First Name
-                    <span className="text-2xl text-orange-900">*</span>
-                  </label>
+                  <label className="block">First Name</label>
                   <Field
                     name="first_name"
                     className="w-full rounded border p-2"
                   />
                   <ErrorMessage
                     name="first_name"
-                    className="text-sm text-orange-900"
+                    className="text-sm text-red"
                     component="div"
                   />
                 </div>
                 <div>
-                  <label className="block">
-                    Last Name<span className="text-2xl text-orange-900">*</span>
-                  </label>
+                  <label className="block">Last Name</label>
                   <Field
                     name="last_name"
                     className="w-full rounded border p-2"
                   />
                   <ErrorMessage
                     name="last_name"
-                    className="text-sm text-orange-900"
+                    className="text-sm text-red"
                     component="div"
                   />
                 </div>
@@ -177,9 +175,7 @@ const UserForm: React.FC<UserFormProps> = ({
                   />
                 </div> */}
                 <div>
-                  <label className="block">
-                    Email<span className="text-2xl text-orange-900">*</span>
-                  </label>
+                  <label className="block">Email</label>
                   <Field
                     autoComplete="off"
                     name="email"
@@ -188,7 +184,7 @@ const UserForm: React.FC<UserFormProps> = ({
                   />
                   <ErrorMessage
                     name="email"
-                    className="text-sm text-orange-900"
+                    className="text-sm text-red"
                     component="div"
                   />
                 </div>
@@ -196,9 +192,7 @@ const UserForm: React.FC<UserFormProps> = ({
 
               {/* Role Type Dropdown */}
               <div>
-                <label className="block">
-                  Role Type<span className="text-2xl text-orange-900">*</span>
-                </label>
+                <label className="block">Role Type</label>
                 <Field
                   name="roletype"
                   as="select"
@@ -210,16 +204,14 @@ const UserForm: React.FC<UserFormProps> = ({
                 </Field>
                 <ErrorMessage
                   name="roletype"
-                  className="text-sm text-orange-900"
+                  className="text-sm text-red"
                   component="div"
                 />
               </div>
 
               {/* Designation Dropdown */}
               <div>
-                <label className="block">
-                  Designation<span className="text-2xl text-orange-900">*</span>
-                </label>
+                <label className="block">Designation</label>
                 <Field
                   as="select"
                   name="designation"
@@ -235,17 +227,14 @@ const UserForm: React.FC<UserFormProps> = ({
                 <ErrorMessage
                   name="designation"
                   component="div"
-                  className="text-sm text-orange-900"
+                  className="text-sm text-red"
                 />
               </div>
 
               {/* Date of Joining & Date of Birth */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block">
-                    Date of Joining
-                    <span className="text-2xl text-orange-900">*</span>
-                  </label>
+                  <label className="block">Date of Joining</label>
                   <Field
                     name="doj"
                     type="date"
@@ -254,14 +243,11 @@ const UserForm: React.FC<UserFormProps> = ({
                   <ErrorMessage
                     name="doj"
                     component="div"
-                    className="text-sm text-orange-900"
+                    className="text-sm text-red"
                   />
                 </div>
                 <div>
-                  <label className="block">
-                    Date of Birth
-                    <span className="text-2xl text-orange-900">*</span>
-                  </label>
+                  <label className="block">Date of Birth</label>
                   <Field
                     name="dob"
                     type="date"
@@ -270,27 +256,32 @@ const UserForm: React.FC<UserFormProps> = ({
                   <ErrorMessage
                     name="dob"
                     component="div"
-                    className="text-sm text-orange-900"
+                    className="text-sm text-red"
                   />
                 </div>
               </div>
 
               {/* Password */}
-              <div>
-                <label className="block">
-                  Password<span className="text-2xl text-orange-900">*</span>
-                </label>
+              <div className="relative">
+                <label className="block">Password</label>
                 <Field
                   name="hashed_password"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   autoComplete="new-password"
                   className="w-full rounded border p-2"
                 />
                 <ErrorMessage
-                  name="password"
-                  className="text-sm text-orange-900"
+                  name="hashed_password"
+                  className="text-sm text-red"
                   component="div"
                 />
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="text-gray-500 absolute right-3 top-9"
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
               </div>
 
               {/* Buttons */}
@@ -298,15 +289,15 @@ const UserForm: React.FC<UserFormProps> = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="rounded bg-[#e65558] px-4 py-2 text-white"
+                  className="rounded bg-red px-4 py-2 text-white hover:bg-[#FF0000]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded bg-blue-500 px-4 py-2 text-white"
+                  className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
                 >
-                  Add User
+                  {formType === 'edit' ? 'Save' : 'Add User'}
                 </button>
               </div>
             </Form>

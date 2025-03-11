@@ -2,10 +2,12 @@ import API from '../axiosInstance';
 import { User } from '../../redux/slices/userSlice'; // Import User interface
 
 //  Fetch All Users
-export const fetchUsersAPI = async () => {
+export const fetchUsersAPI = async (company_id: number) => {
   try {
     // const response = await API.get('/v1/users');
-    const response = await API.get('/companyapi/company/23/employees');
+    const response = await API.get(
+      `/companyapi/company/${company_id}/employees`
+    );
     return response.data;
   } catch (error) {
     throw error;
@@ -22,9 +24,9 @@ export const createUserAPI = async (userData: User) => {
   }
 };
 //  Update User
-export const updateUser = async (id: string, userData: Partial<User>) => {
+export const updateUserAPI = async (id: string, userData: Partial<User>) => {
   try {
-    const response = await API.put(`/updateuserapi/${id}`, userData);
+    const response = await API.put(`/addusersapi/addusers/${id}`, userData);
     return response.data;
   } catch (error) {
     throw error;
@@ -32,7 +34,7 @@ export const updateUser = async (id: string, userData: Partial<User>) => {
 };
 
 //  Delete User
-export const deleteUser = async (id: string) => {
+export const deleteUserAPI = async (id: string) => {
   try {
     await API.delete(`/addusersapi/addusers/${id}`);
     return id; // Return deleted user ID for Redux state update

@@ -1,7 +1,7 @@
-import React from 'react';
+// import React from 'react';
 
-function DashboardChart() {
-  return <div>DashboardChart</div>;
-}
+// function DashboardChart() {
+//   return <div>DashboardChart</div>;
+// }
 
-export default DashboardChart;
+// export default DashboardChart;

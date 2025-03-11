@@ -1,448 +1,324 @@
-// // import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
-
-// // const Calendar = () => {
-// //   return (
-// //     <>
-// //       <Breadcrumb pageName="Calendar" />
-
-// //       {/* <!-- ====== Calendar Section Start ====== --> */}
-// //       <div className="w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-// //         <table className="w-full">
-// //           <thead>
-// //             <tr className="grid grid-cols-7 rounded-t-sm bg-primary text-white">
-// //               <th className="flex h-15 items-center justify-center rounded-tl-sm p-1 text-xs font-semibold sm:text-base xl:p-5">
-// //                 <span className="hidden lg:block"> Sunday </span>
-// //                 <span className="block lg:hidden"> Sun </span>
-// //               </th>
-// //               <th className="flex h-15 items-center justify-center p-1 text-xs font-semibold sm:text-base xl:p-5">
-// //                 <span className="hidden lg:block"> Monday </span>
-// //                 <span className="block lg:hidden"> Mon </span>
-// //               </th>
-// //               <th className="flex h-15 items-center justify-center p-1 text-xs font-semibold sm:text-base xl:p-5">
-// //                 <span className="hidden lg:block"> Tuesday </span>
-// //                 <span className="block lg:hidden"> Tue </span>
-// //               </th>
-// //               <th className="flex h-15 items-center justify-center p-1 text-xs font-semibold sm:text-base xl:p-5">
-// //                 <span className="hidden lg:block"> Wednesday </span>
-// //                 <span className="block lg:hidden"> Wed </span>
-// //               </th>
-// //               <th className="flex h-15 items-center justify-center p-1 text-xs font-semibold sm:text-base xl:p-5">
-// //                 <span className="hidden lg:block"> Thursday </span>
-// //                 <span className="block lg:hidden"> Thur </span>
-// //               </th>
-// //               <th className="flex h-15 items-center justify-center p-1 text-xs font-semibold sm:text-base xl:p-5">
-// //                 <span className="hidden lg:block"> Friday </span>
-// //                 <span className="block lg:hidden"> Fri </span>
-// //               </th>
-// //               <th className="flex h-15 items-center justify-center rounded-tr-sm p-1 text-xs font-semibold sm:text-base xl:p-5">
-// //                 <span className="hidden lg:block"> Saturday </span>
-// //                 <span className="block lg:hidden"> Sat </span>
-// //               </th>
-// //             </tr>
-// //           </thead>
-// //           <tbody>
-// //             {/* <!-- Line 1 --> */}
-// //             <tr className="grid grid-cols-7">
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   1
-// //                 </span>
-// //                 <div className="group h-16 w-full flex-grow cursor-pointer py-1 md:h-30">
-// //                   <span className="group-hover:text-primary md:hidden">
-// //                     More
-// //                   </span>
-// //                   <div className="event invisible absolute left-2 z-99 mb-1 flex w-[200%] flex-col rounded-sm border-l-[3px] border-primary bg-gray px-3 py-1 text-left opacity-0 group-hover:visible group-hover:opacity-100 dark:bg-meta-4 md:visible md:w-[190%] md:opacity-100">
-// //                     <span className="event-name text-sm font-semibold text-black dark:text-white">
-// //                       Redesign Website
-// //                     </span>
-// //                     <span className="time text-sm font-medium text-black dark:text-white">
-// //                       1 Dec - 2 Dec
-// //                     </span>
-// //                   </div>
-// //                 </div>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   2
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   3
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   4
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   5
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   6
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   7
-// //                 </span>
-// //               </td>
-// //             </tr>
-// //             {/* <!-- Line 1 --> */}
-// //             {/* <!-- Line 2 --> */}
-// //             <tr className="grid grid-cols-7">
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   8
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   9
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   10
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   11
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   12
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   13
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   14
-// //                 </span>
-// //               </td>
-// //             </tr>
-// //             {/* <!-- Line 2 --> */}
-// //             {/* <!-- Line 3 --> */}
-// //             <tr className="grid grid-cols-7">
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   15
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   16
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   17
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   18
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   19
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   20
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   21
-// //                 </span>
-// //               </td>
-// //             </tr>
-// //             {/* <!-- Line 3 --> */}
-// //             {/* <!-- Line 4 --> */}
-// //             <tr className="grid grid-cols-7">
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   22
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   23
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   24
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   25
-// //                 </span>
-// //                 <div className="group h-16 w-full flex-grow cursor-pointer py-1 md:h-30">
-// //                   <span className="group-hover:text-primary md:hidden">
-// //                     More
-// //                   </span>
-// //                   <div className="event invisible absolute left-2 z-99 mb-1 flex w-[300%] flex-col rounded-sm border-l-[3px] border-primary bg-gray px-3 py-1 text-left opacity-0 group-hover:visible group-hover:opacity-100 dark:bg-meta-4 md:visible md:w-[290%] md:opacity-100">
-// //                     <span className="event-name text-sm font-semibold text-black dark:text-white">
-// //                       App Design
-// //                     </span>
-// //                     <span className="time text-sm font-medium text-black dark:text-white">
-// //                       25 Dec - 27 Dec
-// //                     </span>
-// //                   </div>
-// //                 </div>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   26
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   27
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   28
-// //                 </span>
-// //               </td>
-// //             </tr>
-// //             {/* <!-- Line 4 --> */}
-// //             {/* <!-- Line 5 --> */}
-// //             <tr className="grid grid-cols-7">
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   29
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   30
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   31
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   1
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   2
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   3
-// //                 </span>
-// //               </td>
-// //               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
-// //                 <span className="font-medium text-black dark:text-white">
-// //                   4
-// //                 </span>
-// //               </td>
-// //             </tr>
-// //             {/* <!-- Line 5 --> */}
-// //           </tbody>
-// //         </table>
-// //       </div>
-// //       {/* <!-- ====== Calendar Section End ====== --> */}
-// //     </>
-// //   );
-// // };
-
-// // export default Calendar;
-
-
-// import { useState } from "react";
-// import { Calendar as BigCalendar, momentLocalizer, Event } from "react-big-calendar";
-// import moment from "moment";
-// import "react-big-calendar/lib/css/react-big-calendar.css";
-// import { Dialog, Transition } from "@headlessui/react";
-// import { Fragment } from "react";
-// import { XMarkIcon } from "@heroicons/react/24/outline";
-
-// const localizer = momentLocalizer(moment);
-
-// const events = [
-//   {
-//     id: 1,
-//     title: "Team Meeting",
-//     start: new Date(2025, 1, 26, 10, 0),
-//     end: new Date(2025, 1, 26, 11, 0),
-//   },
-//   {
-//     id: 2,
-//     title: "Project Deadline",
-//     start: new Date(2025, 1, 28, 12, 0),
-//     end: new Date(2025, 1, 28, 13, 0),
-//   },
-// ];
-
-// const MyCalendar = () => {
-//   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-//   const [isOpen, setIsOpen] = useState(false);
-
-//   const handleSelectEvent = (event: Event) => {
-//     setSelectedEvent(event);
-//     setIsOpen(true);
-//   };
-
-//   return (
-//     <div className="p-4">
-//       <h2 className="text-xl font-bold mb-4">📅 Event Calendar</h2>
-//       <div className="bg-white shadow rounded-lg p-4">
-//         <BigCalendar
-//           localizer={localizer}
-//           events={events}
-//           startAccessor="start"
-//           endAccessor="end"
-//           style={{ height: 500 }}
-//           onSelectEvent={handleSelectEvent}
-//         />
-//       </div>
-
-//       {/* Modal for Event Details */}
-//       <Transition appear show={isOpen} as={Fragment}>
-//         <Dialog as="div" className="relative z-10" onClose={() => setIsOpen(false)}>
-//           <div className="fixed inset-0 bg-black bg-opacity-30" />
-//           <div className="fixed inset-0 flex items-center justify-center p-4">
-//             <Dialog.Panel className="bg-white rounded-lg shadow-xl p-6 w-96">
-//               <div className="flex justify-between items-center mb-4">
-//                 <Dialog.Title className="text-lg font-bold">Event Details</Dialog.Title>
-//                 <button onClick={() => setIsOpen(false)}>
-//                   <XMarkIcon className="w-5 h-5 text-gray-500" />
-//                 </button>
-//               </div>
-//               {selectedEvent && (
-//                 <div>
-//                   <p className="text-lg font-semibold">{selectedEvent.title}</p>
-//                   <p className="text-gray-600">
-//                     {moment(selectedEvent.start).format("MMMM Do YYYY, h:mm A")} -{" "}
-//                     {moment(selectedEvent.end).format("h:mm A")}
-//                   </p>
-//                 </div>
-//               )}
-//             </Dialog.Panel>
-//           </div>
-//         </Dialog>
-//       </Transition>
-//     </div>
-//   );
-// };
-
-// export default MyCalendar;
-
-
-import { useState, useEffect } from "react";
-import { Calendar as BigCalendar, momentLocalizer, Event } from "react-big-calendar";
-import moment from "moment";
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import Holidays from "date-holidays";
+import { useState, useEffect, Fragment } from 'react';
+import {Calendar as BigCalendar,momentLocalizer,Event} from 'react-big-calendar';
+import moment from 'moment';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { Dialog, Transition } from '@headlessui/react';
+import { XMarkIcon } from '@heroicons/react/24/outline';
+import { authHeader } from '../api/authHeader';
 
 const localizer = momentLocalizer(moment);
 
-const initialEvents = [
-  {
-    id: 1,
-    title: "Team Meeting",
-    start: new Date(2025, 1, 26, 10, 0),
-    end: new Date(2025, 1, 26, 11, 0),
-  },
-  {
-    id: 2,
-    title: "Project Deadline",
-    start: new Date(2025, 1, 28, 12, 0),
-    end: new Date(2025, 1, 28, 13, 0),
-  },
-];
-
 const MyCalendar = () => {
-  const [events, setEvents] = useState<Event[]>(initialEvents);
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [showList, setShowList] = useState(false);
+  const [holidays, setHolidays] = useState([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [modalType, setModalType] = useState(''); // "holiday" or "event"
+  const [newEntry, setNewEntry] = useState({ name: '', date: '', time: '' });
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
-  // Fetch Holidays
-  useEffect(() => {
-    const hd = new Holidays("IN","OD"); // Change country code as needed (e.g., "IN" for India)
-    const holidayList = hd.getHolidays(new Date().getFullYear());
 
-    console.log("Fetched Holidays:", holidayList);
+useEffect(() => {
+    const fetchHolidays = async () => {
+      try {
+        const headers = authHeader();
+        const response = await fetch(
+          'http://192.168.2.31:9009/companyholidaysapi/company-holidays/company/23',
+          { headers }
+        );
 
-    const holidayEvents = holidayList.map((holiday, index) => ({
-      id: `holiday-${index}`,
-      title: holiday.name,
-      start: new Date(holiday.date),
-      end: new Date(holiday.date),
-      allDay: true,
-    }));
+        if (!response.ok)
+          throw new Error(`Failed to fetch holidays: ${response.status}`);
 
-    console.log("Formatted Holiday Events:", holidayEvents);
+        const data = await response.json();
 
-    setEvents((prevEvents) => [...prevEvents, ...holidayEvents]);
+        const holidayEvents = data.map((holiday) => ({
+          id: holiday.id,
+          title: holiday.holiday_name,
+          start: new Date(holiday.holiday_date),
+          end: new Date(holiday.holiday_date),
+          allDay: true,
+          type: 'holiday',
+        }));
+
+        setEvents(holidayEvents);
+        setHolidays(data);
+      } catch (error) {
+        console.error('Error fetching holidays:', error);
+      }
+    };
+
+    fetchHolidays();
   }, []);
 
-   const handleSelectEvent = (event: Event) => {
-    setSelectedEvent(event);
-    setIsOpen(true);
+  const handleEventClick = (event) => {
+    setSelectedEvent({
+      id: event.id,
+      title: event.title,
+      date: moment(event.start).format('MMM D, YYYY'),
+      time:
+        event.type === 'event' ? moment(event.start).format('hh:mm A') : null,
+    });
+    setModalType('event-details');
+  };
+
+  const handleDeleteEntry = async (id) => {
+    if (!id) return;
+    
+    try {
+      const headers = authHeader();
+      const response = await fetch(
+        `http://127.0.0.1:8000/companyholidaysapi/company-holidays/${id}`,
+        {
+          method: 'DELETE',
+          headers: {
+            ...headers,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+  
+      if (!response.ok) throw new Error('Failed to delete the holiday');
+  
+      console.log(`Deleted holiday with ID: ${id}`);
+  
+      // Update the state by removing the deleted holiday
+      setEvents((prevEvents) => prevEvents.filter((event) => event.id !== id));
+      setHolidays((prevHolidays) => prevHolidays.filter((holiday) => holiday.id !== id));
+  
+      setModalType(''); // Close the modal after deleting
+    } catch (error) {
+      console.error('Error deleting holiday:', error);
+    }
+  };
+  
+  
+const handleCreateEntry = async () => {
+    if (
+      !newEntry.name ||
+      !newEntry.date ||
+      (modalType === 'event' && !newEntry.time)
+    )
+      return;
+
+    const entryData = {
+      holiday_name: newEntry.name,
+      holiday_date: newEntry.date,
+      holiday_time: newEntry.time,
+      company_id: 23,
+    };
+
+    try {
+      const headers = authHeader();
+      const response = await fetch(
+        'http://192.168.2.31:9009/companyholidaysapi/company-holidays/',
+        {
+          method: 'POST',
+          headers: {
+            ...headers,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(entryData),
+        }
+      );
+
+      if (!response.ok) throw new Error('Failed to create entry');
+
+      const newEntryResponse = await response.json();
+      console.log('Entry Created:', newEntryResponse);
+
+      const newEvent = {
+        id: newEntryResponse.id,
+        title: newEntryResponse.holiday_name,
+        start: new Date(
+          `${newEntryResponse.holiday_date}T${
+            newEntryResponse.holiday_time || '00:00'
+          }`
+        ),
+        end: new Date(
+          `${newEntryResponse.holiday_date}T${
+            newEntryResponse.holiday_time || '00:00'
+          }`
+        ),
+        allDay: modalType === 'holiday',
+        type: modalType,
+      };
+
+      setEvents((prevEvents) => [...prevEvents, newEvent]);
+      setHolidays((prevHolidays) => [...prevHolidays, newEntryResponse]);
+
+      setNewEntry({ name: '', date: '', time: '' });
+      setModalType('');
+    } catch (error) {
+      console.error('Error creating entry:', error);
+    }
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">📅 Event Calendar</h2>
-      <div className="bg-white shadow rounded-lg p-4">
-        <BigCalendar
-          localizer={localizer}
-          events={events}
-          startAccessor="start"
-          endAccessor="end"
-          style={{ height: 500 }}
-          onSelectEvent={handleSelectEvent}
-        />
-      </div>
-
-      {/* Modal for Event Details */}
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={() => setIsOpen(false)}>
-          <div className="fixed inset-0 bg-black bg-opacity-30" />
-          <div className="fixed inset-0 flex items-center justify-center p-4">
-            <Dialog.Panel className="bg-white rounded-lg shadow-xl p-6 w-96">
-              <div className="flex justify-between items-center mb-4">
-                <Dialog.Title className="text-lg font-bold">Event Details</Dialog.Title>
-                <button onClick={() => setIsOpen(false)}>
-                  <XMarkIcon className="w-5 h-5 text-gray-500" />
+    <div className="relative p-4">
+      {!showList ? (
+        <div className="relative rounded-lg bg-white p-4 shadow">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-xl font-bold text-black">Holiday Calendar</h2>
+              <div className="flex gap-4">
+              <button
+                onClick={() => setShowList(true)}
+                className="rounded-md bg-blue-600 px-5 py-2 text-white shadow-lg"
+              >
+                See All Holiday List
+              </button>
+              <div className="relative">
+                <button
+                  className="rounded-md bg-green-600 px-4 py-2 text-white shadow-lg"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                >
+                  + Add
                 </button>
+                {isDropdownOpen && (
+                  <div className="absolute right-0 z-50 mt-2 w-48 max-w-xs overflow-hidden rounded-md border bg-white shadow-lg">
+                    <button
+                      onClick={() => {
+                        setModalType('holiday');
+                        setIsDropdownOpen(false);
+                      }}
+                      className="text-gray-800 hover:bg-gray-100 block w-full px-4 py-2 text-left"
+                    >
+                      Holiday
+                    </button>
+                    <button
+                      onClick={() => {
+                        setModalType('event');
+                        setIsDropdownOpen(false);
+                      }}
+                      className="text-gray-800 hover:bg-gray-100 block w-full px-4 py-2 text-left"
+                    >
+                      Event
+                    </button>
+                  </div>
+                )}
               </div>
-              {selectedEvent && (
-                <div>
-                  <p className="text-lg font-semibold">{selectedEvent.title}</p>
-                  <p className="text-gray-600">
-                    {moment(selectedEvent.start).format("MMMM Do YYYY, h:mm A")} -{" "}
-                    {moment(selectedEvent.end).format("h:mm A")}
-                  </p>
+            </div>
+          </div>
+
+          <BigCalendar
+            localizer={localizer}
+            events={events}
+            startAccessor="start"
+            endAccessor="end"
+            style={{ height: 500 }}
+            onSelectEvent={handleEventClick}
+          
+          />
+        </div>
+      ) : (
+        <div className="mx-auto w-3/4 rounded-lg bg-white p-6 shadow">
+          <h2 className="mb-4 text-center text-2xl font-bold text-black">
+            All Holiday List
+          </h2>
+          <ul className="space-y-3 text-black">
+            {holidays.map((holiday) => (
+              <li
+                key={holiday.id}
+                className="bg-gray-100 rounded-lg p-3 shadow-md"
+              >
+                <p className="font-semibold">{holiday.holiday_name}</p>
+                <p className="text-gray-600">
+                  {moment(holiday.holiday_date).format('MMM D, YYYY')}
+                </p>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-6 flex justify-center">
+            <button
+              onClick={() => setShowList(false)}
+              className="rounded-md bg-blue-600 px-5 py-2 text-white shadow-lg"
+            >
+              Back to Calendar
+            </button>
+          </div>
+        </div>
+      )}
+
+     <Transition appear show={modalType !== ''} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={() => setModalType('')}>
+          <div className="fixed inset-0 bg-black bg-opacity-30" />
+            <div className="fixed inset-0 flex items-center justify-center p-4">
+              <Dialog.Panel className="w-96 rounded-lg bg-white p-6 text-black shadow-xl relative">
+                 {/* Close Button */}
+                <button
+                  onClick={() => setModalType('')}
+                  className="absolute right-3 top-3 text-gray-500 hover:text-gray-800"
+                >
+                 <XMarkIcon className="w-6 h-6" />
+                </button>
+
+              <div className="mb-4 flex items-center justify-between">
+              <Dialog.Title className="text-lg font-bold">
+                 {modalType === "event-details" && selectedEvent ? (
+                  <>
+                  <p className="mb-2 font-semibold">Event: {selectedEvent.title}</p>
+                  <p className="text-gray-600 mb-2">Date: {selectedEvent.date}</p>
+                  {selectedEvent.time && <p className="text-gray-600 mb-4">Time: {selectedEvent.time}</p>}
+                  <button 
+                        onClick={() => handleDeleteEntry(selectedEvent.id)} 
+                        className="mt-4 rounded-md bg-red-600 px-4 py-2 text-white"
+                      >
+                        Delete
+                      </button>
+                    </>
+                ) : modalType === "holiday-details" && selectedEvent ? (
+                  <>
+                    <p className="mb-2 font-semibold">Holiday: {selectedEvent.title}</p>
+                    <p className="text-gray-600 mb-2">Date: {selectedEvent.date}</p>
+                    <button 
+                        onClick={() => handleDeleteEntry(selectedEvent.id)} 
+                        className="mt-4 rounded-md bg-red-600 px-4 py-2 text-white"
+                      >
+                        Delete
+                      </button>
+                    </>
+                  ) : modalType === "event" ? (
+                    <p className="mb-2 font-semibold">Create Event</p>
+                  ) : modalType === "holiday" ? (
+                    <p className="mb-2 font-semibold">Create Holiday</p>
+                  ) : null}
+                </Dialog.Title>
                 </div>
+            {modalType !== 'event-details' && modalType !== 'holiday-details' && (
+                <>
+                  <div className="mb-4">
+                    <label className="text-gray-700 block text-sm font-medium">Name</label>
+                    <input
+                      type="text"
+                      value={newEntry.name}
+                      onChange={(e) => setNewEntry({ ...newEntry, name: e.target.value })}
+                      className="w-full rounded-md border p-2"
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="text-gray-700 block text-sm font-medium">Date</label>
+                    <input
+                      type="date"
+                      value={newEntry.date}
+                      onChange={(e) => setNewEntry({ ...newEntry, date: e.target.value })}
+                      className="w-full rounded-md border p-2"
+                    />
+                  </div>
+                  {modalType === 'event' && (
+                    <div className="mb-4">
+                      <label className="text-gray-700 block text-sm font-medium">Time</label>
+                      <input
+                        type="time"
+                        value={newEntry.time}
+                        onChange={(e) => setNewEntry({ ...newEntry, time: e.target.value })}
+                        className="w-full rounded-md border p-2"
+                      />
+                    </div>
+                  )}
+                  <button onClick={handleCreateEntry} className="rounded-md bg-green-600 px-5 py-2 text-white">
+                    Save
+                  </button>
+                </>
               )}
             </Dialog.Panel>
           </div>
@@ -451,5 +327,6 @@ const MyCalendar = () => {
     </div>
   );
 };
+export default MyCalendar
 
-export default MyCalendar;
+
