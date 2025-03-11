@@ -71,28 +71,28 @@ class UserResponseSchema(BaseModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     email: Optional[str] = None
-    phone: Optional[str] = None
-    gender: Optional[str] = None
-    marital_status: Optional[str] = None
-    blood_group: Optional[str] = None
-    emergency_contact: Optional[str] = None
-    address: Optional[str] = None
+    # phone_number: Optional[str] = None 
+    # gender: Optional[str] = None
+    # marital_status: Optional[str] = None
+    # blood_group: Optional[str] = None
+    # emergency_contact: Optional[str] = None
+    # address: Optional[str] = None
     employee_id: Optional[int] = None
-    company_name: Optional[str] = None
+    # company_name: Optional[str] = None
     designation: Optional[str] = None
-    role_type: Optional[str] = None
-    employee_type: Optional[str] = None
-    department: Optional[str] = None
+    roletype: Optional[str] = None
+    # employee_type: Optional[str] = None
+    # department: Optional[str] = None
     doj: Optional[date] = None
     dob: Optional[date] = None
     
-    
-    @field_validator("dob", mode="before")
+    # ✅ Convert datetime to date for both doj and dob
+    @field_validator("doj", "dob", mode="before")
     def validate_date(cls, v):
-        if isinstance(v, datetime):  # Convert datetime to date if needed
-            v = v.date()
-        if v and v > date.today():
-            raise ValueError("Date of birth cannot be in the future")
+        if isinstance(v, datetime):  # Ensure only date is returned
+            return v.date()
+        if v and isinstance(v, date) and v > date.today():
+            raise ValueError("Date cannot be in the future")
         return v
     
     class Config:

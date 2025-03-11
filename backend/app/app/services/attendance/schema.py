@@ -15,6 +15,8 @@ class AttendanceSchema(BaseModel):
     """
     # date: datetime.date
     check_in: Optional[datetime.time] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
     # status: Optional[AttendanceStatus] = AttendanceStatus.FULL_DAY 
 
     model_config = ConfigDict(from_attributes=True)  # ✅ Ensures compatibility with ORM
@@ -37,5 +39,8 @@ class AttendanceResponseSchema(BaseModel):
     check_in: Optional[datetime.time] = None
     check_out: Optional[datetime.time] = None
     status: AttendanceStatus
+    name: Optional[str] = None
+    working_hours: Optional[float] = None
+    overtime: Optional[float] = None
 
     model_config = ConfigDict(from_attributes=True)  # ✅ Ensures compatibility with ORM

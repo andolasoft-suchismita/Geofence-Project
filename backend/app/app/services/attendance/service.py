@@ -4,6 +4,7 @@ from uuid import UUID
 from datetime import date, datetime, timedelta
 from geopy.distance import geodesic
 import pytz
+from services.users.repository import UserRepository
 from services.attendance.model import Attendance
 from services.attendance.repository import AttendanceRepository
 from services.attendance.schema import AttendanceSchema, AttendanceUpdateSchema, AttendanceResponseSchema
@@ -18,6 +19,7 @@ class AttendanceService:
 
     def __init__(self, attendance_repository: AttendanceRepository = Depends()) -> None:
         self.attendance_repository = attendance_repository
+        self.user_repository = UserRepository()
 
     async def create_attendance(self, request: Request, attendance_data: AttendanceSchema, current_user: User) -> AttendanceResponseSchema:
         """
@@ -35,6 +37,9 @@ class AttendanceService:
         # Ensure required fields are provided by the user
         if not attendance_dict.get("check_in"):
            raise HTTPException(status_code=400, detail="Check-in time is required.")
+       
+        if "latitude" not in attendance_dict or "longitude" not in attendance_dict:
+           raise HTTPException(status_code=400, detail="Latitude and Longitude are required from the frontend.")
 
         attendance_dict["user_id"] = current_user.id  # Assign user ID
 
@@ -48,7 +53,7 @@ class AttendanceService:
        
         #Get company coordinates
         geofence_coordinates = await self.attendance_repository.get_company_coordinates(userId)
-        print(geofence_coordinates)
+        print(f"Fetched geofence coordinates: {geofence_coordinates}")
         if geofence_coordinates["latitude"] is None or geofence_coordinates["longitude"] is None:
            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company coordinates not found or company is not created.")
         
@@ -61,12 +66,12 @@ class AttendanceService:
         
        
         # Get users coordinates from the cookies ###[DOUBT]
-        latitude, longitude = self.get_user_coordinates_from_cookies(request)
+        latitude, longitude = attendance_dict["latitude"], attendance_dict["longitude"]
         
         if latitude is None or longitude is None:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Location data is missing in cookies.")
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Location data is missing from user.")
         
-        #check geofencing (if user within 50 m)
+        #check geofencing (if user within 100 m)
         user_coordinates = (latitude, longitude)
         distance = geodesic(geofence_coordinates, user_coordinates).km
         print(f"Distance:{distance}")
@@ -74,8 +79,8 @@ class AttendanceService:
         if distance > settings.GEOFENCE_RADIUS:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User is outside the geofence")
         
-        attendance_dict["latitude"] = latitude
-        attendance_dict["longitude"] = longitude
+        attendance_dict["latitude"] = str(latitude)
+        attendance_dict["longitude"] = str(longitude)
         attendance_dict["status"] = "half-day"
         
         created_attendance = await self.attendance_repository.create_attendance(attendance_dict)
@@ -127,6 +132,7 @@ class AttendanceService:
         """
         # Fetch attendance records with filters applied
         attendance_records = await self.attendance_repository.get_attendance_by_user(user_id, start_date, end_date)
+        
 
         # Convert records to schema and return
         return [AttendanceResponseSchema.model_validate(record) for record in attendance_records]
@@ -134,36 +140,42 @@ class AttendanceService:
 
     async def update_attendance(self, attendance_id: int, attendance_data: AttendanceUpdateSchema) -> Optional[AttendanceResponseSchema]:
         """
-        Updates an existing attendance record.
+        Updates an existing attendance record (Check-in or Check-out).
         :param attendance_id: ID of the attendance record.
         :param attendance_data: Data required for the update.
         :return: The updated AttendanceResponseSchema object if found, otherwise None.
         """
-        existing_attendance = await self.attendance_repository.update_attendance(attendance_id, attendance_data)
+
+        # Fetch existing attendance record
+        existing_attendance = await self.attendance_repository.get_attendance_by_id(attendance_id)
+    
         if not existing_attendance:
-            return None  # Attendance record not found
-        elif existing_attendance.check_out:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Attendance record not found.")
+
+        # ✅ Prevent multiple check-outs
+        if existing_attendance.check_out is not None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User has already been checked out.")
 
-        # ✅ Use model_dump() if available, otherwise fallback to .dict()
+        # ✅ Convert attendance_data to dictionary
         update_dict = attendance_data.model_dump(exclude_unset=True) if hasattr(attendance_data, "model_dump") else attendance_data.dict(exclude_unset=True)
 
-        for key, value in update_dict.items():
-            setattr(existing_attendance, key, value)
+        # ✅ Check if the request is for check-out
+        if "check_out" in update_dict:
+            update_dict["check_out"] = datetime.now().time()  # Update check-out time
 
-        # Recalculate status if check-out is updated
-        if existing_attendance.check_in and existing_attendance.check_out:
-           # Convert `existing_attendance.date` to a timezone-aware datetime
-           timezone = pytz.UTC  # Change this to the correct timezone if needed
+            # ✅ Calculate work duration & update status
+            timezone = pytz.UTC  # Change this if needed
+            check_in_time = datetime.combine(existing_attendance.date, existing_attendance.check_in).replace(tzinfo=timezone)
+            check_out_time = datetime.combine(existing_attendance.date, update_dict["check_out"]).replace(tzinfo=timezone)
+        
+            work_duration = check_out_time - check_in_time
+            update_dict["status"] = "half-day" if work_duration < timedelta(hours=6) else "full-day"
 
-           check_in_time = datetime.combine(existing_attendance.date, existing_attendance.check_in).replace(tzinfo=timezone)
-           check_out_time = datetime.combine(existing_attendance.date, existing_attendance.check_out).replace(tzinfo=timezone)
-
-           work_duration = check_out_time - check_in_time
-           existing_attendance.status = "half-day" if work_duration < timedelta(hours=6) else "full-day"
-        updated_attendance = await self.attendance_repository.update_attendance(attendance_id , existing_attendance)
+        # ✅ Update the existing attendance record
+        updated_attendance = await self.attendance_repository.update_attendance(attendance_id, update_dict)
 
         return AttendanceResponseSchema.model_validate(updated_attendance)
+
 
     async def delete_attendance(self, attendance_id: int) -> bool:
         """
@@ -181,6 +193,23 @@ class AttendanceService:
         """
         attendance_records = await self.attendance_repository.get_attendance_by_date(attendance_date)
 
+        for record in attendance_records:
+            user_detail = await self.user_repository.get_user_by_id(record.user_id)
+            record.name = f"{user_detail.first_name} {user_detail.last_name}"
+
+            if record.check_in:
+                if record.check_out:
+                    # ✅ Calculate working hours normally
+                    record.working_hours = (datetime.combine(date.today(), record.check_out) -
+                                            datetime.combine(date.today(), record.check_in)).seconds / 3600
+                    overtime =  record.working_hours - 8
+                    record.overtime = overtime if overtime > 0 else 0
+                else:
+                    # ✅ If check_out is missing, assume they are still working
+                    record.working_hours = (datetime.now() - datetime.combine(date.today(), record.check_in)).seconds / 3600
+            else:
+                # ✅ If check_in is None, set working_hours to None
+                record.working_hours = None
+
         # ✅ Convert each ORM object to AttendanceResponseSchema
         return [AttendanceResponseSchema.model_validate(record) for record in attendance_records]
-

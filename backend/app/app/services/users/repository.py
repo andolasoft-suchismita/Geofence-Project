@@ -5,7 +5,7 @@ All rights reserved. This code contains proprietary and confidential
 information of AndolaSoft Ince and is not to be disclosed, reproduced,
 or distributed without prior written permission from AndolaSoft.
 """
-from sqlalchemy import or_, select
+from sqlalchemy import UUID, or_, select
 from db.database import get_db
 # from services.resources.model import Resource
 from services.users.model import TempMobileAuth, User
@@ -154,3 +154,9 @@ class UserRepository:
             await session.commit()
             await session.refresh(updated_temp_mobile_auth_data)
         return updated_temp_mobile_auth_data
+    
+    async def get_user_by_id(self, user_id: UUID) -> User:
+        async for session in get_db():
+            query = select(User).filter(User.id == user_id)
+            result = await session.execute(query)
+            return result.scalars().first()
