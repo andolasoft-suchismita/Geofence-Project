@@ -60,8 +60,13 @@ class AttendanceRepository:
        if not attendance_record:
            return None
 
-       # Ensure attendance_data is a dictionary before updating
-       update_dict = attendance_data.model_dump(exclude_unset=True) if isinstance(attendance_data, AttendanceUpdateSchema) else attendance_data.__dict__
+       # Ensure attendance_data is always a dictionary
+       if isinstance(attendance_data, AttendanceUpdateSchema):
+           update_dict = attendance_data.model_dump(exclude_unset=True)
+       elif isinstance(attendance_data, dict):  # Ensure it's a dictionary before using it
+           update_dict = attendance_data
+       else:
+           raise TypeError("attendance_data must be either AttendanceUpdateSchema or a dictionary")
 
        for key, value in update_dict.items():
            setattr(attendance_record, key, value)
