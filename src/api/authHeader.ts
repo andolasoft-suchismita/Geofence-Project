@@ -5,6 +5,9 @@ export function authHeader() {
   const state = store.getState();
 
   let accessToken = state?.authSlice?.token;
+
+  console.log("Token from Redux:", accessToken);
+  
   if (accessToken) {
     return {
       Authorization: `Bearer ${accessToken}`,

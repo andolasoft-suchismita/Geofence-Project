@@ -11,7 +11,7 @@ const API = axios.create({
 
 export const FormAPI = axios.create({
   baseURL: import.meta.env.VITE_API_URL, // Fallback to localhost if env not set
-  timeout: 10000, // 10 seconds timeout
+  timeout: 20000, // 10 seconds timeout
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded',
   },
