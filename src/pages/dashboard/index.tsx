@@ -1,3 +1,8 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import CompanyPopup from '../CompanyPopup';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/rootReducers';
 import { FaUserFriends, FaClock, FaUserMinus } from "react-icons/fa";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from "recharts";
 
@@ -26,78 +31,103 @@ const Dashboard = () => {
     { name: "Present", value: totalPresent, color: "#3B82F6" }, // Blue
     { name: "Absent", value: totalAbsent, color: "#60A5FA" }, // Light Blue
   ];
+   const [showPopup, setShowPopup] = useState(false);
+   const navigate = useNavigate();
+   const company_id = useSelector(
+     (state: RootState) => state.authSlice.company_id
+   );
+   useEffect(() => {
+     if (!company_id) {
+       const timeout = setTimeout(() => setShowPopup(true), 3000);
+       return () => clearTimeout(timeout);
+     }
+   }, [company_id]); // Reacts to Redux state updates
+
+   const handleCompanyCreation = () => {
+     setShowPopup(false);
+     navigate('/companysettings'); // Redirect after creation
+   };
+
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="bg-gray-100 min-h-screen p-6">
       {/* Header */}
-      <header className="flex justify-between items-center mb-6 bg-white p-4 rounded-md shadow">
+      <header className="mb-6 flex items-center justify-between rounded-md bg-white p-4 shadow">
         <input
           type="text"
           placeholder="Search"
-          className="px-4 py-2 border rounded-md w-1/3"
+          className="w-1/3 rounded-md border px-4 py-2"
         />
         <div className="flex items-center space-x-3">
           <span className="font-semibold">David Clark</span>
-          <div className="w-10 h-10 bg-gray-400 rounded-full"></div>
+          <div className="bg-gray-400 h-10 w-10 rounded-full"></div>
         </div>
       </header>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-3 gap-6">
-        <div className="bg-white p-5 rounded-md shadow">
+        <div className="rounded-md bg-white p-5 shadow">
           <div className="flex justify-between">
             <h3 className="text-lg font-semibold">Total Employees</h3>
-            <FaUserFriends className="text-blue-500 text-2xl" />
+            <FaUserFriends className="text-2xl text-blue-500" />
           </div>
-          <p className="text-2xl font-bold mt-2">{totalPresent + totalAbsent}</p>
+          <p className="mt-2 text-2xl font-bold">
+            {totalPresent + totalAbsent}
+          </p>
           {/* <p className="text-blue-500 text-sm">+12% from last month</p> */}
         </div>
 
-        <div className="bg-white p-5 rounded-md shadow">
-    <div className="flex justify-between">
-      <h3 className="text-lg font-semibold">Absentees Today</h3>
-      <FaUserMinus className="text-blue-400 text-2xl" /> {/* Updated icon */}
-    </div>
-    <p className="text-2xl font-bold mt-2">{employeeData[11].absent}</p>
-    {/* <p className="text-blue-400 text-sm">-10% from last month</p> */}
-  </div>
+        <div className="rounded-md bg-white p-5 shadow">
+          <div className="flex justify-between">
+            <h3 className="text-lg font-semibold">Absentees Today</h3>
+            <FaUserMinus className="text-2xl text-blue-400" />{' '}
+            {/* Updated icon */}
+          </div>
+          <p className="mt-2 text-2xl font-bold">{employeeData[11].absent}</p>
+          {/* <p className="text-blue-400 text-sm">-10% from last month</p> */}
+        </div>
 
-
-        <div className="bg-white p-5 rounded-md shadow">
-    <div className="flex justify-between">
-      <h3 className="text-lg font-semibold">Late Comings</h3>
-      <FaClock className="text-blue-500 text-2xl" /> {/* Clock Icon */}
-    </div>
-    <p className="text-2xl font-bold mt-2">23</p> {/* Placeholder value */}
-    {/* <p className="text-blue-500 text-sm">+5% from last month</p> */}
-  </div>
-</div>
+        <div className="rounded-md bg-white p-5 shadow">
+          <div className="flex justify-between">
+            <h3 className="text-lg font-semibold">Late Comings</h3>
+            <FaClock className="text-2xl text-blue-500" /> {/* Clock Icon */}
+          </div>
+          <p className="mt-2 text-2xl font-bold">23</p>{' '}
+          {/* Placeholder value */}
+          {/* <p className="text-blue-500 text-sm">+5% from last month</p> */}
+        </div>
+      </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-2 gap-6 mt-6">
+      <div className="mt-6 grid grid-cols-2 gap-6">
         {/* Updated Bar Chart - Present vs Absent */}
-        <div className="bg-white p-5 rounded-md shadow">
-          <h3 className="text-lg font-semibold mb-4">Monthly Attendance Summary</h3>
+        <div className="rounded-md bg-white p-5 shadow">
+          <h3 className="mb-4 text-lg font-semibold">
+            Monthly Attendance Summary
+          </h3>
           <BarChart width={500} height={300} data={employeeData}>
             <XAxis dataKey="month" />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="present" fill="#3B82F6" name="Present" />  {/* Blue */}
-            <Bar dataKey="absent" fill="#60A5FA" name="Absent" />  {/* Light Blue */}
+            <Bar dataKey="present" fill="#3B82F6" name="Present" /> {/* Blue */}
+            <Bar dataKey="absent" fill="#60A5FA" name="Absent" />{' '}
+            {/* Light Blue */}
           </BarChart>
         </div>
 
         {/* Updated Pie Chart - Overall Present vs Absent */}
-        <div className="bg-white p-5 rounded-md shadow">
-          <h3 className="text-lg font-semibold mb-4">Overall Attendance</h3>
+        <div className="rounded-md bg-white p-5 shadow">
+          <h3 className="mb-4 text-lg font-semibold">Overall Attendance</h3>
           <PieChart width={300} height={300}>
             <Pie
               data={pieData}
               cx="50%"
               cy="50%"
               outerRadius={80}
-              label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+              label={({ name, percent }) =>
+                `${name} (${(percent * 100).toFixed(0)}%)`
+              }
               dataKey="value"
             >
               {pieData.map((entry, index) => (
@@ -107,6 +137,7 @@ const Dashboard = () => {
           </PieChart>
         </div>
       </div>
+      <div>{showPopup && <CompanyPopup onClose={handleCompanyCreation} />}</div>
     </div>
   );
 };

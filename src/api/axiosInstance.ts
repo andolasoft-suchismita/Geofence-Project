@@ -4,7 +4,6 @@ import { authHeader } from './authHeader';
 // Create an Axios instance with default config
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL, // Fallback to localhost if env not set
-  timeout: 10000, // 10 seconds timeout
   headers: {
     'Content-Type': 'application/json',
   },
