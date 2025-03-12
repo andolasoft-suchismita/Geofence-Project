@@ -33,7 +33,7 @@ class AttendanceResponseSchema(BaseModel):
     """
     Schema for returning attendance details in API responses.
     """
-    id: int
+    id: Optional [int] = None
     user_id: UUID
     date: datetime.date
     check_in: Optional[datetime.time] = None

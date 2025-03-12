@@ -44,17 +44,18 @@ async def get_attendance_by_user(
     return await service.get_attendance_by_user(user_id, date)
 
 # **Get Attendance by Date**
-@MyAttendanceRouter.get("/by-date/{attendance_date}", response_model=List[AttendanceResponseSchema])
+@MyAttendanceRouter.get("/by-date/{attendance_date}/company/{company_id}", response_model=List[AttendanceResponseSchema])
 async def get_attendance_by_date(
-    attendance_date: str = Path(..., description="Date in YYYY-MM-DD format"),  # ✅ Use `str`
+    attendance_date: date = Path(..., description="Date in YYYY-MM-DD format"),  # ✅ `date` type already
+    company_id: int = Path(..., description="Company ID"),
     service: AttendanceService = Depends()
 ):
-    try:
-        attendance_date = datetime.strptime(attendance_date, "%Y-%m-%d").date()  # ✅ Convert manually
-    except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD.")
+    # try:
+    #     attendance_date = datetime.strptime(attendance_date, "%Y-%m-%d").date()  # ✅ Convert manually
+    # except ValueError:
+    #     raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD.")
 
-    attendance_records = await service.get_attendance_by_date(attendance_date)
+    attendance_records = await service.get_attendance_by_date(attendance_date, company_id)
 
     if not attendance_records:
         raise HTTPException(status_code=404, detail="No attendance records found for this date")

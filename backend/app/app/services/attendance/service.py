@@ -4,10 +4,11 @@ from uuid import UUID
 from datetime import date, datetime, timedelta
 from geopy.distance import geodesic
 import pytz
+from services.company.repository import CompanyRepository
 from services.users.repository import UserRepository
 from services.attendance.model import Attendance
 from services.attendance.repository import AttendanceRepository
-from services.attendance.schema import AttendanceSchema, AttendanceUpdateSchema, AttendanceResponseSchema
+from services.attendance.schema import AttendanceSchema, AttendanceStatus, AttendanceUpdateSchema, AttendanceResponseSchema
 from services.users.model import User
 from config.settings import settings
 
@@ -20,6 +21,7 @@ class AttendanceService:
     def __init__(self, attendance_repository: AttendanceRepository = Depends()) -> None:
         self.attendance_repository = attendance_repository
         self.user_repository = UserRepository()
+        self.company_repository = CompanyRepository()
 
     async def create_attendance(self, request: Request, attendance_data: AttendanceSchema, current_user: User) -> AttendanceResponseSchema:
         """
@@ -109,7 +111,7 @@ class AttendanceService:
         except ValueError:
             return None, None
 
-    async def get_attendance(self, attendance_id: int) -> Optional[AttendanceResponseSchema]:
+    async def get_attendance_by_id(self, attendance_id: int) -> Optional[AttendanceResponseSchema]:
         """
         Retrieves an attendance record by its ID.
         :param attendance_id: ID of the attendance record.
@@ -187,14 +189,29 @@ class AttendanceService:
         """
         return await self.attendance_repository.delete_attendance(attendance_id)
 
-    async def get_attendance_by_date(self, attendance_date: date) -> List[AttendanceResponseSchema]:
+    async def get_attendance_by_date(self, attendance_date: date, company_id) -> List[AttendanceResponseSchema]:
         """
-        Retrieves attendance records by date.
+        Retrieves attendance records by date and fills in absent users.
         :param attendance_date: Date of the attendance records.
         :return: A list of AttendanceResponseSchema objects.
         """
-        attendance_records = await self.attendance_repository.get_attendance_by_date(attendance_date)
+        # ✅ Fetch all users from the database
+        all_users = await self.company_repository.get_employees_by_company(company_id)
+        if not all_users:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found.")
+        all_user_ids = {user.id for user in all_users}
 
+        # ✅ Get all attendance records for the given date
+        attendance_records = await self.attendance_repository.get_attendance_by_date(attendance_date)
+        if not attendance_records:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No attendance records found for the given date.")
+        present_user_ids = {record.user_id for record in attendance_records}
+
+        # ✅ Identify absent users
+        absent_user_ids = all_user_ids - present_user_ids  # Users without check-ins
+
+        # ✅ Convert attendance records to response schema
+        attendance_list = []
         for record in attendance_records:
             user_detail = await self.user_repository.get_user_by_id(record.user_id)
             record.name = f"{user_detail.first_name} {user_detail.last_name}"
@@ -204,14 +221,30 @@ class AttendanceService:
                     # ✅ Calculate working hours normally
                     record.working_hours = (datetime.combine(date.today(), record.check_out) -
                                             datetime.combine(date.today(), record.check_in)).seconds / 3600
-                    overtime =  record.working_hours - 8
+                    overtime = record.working_hours - 8
                     record.overtime = overtime if overtime > 0 else 0
                 else:
                     # ✅ If check_out is missing, assume they are still working
                     record.working_hours = (datetime.now() - datetime.combine(date.today(), record.check_in)).seconds / 3600
             else:
-                # ✅ If check_in is None, set working_hours to None
                 record.working_hours = None
+            
+            attendance_list.append(AttendanceResponseSchema.model_validate(record))
+ 
+        # ✅ Add "Absent" records for users with no check-in
+        for user_id in absent_user_ids:
+            user_detail = await self.user_repository.get_user_by_id(user_id)
+            absent_record = AttendanceResponseSchema(
+                  # No actual record in DB
+                user_id=user_id,
+                name=f"{user_detail.first_name} {user_detail.last_name}",
+                date=attendance_date,
+                check_in=None,
+                check_out=None,
+                status=AttendanceStatus.ABSENT,
+                working_hours=0.0,
+                overtime=0.0
+            )
+            attendance_list.append(absent_record)
 
-        # ✅ Convert each ORM object to AttendanceResponseSchema
-        return [AttendanceResponseSchema.model_validate(record) for record in attendance_records]
+        return attendance_list
