@@ -74,6 +74,7 @@ class AttendanceService:
         #check geofencing (if user within 100 m)
         user_latitude, user_longitude = float(latitude), float(longitude)
         user_coordinates = (user_latitude, user_longitude)
+        print(f"User coordinates: {user_coordinates}")
         distance = geodesic(geofence_coordinates, user_coordinates).km
         print(f"Distance:{distance}")
         
