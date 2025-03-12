@@ -48,8 +48,8 @@ class AttendanceService:
            user_id=current_user.id, date=attendance_dict["date"]
         )
         
-        if existing_attendance:
-           raise HTTPException(status_code=400, detail="User has already checked in for this date.")
+        # if existing_attendance:
+        #    raise HTTPException(status_code=400, detail="User has already checked in for this date.")
        
         #Get company coordinates
         geofence_coordinates = await self.attendance_repository.get_company_coordinates(userId)
@@ -155,8 +155,8 @@ class AttendanceService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Attendance record not found.")
 
         # ✅ Prevent multiple check-outs
-        if existing_attendance.check_out is not None:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User has already been checked out.")
+        # if existing_attendance.check_out is not None:
+        #     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User has already been checked out.")
 
         # ✅ Convert attendance_data to dictionary
         update_dict = attendance_data.model_dump(exclude_unset=True) if hasattr(attendance_data, "model_dump") else attendance_data.dict(exclude_unset=True)
