@@ -72,7 +72,8 @@ class AttendanceService:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Location data is missing from user.")
         
         #check geofencing (if user within 100 m)
-        user_coordinates = (latitude, longitude)
+        user_latitude, user_longitude = float(latitude), float(longitude)
+        user_coordinates = (user_latitude, user_longitude)
         distance = geodesic(geofence_coordinates, user_coordinates).km
         print(f"Distance:{distance}")
         
