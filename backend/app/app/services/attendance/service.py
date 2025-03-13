@@ -205,14 +205,17 @@ class AttendanceService:
         attendance_records = await self.attendance_repository.get_attendance_by_date(attendance_date)
         if not attendance_records:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No attendance records found for the given date.")
-        present_user_ids = {record.user_id for record in attendance_records}
+        
+        filtered_attendance_records = [record for record in attendance_records if record.user_id in all_user_ids]
+        
+        present_user_ids = {record.user_id for record in filtered_attendance_records}
 
         # ✅ Identify absent users
         absent_user_ids = all_user_ids - present_user_ids  # Users without check-ins
 
         # ✅ Convert attendance records to response schema
         attendance_list = []
-        for record in attendance_records:
+        for record in filtered_attendance_records:
             user_detail = await self.user_repository.get_user_by_id(record.user_id)
             record.name = f"{user_detail.first_name} {user_detail.last_name}"
 

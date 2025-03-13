@@ -47,8 +47,8 @@ class AttendanceRepository:
         """
         query = select(Attendance).filter(Attendance.user_id == user_id)
         if start_date and end_date is not None:
-            query = query.filter(Attendance.date <= start_date, Attendance.date >= end_date)
-
+            query = query.filter(Attendance.date >= start_date, Attendance.date <= end_date)
+        
         result = await self.db.execute(query)
         return result.scalars().all()
 
