@@ -71,18 +71,18 @@ class UserResponseSchema(BaseModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     email: Optional[str] = None
-    # phone_number: Optional[str] = None 
-    # gender: Optional[str] = None
-    # marital_status: Optional[str] = None
-    # blood_group: Optional[str] = None
-    # emergency_contact: Optional[str] = None
-    # address: Optional[str] = None
+    phone_number: Optional[str] = None 
+    gender: Optional[str] = None
+    marital_status: Optional[str] = None
+    blood_group: Optional[str] = None
+    emergency_contact: Optional[str] = None
+    address: Optional[str] = None
     employee_id: Optional[int] = None
-    # company_name: Optional[str] = None
+    company_name: Optional[str] = None
     designation: Optional[str] = None
     roletype: Optional[str] = None
-    # employee_type: Optional[str] = None
-    # department: Optional[str] = None
+    employee_type: Optional[str] = None
+    department: Optional[str] = None
     doj: Optional[date] = None
     dob: Optional[date] = None
     
