@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/rootReducers';
 import { FaUserFriends, FaClock, FaUserMinus } from "react-icons/fa";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from "recharts";
+import PunchModal from '../../components/PunchModal';
+
 
 const Dashboard = () => {
   // Monthly Present vs Absent Data;
@@ -33,45 +35,33 @@ const Dashboard = () => {
     { name: "Absent", value: totalAbsent, color: "#60A5FA" }, // Light Blue
   ];
 
-   const company_id = useSelector(
-     (state: RootState) => state.authSlice.company_id
-   );
-   useEffect(() => {
-     if (!company_id) {
-       const timeout = setTimeout(() => setShowPopup(true), 3000);
-       return () => clearTimeout(timeout);
-     }
-   }, [company_id]); // Reacts to Redux state updates
-
 
   const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate()
+  const company_id = useSelector(
+    (state: RootState) => state.authSlice.company_id
+  );
 
   useEffect(() => {
-    const companyCreated = localStorage.getItem('companyCreated');
-    console.log('companyCreated from localStorage:', companyCreated);
-
-    if (!companyCreated) {
-      console.log('Company not created, showing popup in 3 seconds...');
-      const timeout = setTimeout(() => {
-        console.log('showPopup is now:', true);
-        setShowPopup(true);
-      }, 3000);
-
-      return () => clearTimeout(timeout); // Cleanup timeout
+    if (!company_id) {
+      const timeout = setTimeout(() => setShowPopup(true), 3000);
+      return () => clearTimeout(timeout);
     }
-  }, []);
+  }, [company_id]); // Reacts to Redux state updates
+  
+   const handleCompanyCreation = () => {
+     setShowPopup(false);
+     navigate('/companysettings'); // Redirect after creation
+   };
+  
 
-  const handleCompanyCreation = () => {
-    localStorage.setItem('companyCreated', 'true'); // ✅ Save that company is created
-    setShowPopup(false);
-    navigate('/companysettings'); // ✅ Redirect to settings after creation
-  };
+  const { isPunchedIn } = useSelector((state: RootState) => state.attendance);
 
   return (
     <>
     <div className="min-h-screen bg-gray-100 p-6">
       {/* Header */}
+      <PunchModal /> {/* Always show modal after punch-out */}
       <header className="mb-6 flex items-center justify-between rounded-md bg-white p-4 shadow">
         <input
           type="text"
@@ -83,7 +73,6 @@ const Dashboard = () => {
           <div className="bg-gray-400 h-10 w-10 rounded-full"></div>
         </div>
       </header>
-
       {/* Stats Cards */}
       <div className="grid grid-cols-3 gap-6">
         <div className="rounded-md bg-white p-5 shadow">
@@ -117,7 +106,6 @@ const Dashboard = () => {
           {/* <p className="text-blue-500 text-sm">+5% from last month</p> */}
         </div>
       </div>
-
       {/* Charts Section */}
       <div className="mt-6 grid grid-cols-2 gap-6">
         {/* Updated Bar Chart - Present vs Absent */}
@@ -159,14 +147,6 @@ const Dashboard = () => {
       </div>
       <div>{showPopup && <CompanyPopup onClose={handleCompanyCreation} />}</div>
     </div>
-    <div>
-    <h1>Welcome to Dashboard</h1>
-    {showPopup ? (
-      <CompanyPopup onClose={handleCompanyCreation} />
-    ) : (
-      <p>Popup should appear in 3 seconds...</p> // Debugging
-    )}
-  </div>
   </>
   );
 };

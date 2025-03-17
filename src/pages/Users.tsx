@@ -6,17 +6,26 @@ import UsersTable from '../UserTable';
 import { createUserAPI, deleteUserAPI, fetchUsersAPI, updateUserAPI } from '../api/services/userService';
 import { showToast } from '../utils/toast';
 import DeleteConfirmationModal from '../components/Modal/DeleteConfirmationModal';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/rootReducers';
+
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedItem, setSelectedItem] = useState<User>(null);
   const [formType, setFormType] = useState<string | null>(null);
-
-  const resetStates = () => { setFormType(null); setSelectedItem(null) }
+  const company_id = useSelector(
+    (state: RootState) => state.authSlice.company_id
+  ); // Get company_id from Redux
+  const resetStates = () => {
+    setFormType(null);
+    setSelectedItem(null);
+  };
 
   async function fetchUserList() {
+    if (!company_id) return; // Prevent API call if company_id is undefined
     try {
-      const res = await fetchUsersAPI();
+      const res = await fetchUsersAPI(company_id);
       setUsers(res);
     } catch (error) {
       showToast('Something went wrong', 'error');
@@ -25,14 +34,14 @@ const Users: React.FC = () => {
 
   useEffect(() => {
     fetchUserList();
-  }, []);
+  }, [company_id]);
   ///////////////////////////////////////////
   const addUser = async (values: any) => {
     try {
       await createUserAPI(values);
-      const updatedData = await fetchUsersAPI();
+      const updatedData = await fetchUsersAPI(company_id);
       if (updatedData) setUsers(updatedData);
-      resetStates()
+      resetStates();
       showToast('User created successfully', 'success');
     } catch (error) {
       showToast('Failed to create user', 'error');
@@ -42,9 +51,9 @@ const Users: React.FC = () => {
   const updateUser = async (id: string, values: any) => {
     try {
       await updateUserAPI(id, values);
-      const updatedData = await fetchUsersAPI();
+      const updatedData = await fetchUsersAPI(company_id);
       if (updatedData) setUsers(updatedData);
-      resetStates()
+      resetStates();
       showToast('User updated successfully', 'success');
     } catch (error) {
       showToast('Failed to update user', 'error');
@@ -54,15 +63,14 @@ const Users: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteUserAPI(id);
-      const updatedData = await fetchUsersAPI();
+      const updatedData = await fetchUsersAPI(company_id);
       if (updatedData) setUsers(updatedData);
       showToast('User deleted successfully', 'success');
-      resetStates()
+      resetStates();
     } catch (error) {
       showToast('Failed to delete user', 'error');
     }
   };
-
 
   return (
     <div className="p-4">
@@ -119,7 +127,6 @@ const Users: React.FC = () => {
             className="w-full max-w-xs sm:max-w-md md:max-w-lg"
             title="No user Found . Click the Above Button to Add users"
           />
-         
         </div>
       ) : (
         <UsersTable

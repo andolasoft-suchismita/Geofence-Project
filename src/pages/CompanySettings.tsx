@@ -22,6 +22,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
 // Custom Marker Icon
+
 const customIcon = new L.Icon({
   iconUrl:
     'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
@@ -72,26 +73,38 @@ const validationSchema = Yup.object({
   city: Yup.string().required('City is required'),
   zip_code: Yup.string().required('Zip Code is required'),
   website: Yup.string().url('Invalid URL').required('Website is required'),
+  
 });
 
 
 const CompanySettings = () => {
-   const dispatch = useDispatch();
-   const navigate = useNavigate();
-   const company_id = useSelector(
-     (state: RootState) => state.authSlice.company_id
-   );
-   const company = useSelector((state: RootState) => state.company);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const company_id = useSelector(
+    (state: RootState) => state.authSlice.company_id
+  );
+  const company = useSelector((state: RootState) => state.company);
 
-   const [loading, setLoading] = useState(true);
-  
+  const [loading, setLoading] = useState(true);
 
   const [logo, setLogo] = useState<string | null>(null);
   const [position, setPosition] = useState<{ lat: number; lng: number }>({
     lat: 28.6139,
     lng: 77.209,
   });
-  
+
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setLogo(reader.result as string); // Store Base64 string
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+
   useEffect(() => {
     const fetchCompany = async () => {
       if (company_id) {
@@ -109,33 +122,58 @@ const CompanySettings = () => {
     fetchCompany();
   }, [company_id, dispatch]);
 
+  // const handleUpdateCompany = async (values: any, { setSubmitting }: any) => {
+  //   if (!company_id) {
+  //     showToast('No company selected!');
+  //     return;
+  //   }
 
- const handleUpdateCompany = async (values: any, { setSubmitting }: any) => {
-   if (!company_id) {
-     showToast('No company selected!');
-     return;
-   }
+  //   try {
+  //     console.log('Submitting data:', values); // Debugging
+  //     await validationSchema.validate(values); //  Explicit validation check
 
-   try {
-     console.log('Submitting data:', values); // Debugging
-     await validationSchema.validate(values); //  Explicit validation check
+  //     const updatedCompany = await updateCompany(company_id, values);
+  //     dispatch(setCompanyData(updatedCompany));
+  //     showToast('Company updated successfully!');
+  //     setSubmitting(false);
+  //   } catch (error) {
+  //     console.error('Validation/API Error:', error);
+  //     showToast(error.message || 'Failed to update company details.');
+  //     setSubmitting(false);
+  //   }
+  // };
+  
+  const handleUpdateCompany = async (values: any, { setSubmitting }: any) => {
+    if (!company_id) {
+      showToast('No company selected!');
+      return;
+    }
 
-     const updatedCompany = await updateCompany(company_id, values);
-     dispatch(setCompanyData(updatedCompany));
-     showToast('Company updated successfully!');
-     setSubmitting(false);
-     
-   } catch (error) {
-     console.error('Validation/API Error:', error);
-     showToast(error.message || 'Failed to update company details.');
-     setSubmitting(false);
-   }
- };
+    try {
+      await validationSchema.validate(values);
 
- 
+      const updatedCompany = await updateCompany(company_id, {
+        ...values,
+        logo: logo || company.logo, // Include logo (keep old one if not changed)
+      });
+
+      dispatch(setCompanyData(updatedCompany));
+      showToast('Company updated successfully!');
+      setSubmitting(false);
+    } catch (error) {
+      console.error('Validation/API Error:', error);
+      showToast(error.message || 'Failed to update company details.');
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="container mx-auto w-full max-w-6xl rounded-lg bg-white p-8 shadow-lg">
-      {!loading && (
+      {loading ? (
+        <div className="flex h-screen items-center justify-center">
+          <div className="h-12 w-12 animate-spin rounded-full border-t-4 border-solid border-blue-500"></div>
+        </div>
+      ) : (
         <Formik
           initialValues={{
             name: company?.name || '',
@@ -154,20 +192,24 @@ const CompanySettings = () => {
         >
           {({ isSubmitting }) => (
             <Form>
+              <h2 className="text-gray-800 text-2xl font-bold">
+                Company Settings
+              </h2>
               <div className="mb-8 flex items-center justify-between">
                 <div className="w-2/3">
-                  <label className="block text-lg text-black">
+                  <label className="text-gray-700 block text-base text-base font-semibold">
                     Company Name
                   </label>
                   <Field
                     type="text"
                     name="name"
+                    placeholder="Your Comapany Name"
                     className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
                   />
                   <ErrorMessage
                     name="name"
                     component="div"
-                    className="text-red-500 text-sm"
+                    className="text-sm text-red"
                   />
                 </div>
 
@@ -196,121 +238,136 @@ const CompanySettings = () => {
                   <input
                     id="logo-upload"
                     type="file"
-                    accept=""
+                    accept="image/*"
                     className="hidden"
-                    onChange={(e) =>
-                      setLogo(
-                        e.target.files?.[0]
-                          ? URL.createObjectURL(e.target.files[0])
-                          : null
-                      )
-                    }
+                    onChange={handleLogoChange}
                   />
                 </div>
               </div>
 
               <div className="mb-8 grid grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-lg text-black">Email</label>
+                  <label className="text-gray-700 block text-base text-base font-semibold">
+                    Email
+                  </label>
                   <Field
                     type="email"
                     name="email"
                     className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
+                    placeholder="Your Company Email"
                   />
                   <ErrorMessage
                     name="email"
                     component="div"
-                    className="text-red-500 text-sm"
+                    className="text-sm text-red"
                   />
                 </div>
                 <div>
-                  <label className="block text-lg text-black">Contact</label>
+                  <label className="text-gray-700 block text-base text-base font-semibold">
+                    Contact
+                  </label>
                   <Field
-                    
                     name="phone"
+                    placeholder="Enter Your Phone No."
                     className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
                   />
                   <ErrorMessage
                     name="phone"
                     component="div"
-                    className="text-red-500 text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-lg text-black">Website</label>
-                  <Field
-                  
-                    name="website"
-                    className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
-                  />
-                  <ErrorMessage
-                    name="website"
-                    component="div"
-                    className="text-red-500 text-sm"
+                    className="text-sm text-red"
                   />
                 </div>
               </div>
-
+              <div>
+                <label className="text-gray-700 block text-base text-base font-semibold">
+                  Website
+                </label>
+                <Field
+                  name="website"
+                  placeholder="Enter Your Comapany Website"
+                  className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
+                />
+                <ErrorMessage
+                  name="website"
+                  component="div"
+                  className="text-sm text-red"
+                />
+              </div>
               <div className="mb-8">
-                <label className="block text-lg text-black">Address</label>
+                <label className="text-gray-700 block text-base text-base font-semibold">
+                  Address
+                </label>
                 <Field
                   name="address"
+                  placeholder="Enter your Company Address...."
                   className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
                 />
                 <ErrorMessage
                   name="address"
                   component="div"
-                  className="text-red-500 text-sm"
+                  className="text-sm text-red"
                 />
               </div>
 
               <div className="mb-8 grid grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-lg text-black">Country</label>
+                  <label className="text-gray-700 block text-base text-base font-semibold">
+                    Country
+                  </label>
                   <Field
                     name="country"
+                    placeholder="Ex-India"
                     className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
                   />
                   <ErrorMessage
                     name="country"
                     component="div"
-                    className="text-red-500 text-sm"
+                    className="text-sm text-red"
                   />
                 </div>
                 <div>
-                  <label className="block text-lg text-black">State</label>
+                  <label className="text-gray-700 block text-base text-base font-semibold">
+                    State
+                  </label>
                   <Field
                     name="state"
+                    placeholder="Ex-Odisha"
                     className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
                   />
                   <ErrorMessage
                     name="state"
                     component="div"
-                    className="text-red-500 text-sm"
+                    className="text-sm text-red"
                   />
                 </div>
                 <div>
-                  <label className="block text-lg text-black">City</label>
+                  <label className="text-gray-700 block text-base text-base font-semibold">
+                    City
+                  </label>
                   <Field
                     name="city"
+                    placeholder="Ex-Bhubaneswar"
                     className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
                   />
                   <ErrorMessage
                     name="city"
                     component="div"
-                    className="text-red-500 text-sm"
+                    className="text-sm text-red"
                   />
                 </div>
                 <div>
-                  <label className="block text-lg text-black">Zip Code</label>
+                  <label className="text-gray-700 block text-base text-base font-semibold">
+                    Zip Code
+                  </label>
                   <Field
                     name="zip_code"
+                    placeholder="Ex-751010"
                     className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
                   />
                   <ErrorMessage
                     name="zip_code"
                     component="div"
-                    className="text-red-500 text-sm"
+                    className="text-sm text-red"
                   />
                 </div>
               </div>
@@ -326,14 +383,14 @@ const CompanySettings = () => {
               <div className="mt-4 flex justify-end gap-4">
                 <button
                   type="button"
-                  className="hover:bg-red-600 rounded-lg bg-orange-500 px-6 py-3 text-white"
+                  className="rounded-lg bg-red px-6 py-3 text-white hover:bg-[#FF0000]"
                   onClick={() => navigate(-1)} // Navigate back to the previous page
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-lg bg-blue-600 px-6 py-3 text-white hover:bg-blue-700"
+                  className="rounded-lg bg-blue-500 px-6 py-3 text-white hover:bg-blue-700"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? 'Saving...' : 'Save'}

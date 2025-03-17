@@ -1,4 +1,3 @@
-
 import { useState, useEffect, Fragment } from 'react';
 import {Calendar as BigCalendar,momentLocalizer,Event} from 'react-big-calendar';
 import moment from 'moment';
@@ -18,7 +17,6 @@ const MyCalendar = () => {
   const [newEntry, setNewEntry] = useState({ name: '', date: '', time: '' });
   const [selectedEvent, setSelectedEvent] = useState(null);
 
-  //const today = moment().startOf('day'); // Get today's date
 
 useEffect(() => {
     const fetchHolidays = async () => {
@@ -155,19 +153,6 @@ const handleCreateEntry = async () => {
       console.error('Error creating entry:', error);
     }
   };
-
-  // Highlighting Today's Date
-  // const dayPropGetter = (event) => {
-  //   const dayPropGetter = (date) => {
-  //     const isToday = moment(date).isSame(currentDate, 'day');
-  //     if (isToday) {
-  //       return {
-  //         className: 'highlight-today',
-  //         style: { backgroundColor: '#ffeb3b', color: '#000', fontWeight: 'bold' }
-  //       };
-  //     }
-  //     return {};
-  //   };
 
   return (
     <div className="relative p-4">
@@ -343,3 +328,5 @@ const handleCreateEntry = async () => {
   );
 };
 export default MyCalendar
+
+
