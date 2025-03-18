@@ -1,169 +1,162 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-// 🔹 Enums for Dropdown Options
-// enum GenderEnum {
-//   Male = "Male",
-//   Female = "Female",
-//   Other = "Other",
-// }
+interface EditProfileProps {
+  editData: any;
+  setEditData: React.Dispatch<React.SetStateAction<any>>;
+  handleSave: (values: any) => void;
+  handleCancel: () => void;
+}
 
-// enum RoleTypeEnum {
-//   Admin = "Admin",
-//   Employee = "Employee",
-// }
+const EditProfile: React.FC<EditProfileProps> = ({
+  editData,
+  handleSave,
+  handleCancel,
+}) => {
+  console.log("Edit Data:", editData); // Debugging line
 
-// enum EmployeeTypeEnum {
-//   FullTime = "Full-time",
-//   PartTime = "Part-time",
-//   Contract = "Contract",
-//   Intern = "Intern",
-// }
-
-// enum DesignationEnum {
-//   CEO = "ceo",
-//   CTO = "cto",
-//   CFO = "cfo",
-//   COO = "coo",
-//   CMO = "cmo",
-//   MANAGER = "manager",
-//   TEAM_LEAD = "team_lead",
-//   SENIOR_ENGINEER = "senior_engineer",
-//   SOFTWARE_ENGINEER = "software_engineer",
-//   JUNIOR_ENGINEER = "junior_engineer",
-//   HR_MANAGER = "hr_manager",
-//   RECRUITER = "recruiter",
-//   SALES_MANAGER = "sales_manager",
-//   MARKETING_MANAGER = "marketing_manager",
-//   INTERN = "intern",
-// }
-
-
-const EditProfile = ({ editData, handleSave, handleCancel }) => {
   const formik = useFormik({
     initialValues: {
-      firstName: editData.firstName || "",
-      lastName: editData.lastName || "",
-      dob: editData.dob || "",
-      phone: editData.phone || "",
-      email: editData.email || "",
-      gender: editData.gender || "",
-      address: editData.address || "",
-      emergencyContact: editData.emergencyContact || "",
-      bloodGroup: editData.bloodGroup || "",
-      maritalStatus: editData.maritalStatus || "",
-      employeeId: editData.employeeId || "",
-      companyName: editData.companyName || "",
-      designation: editData.designation || "",
-      roleType: editData.roleType || "",
-      employeetype: editData.employeetype || "",
-      department: editData.department || "",
-      dateOfJoining: editData.dateOfJoining || "",
+      first_name: editData?.first_name || "",
+      last_name: editData?.last_name || "",
+      phone: editData?.phone || "",
+      email: editData?.email || "",
+      dob: editData?.dob || "",
+      address: editData?.address || "",
+      gender: editData?.gender || "",
+      blood_group: editData?.blood_group || "",
+      marital_status: editData?.marital_status || "",
+      employee_id: editData?.employee_id || "",
+      company_name: editData?.company_name || "",
+      designation: editData?.designation || "",
+      department: editData?.department || "",
+      roletype: editData?.roletype || "", // Read-only
+      employee_type: editData?.employee_type || "", // Read-only
+      doj: editData?.doj || "", // Read-only
     },
     validationSchema: Yup.object({
-      firstName: Yup.string().required("First Name is required"),
-      lastName: Yup.string().required("Last Name is required"),
-      dob: Yup.string().required("Date of Birth is required"),
+      first_name: Yup.string().required("First Name is required"),
+      last_name: Yup.string().required("Last Name is required"),
       phone: Yup.string()
-        .matches(/^[0-9]{10}$/, "Phone number must be 10 digits")
+        .matches(/^\d{10}$/, "Invalid phone number")
         .required("Phone is required"),
       email: Yup.string().email("Invalid email").required("Email is required"),
+      dob: Yup.string().required("Date of Birth is required"),
       gender: Yup.string().required("Gender is required"),
       address: Yup.string().required("Address is required"),
-      emergencyContact: Yup.string().matches(
-        /^[0-9]{10}$/,
-        "Emergency Contact must be 10 digits"
-      ),
-      employeeId: Yup.string().required("Employee ID is required"),
-      companyName: Yup.string().required("Company Name is required"),
-      designation: Yup.string().required("Designation is required"),
-      roleType: Yup.string().required("Role Type is required"),
-      employeetype: Yup.string().required("Employee Type is required"),
+      blood_group: Yup.string().required("Blood Group is required"),
+      marital_status: Yup.string().required("Marital Status is required"),
+      company_name: Yup.string().required("Company Name is required"),
       department: Yup.string().required("Department is required"),
-      dateOfJoining: Yup.string().required("Date of Joining is required"),
     }),
     onSubmit: (values) => {
       handleSave(values);
     },
+    enableReinitialize: true,
   });
 
   return (
-    <form onSubmit={formik.handleSubmit}>
-      {/* Personal Details */}
-      <h3 className="text-2xl font-bold text-gray-800 mb-6">Personal Details</h3>
-      <div className="grid grid-cols-2 gap-x-12 gap-y-10 mb-10">
-        {Object.entries({
-          firstName: "First Name",
-          lastName: "Last Name",
-          phone: "Phone",
-          email: "Email",
-          dob: "Date of Birth",
-          gender: "Gender",
-          bloodGroup: "Blood Group",
-          maritalStatus: "Marital Status",
-          address: "Address",
-          emergencyContact: "Emergency Contact",
-        }).map(([key, label]) => (
-          <div key={key}>
-            <strong className="text-lg text-gray-600">{label}</strong>
-            <input
-              type={key === "dob" ? "date" : "text"}
-              name={key}
-              value={formik.values[key]}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className="w-full p-3 border rounded-md mt-2 bg-gray-50 text-lg"
-              placeholder={label}
-            />
-            {formik.touched[key] && formik.errors[key] && (
-              <p className="text-red-500 text-sm">{formik.errors[key]}</p>
-            )}
-          </div>
-        ))}
+    <form onSubmit={formik.handleSubmit} className="space-y-6">
+      {/* Personal Details Section */}
+      <div>
+        <h4 className="text-lg font-bold text-gray-700 mb-4">
+          Personal Details
+        </h4>
+        <div className="grid grid-cols-2 gap-x-10 gap-y-6">
+          {[
+            ["first_name", "First Name"],
+            ["last_name", "Last Name"],
+            ["phone", "Phone"],
+            ["email", "Email"],
+            ["dob", "Date of Birth"],
+            ["gender", "Gender"],
+            ["blood_group", "Blood Group"],
+            ["marital_status", "Marital Status"],
+            ["address", "Address"],
+          ].map(([name, label]) => (
+            <div key={name}>
+              <label className="block text-gray-700">{label}</label>
+              {name === "gender" || name === "marital_status" ? (
+                <select
+                  name={name}
+                  value={formik.values[name as keyof typeof formik.values]}
+                  onChange={formik.handleChange}
+                  className="w-full p-3 border rounded-md bg-gray-50"
+                >
+                  <option value="">Select {label}</option>
+                  {name === "gender" && (
+                    <>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </>
+                  )}
+                  {name === "marital_status" && (
+                    <>
+                      <option value="single">Single</option>
+                      <option value="married">Married</option>
+                    </>
+                  )}
+                </select>
+              ) : (
+                <input
+                  type={name === "dob" ? "date" : "text"}
+                  name={name}
+                  value={formik.values[name as keyof typeof formik.values]}
+                  onChange={formik.handleChange}
+                  className="w-full p-3 border rounded-md bg-gray-50"
+                />
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Job Details */}
-      <h3 className="text-2xl font-bold text-gray-800 mb-6">Job Details</h3>
-      <div className="grid grid-cols-2 gap-x-10 gap-y-10">
-        {Object.entries({
-          employeeId: "Employee ID",
-          companyName: "Company Name",
-          designation: "Designation",
-          roleType: "Role Type",
-          employeetype: "Employee Type",
-          department: "Department",
-          dateOfJoining: "Date of Joining",
-        }).map(([key, label]) => (
-          <div key={key}>
-            <strong className="text-lg text-gray-600">{label}</strong>
-            <input
-              type="text"
-              name={key}
-              value={formik.values[key]}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className="w-full p-3 border rounded-md mt-2 bg-gray-50 text-lg"
-              placeholder={label}
-            />
-            {formik.touched[key] && formik.errors[key] && (
-              <p className="text-red-500 text-sm">{formik.errors[key]}</p>
-            )}
-          </div>
-        ))}
+      {/* Job Details Section */}
+      <div>
+        <h4 className="text-lg font-bold text-gray-700 mb-4">Job Details</h4>
+        <div className="grid grid-cols-2 gap-x-10 gap-y-6">
+          {[
+            ["employee_id", "Employee ID"],
+            ["company_name", "Company Name"],
+            ["designation", "Designation"],
+            ["department", "Department"],
+            ["roletype", "Role Type"],
+            ["employee_type", "Employee Type"],
+            ["doj", "Date of Joining"],
+          ].map(([name, label]) => (
+            <div key={name}>
+              <label className="block text-gray-700">{label}</label>
+              <input
+                type={name === "doj" ? "date" : "text"}
+                name={name}
+                value={formik.values[name as keyof typeof formik.values]}
+                onChange={formik.handleChange}
+                readOnly={["employee_id", "roletype", "employee_type", "doj"].includes(name)}
+                disabled={["employee_id", "roletype", "employee_type", "doj"].includes(name)}
+                className={`w-full p-3 border rounded-md ${
+                  ["employee_id", "roletype", "employee_type", "doj"].includes(name)
+                    ? "bg-gray-100 text-gray-500 cursor-not-allowed"
+                    : "bg-gray-50"
+                }`}
+              />
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Save Changes & Cancel Buttons */}
-      <div className="flex justify-end space-x-3 mt-6">
-         <button
+      {/* Buttons */}
+      <div className="flex justify-end space-x-4">
+        <button
           type="button"
-          className="px-9 py-3 bg-red text-white rounded-lg text-lg font-semibold hover:bg-gray-500 transition"
           onClick={handleCancel}
+          className="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="px-2 py-3 bg-blue-600 text-white rounded-lg text-lg font-semibold hover:bg-blue-700 transition"
+          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
         >
           Save Changes
         </button>

@@ -1,183 +1,3 @@
-
-// import React, { useState } from "react";
-// import { FaEye, FaEyeSlash } from "react-icons/fa";
-// import ProfilePicture from "../components/Images/profilepicture";
-// // import { FaGoogle } from "react-icons/fa";
-
-// const Profile: React.FC = () => {
-//   const [showPassword, setShowPassword] = useState(false);
-
-//   return (
-//     <div className="max-w-3xl mx-auto bg-white shadow-xl rounded-2xl p-8">
-//       {/* Header Section */}
-//       <div className="flex items-center justify-between mb-4">
-//         {/* <h2 className="text-xl font-semibold">Account</h2> */}
-//         {/* <input
-//           type="text"
-//           placeholder="Search"
-//           className="border p-2 rounded-md w-64"
-//         /> */}
-//         <h2 className="text-2xl font-bold text-gray-800">Profile Settings</h2>
-//       </div>
-
-//       <div>
-//         <ProfilePicture/>
-//         </div>
-
-//       {/* Full Name Section */}
-//       <div className="mt-6">
-//         <p className="text-base text-gray-700 font-semibold">Name</p>
-//         <div className="flex gap-4">
-//           <input
-//             type="text"
-//             placeholder="First name"
-//             className="border p-3 rounded-md w-full  shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-//             value=""
-//           />
-//           <input
-//             type="text"
-//             placeholder="Last name"
-//             className="border p-3 rounded-md w-full  shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-//             value=""
-//           />
-//         </div>
-//       </div>
-
-//       {/* Contact Email */}
-//       <div className="mt-6">
-//         <p className="text-base text-gray-700 font-semibold ">Email</p>
-//         {/* <div className="flex gap-4 mt-2"> */}
-//           <input
-//             type="email"
-//             className="border p-3 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 "
-//             placeholder="john-doe@email.com"
-//           />
-//           {/* <button className="px-4 py-2 bg-gray-100 rounded-md">
-//             Add another email
-//           </button> */}
-//         </div>
-//       {/* </div> */}
-
-//       {/* Password Section */}
-//       <div className="mt-6">
-//         <p className="text-gray-700 font-semibold text-base">Password</p>
-//         <div className="flex gap-4">
-//           <div className="relative w-full">
-//             <input
-//               type={showPassword ? "text" : "password"}
-//               placeholder="Current Password"
-//               className="border p-3 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-//               value=""
-//             />
-//             <span
-//               className="absolute right-3 top-3 cursor-pointer text-gray-500"
-//               onClick={() => setShowPassword(!showPassword)}
-//             >
-//               {showPassword ? <FaEyeSlash /> : <FaEye />}
-//             </span>
-//           </div>
-//           <div className="relative w-full">
-//             <input
-//               type={showPassword ? "text" : "password"}
-//               placeholder="New Password"
-//               className="border p-3 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-//               value=""
-//             />
-//             <span
-//               className="absolute right-3 top-3 cursor-pointer text-gray-500"
-//               onClick={() => setShowPassword(!showPassword)}
-//             >
-//               {showPassword ? <FaEyeSlash /> : <FaEye />}
-//             </span>
-//           </div>
-//         </div>
-
-//         <div className="mt-6" >
-//         <p className="text-gray-700 font-semibold text-base">Date of Birth</p>
-//         <input
-//             type="Date"
-//             placeholder="DD/MM/YY"
-//             className="border p-3 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-//             value=""
-//           />
-//           </div>
-//           <div className="mt-6">
-//         <p className="text-gray-700 font-semibold text-base">Date of Joining</p>
-//         <input
-//             type="Date"
-//             placeholder="DD/MM/YY"
-//             className="border p-3 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-//             value=""
-//           />
-//           </div>
-//           <div className="mt-6">
-//         <p className="text-gray-700 font-semibold text-base">Role</p>
-//         <input
-//             type="text"
-//             placeholder="Admin"
-//             className="border p-3 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-//             value=""
-//           />
-//           </div>
-//           <div className="mt-6">
-//         <p className="text-gray-700 font-semibold text-base">Designation</p>
-//         <input
-//             type="text"
-//             placeholder=""
-//             className="border p-3 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-//             value=""
-//           />
-//           </div>
-
-//           <div className="mt-6">
-//         <p className="text-gray-700 font-semibold text-base">Employee_ID</p>
-//         <input
-//             type="String"
-//             placeholder=""
-//             className="border p-3 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-//             value=""
-//           />
-//           </div>
-
-//           <div className="mt-6 " >
-//         <p className="text-gray-700 font-semibold text-base ">Address</p>
-//         <textarea
-//         className="w-full p-2 border border-gray-300 rounded-md resize-none shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-//         rows={2} // Ensures two lines
-//         maxLength={100} // Optional: Limit characters
-//         placeholder="Enter your address..."
-//         value=""
-//         // onChange={(e) => setAddress(e.target.value)}
-//       />
-//           </div>
-
-//           <div className="mt-6 " >
-//         <p className="text-gray-700 font-semibold text-base">Description</p>
-//         <textarea
-//         className="w-full p-2 border border-gray-300 rounded-md resize-none shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-//         rows={2} // Ensures two lines
-//         maxLength={100} // Optional: Limit characters
-//         placeholder=""
-//         value=""
-//         />
-//           </div>
-
-//       {/* Buttons */}
-//       <div className="mt-6 flex justify-between">
-//         <button className="px-6 py-3 bg-[#e65558] text-white font-semibold rounded-lg shadow-md hover:bg-gray-600 transition text-base">Cancel</button>
-//         <button className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition text-base">Save</button>
-//       </div>
-
-//       </div>
-//       </div>
-
-//   );
-// };
-
-// export default Profile;
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 // import React, { useState, useEffect } from 'react';
 // import { getUserById, updateUserById } from '../api/services/profileService';
 // import ProfilePicture from '../components/Images/profilepicture';
@@ -438,24 +258,25 @@
 import { useState,useEffect } from 'react';
 import { FaEdit } from "react-icons/fa";
 import EditProfile from "../components/EditProfile";
-import { getUserById,updateUser } from "../api/services/profileService";
+import { getUserById, updateUser  } from "../api/services/profileService";
 
 const ProfileSettings = () => {
   const [isEditing, setIsEditing] = useState(false); 
   const [details, setDetails] = useState(null);
   const [editData, setEditData] = useState(details);
- 
-  const userId = "93cac93c-c846-4779-84e6-0dcc3d6b8a94";
+  //const [originalData, setOriginalData] = useState<any>(null);
+
+ const userId = "93cac93c-c846-4779-84e6-0dcc3d6b8a94";
 
   const handleEditClick = () => {
     setIsEditing(true);
     setEditData(details);
   };
 
-  const handleSave = () => {
-    setDetails(editData);
-    setIsEditing(false);
-  };
+  // const handleSave = () => {
+  //   setDetails(editData);
+  //   setIsEditing(false);
+  // };
 
   const handleCancel = () => {
     setIsEditing(false);
@@ -465,6 +286,7 @@ const ProfileSettings = () => {
     const fetchUserData = async () => {
       try {
         const data = await getUserById(userId);
+       
         setDetails(data);
         setEditData(data);
       } catch (error) {
@@ -476,33 +298,37 @@ const ProfileSettings = () => {
     fetchUserData();
   }, []);
 
-  // const handleSave = async () => {
-  //   try {
-  //     const updatedUser = await updateUser(userId, editData);
-  //     setDetails(updatedUser);
-  //     setIsEditing(false);
-  //   } catch (error) {
-  //     console.error("Failed to update user data:", error);
-  //     alert("Error updating profile. Please try again.");
-  //   }
-  // };
-
-  // const handleCancel = () => {
-  //   setIsEditing(false);
-  // };
-
-  if (!details) {
+  const handleSave = async (updatedData: any) => {
+    if (JSON.stringify(updatedData) === JSON.stringify(details)) {
+      console.log("No changes detected, skipping update.");
+      return;
+    }
+  
+    try {
+      await updateUser(userId, updatedData);
+      console.log("User updated successfully");
+      
+      // ✅ Update the state with the new data
+      setDetails(updatedData);
+      setIsEditing(false); // Exit edit mode
+  
+    } catch (error) {
+      console.error("Failed to update user:", error);
+    }
+  };
+  
+   if (!details) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className="w-full max-w-5xl mx-auto min-h-screen overflow-y-auto p-10 bg-gray-100">
+    <div className="w-full max-w-5xl mx-auto min-h-screen overflow-y-auto bg-gray-100">
       {/* Main Container */}
       <section className="bg-white shadow-md rounded-lg p-8">
         
         {/* 🔹 Profile Details Heading (Moved Above) */}
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-2xl font-bold text-gray-800">Profile Details</h3>
+          <h3 className="text-xl font-bold text-gray-800">Profile Details</h3>
           {!isEditing && (
             <FaEdit
               className="text-gray-500 cursor-pointer text-2xl hover:text-gray-700"
@@ -516,10 +342,10 @@ const ProfileSettings = () => {
           <img
             src="https://via.placeholder.com/100"
             alt="Profile"
-            className="w-24 h-24 rounded-full border-4 border-gray-300"
+            className="w-20 h-20 rounded-full border-4 border-gray-300"
           />
           <div>
-            <h2 className="text-3xl font-bold text-gray-800">
+            <h2 className="text-2xl font-bold text-gray-800">
             {details.first_name || "N/A"} {details.last_name || "N/A"}</h2>
             <p className="text-gray-500 text-lg">{details.email || "-"}</p>
           </div>
@@ -528,7 +354,7 @@ const ProfileSettings = () => {
         {isEditing ? (
           <EditProfile
             editData={editData}
-            // setEditData={setEditData}
+            setEditData={setEditData} 
             handleSave={handleSave}
             handleCancel={handleCancel}
           />
