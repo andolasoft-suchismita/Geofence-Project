@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState} from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { MdEmail } from 'react-icons/md';
@@ -6,7 +6,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 // import CompanyInfo from './companyinfo';
 import { showToast } from '../../utils/toast';
 import API, { FormAPI } from '../../api/axiosInstance';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 // import API from '../../api/axiosInstance';
 import { useDispatch } from 'react-redux';
 import { login } from '../../redux/slices/authSlice';
@@ -198,6 +198,18 @@ const SignUp = () => {
                 >
                   SignUp
                 </button>
+                <div className="text-gray-700 text-center">
+                                <p>
+                                  Already have an account?{' '}
+                                  <Link
+                                    to="/signin"
+                                  
+                                    className="text-black ver:underline"
+                                  >
+                                    Sign In
+                                  </Link>
+                                </p>
+                              </div>
               </Form>
             </Formik>
           </div>
