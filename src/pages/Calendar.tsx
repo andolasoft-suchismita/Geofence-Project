@@ -155,7 +155,7 @@ const handleCreateEntry = async () => {
   };
 
   return (
-    <div className="relative p-4">
+    <div className="relative p-0">
       {!showList ? (
         <div className="relative rounded-lg bg-white p-4 shadow">
           <div className="mb-4 flex items-center justify-between">
