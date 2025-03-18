@@ -62,7 +62,7 @@ const ProfilePicture = () => {
 
           {/* Remove Picture */}
           <button
-            className="text-red-600 hover:text-red-800"
+            className="text-red-600 hover:textw-red-800"
             onClick={handleDelete}
           >
             Remove Picture

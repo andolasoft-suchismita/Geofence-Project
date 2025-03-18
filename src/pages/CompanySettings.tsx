@@ -20,6 +20,7 @@ import { showToast } from '../utils/toast';
 import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import Select from "react-select";
 
 // Custom Marker Icon
 
@@ -76,9 +77,28 @@ const validationSchema = Yup.object({
   state: Yup.string().required('State is required'),
   city: Yup.string().required('City is required'),
   zip_code: Yup.string().required('Zip Code is required'),
-  website: Yup.string().url('Invalid URL').required('Website is required'),
+  website: Yup.string().url('Invalid URL').required('Website is required'),                                                                         
+    working_hours: Yup.number()
+      .min(1, 'Working hours must be at least 1 hour')
+      .max(24, 'Working hours cannot exceed 24 hours')
+      .required('Working hours are required'),
   
-});
+    holidays: Yup.array()
+      .of(Yup.string().oneOf(["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]))
+      .min(1, 'At least one holiday must be selected')
+      .required('Holidays are required'),
+  });
+
+
+const holidayOptions = [
+  { value: "Sunday", label: "Sunday" },
+  { value: "Monday", label: "Monday" },
+  { value: "Tuesday", label: "Tuesday" },
+  { value: "Wednesday", label: "Wednesday" },
+  { value: "Thursday", label: "Thursday" },
+  { value: "Friday", label: "Friday" },
+  { value: "Saturday", label: "Saturday" },
+];
 
 const CompanySettings = () => {
   const dispatch = useDispatch();
@@ -155,10 +175,20 @@ const CompanySettings = () => {
     try {
       await validationSchema.validate(values);
 
-      const updatedCompany = await updateCompany(company_id, {
-        ...values,
-        logo: logo || company.logo, // Include logo (keep old one if not changed)
-      });
+       const payload = {
+      ...values,
+      holidays: Array.isArray(values.holidays) ? values.holidays : [values.holidays], // Convert to array if needed
+      logo: logo || company.logo, // Keep existing logo if not updated
+    };
+
+    console.log("Sending Data:", payload); // Debugging
+    
+    const updatedCompany = await updateCompany(company_id, payload);
+
+      // const updatedCompany = await updateCompany(company_id, {
+      //   ...values,
+      //   logo: logo || company.logo, // Include logo (keep old one if not changed)
+      // });
 
       dispatch(setCompanyData(updatedCompany));
       showToast('Company updated successfully!');
@@ -188,6 +218,8 @@ const CompanySettings = () => {
             city: company?.city || '',
             zip_code: company?.zip_code || '',
             website: company?.website || '',
+            working_hours: "",
+            holidays: [], 
           }}
           validationSchema={validationSchema}
           onSubmit={handleUpdateCompany}
@@ -200,7 +232,7 @@ const CompanySettings = () => {
               </h2>
               <div className="mb-8 flex items-center justify-between">
                 <div className="w-2/3">
-                  <label className="text-gray-700 block text-base text-base font-semibold">
+                  <label className="text-gray-700 block text-base  font-semibold">
                     Company Name
                   </label>
                   <Field
@@ -250,7 +282,7 @@ const CompanySettings = () => {
 
               <div className="mb-8 grid grid-cols-2 gap-6">
                 <div>
-                  <label className="text-gray-700 block text-base text-base font-semibold">
+                  <label className="text-gray-700 block text-base font-semibold">
                     Email
                   </label>
                   <Field
@@ -266,7 +298,7 @@ const CompanySettings = () => {
                   />
                 </div>
                 <div>
-                  <label className="text-gray-700 block text-base text-base font-semibold">
+                  <label className="text-gray-700 block text-base font-semibold">
                     Contact
                   </label>
                   <Field
@@ -281,8 +313,9 @@ const CompanySettings = () => {
                   />
                 </div>
               </div>
-              <div>
-                <label className="text-gray-700 block text-base text-base font-semibold">
+              
+              <div  className="mb-8">
+                <label className="text-gray-700 block text-base font-semibold">
                   Website
                 </label>
                 <Field
@@ -295,9 +328,10 @@ const CompanySettings = () => {
                   component="div"
                   className="text-sm text-red"
                 />
+
               </div>
               <div className="mb-8">
-                <label className="text-gray-700 block text-base text-base font-semibold">
+          <label className="text-gray-700 block text-base font-semibold">
                   Address
                 </label>
                 <Field
@@ -314,7 +348,7 @@ const CompanySettings = () => {
 
               <div className="mb-8 grid grid-cols-2 gap-6">
                 <div>
-                  <label className="text-gray-700 block text-base text-base font-semibold">
+                  <label className="text-gray-700 block text-base font-semibold">
                     Country
                   </label>
                   <Field
@@ -329,7 +363,7 @@ const CompanySettings = () => {
                   />
                 </div>
                 <div>
-                  <label className="text-gray-700 block text-base text-base font-semibold">
+                  <label className="text-gray-700 block text-base font-semibold">
                     State
                   </label>
                   <Field
@@ -344,7 +378,7 @@ const CompanySettings = () => {
                   />
                 </div>
                 <div>
-                  <label className="text-gray-700 block text-base text-base font-semibold">
+                  <label className="text-gray-700 block text-base font-semibold">
                     City
                   </label>
                   <Field
@@ -358,6 +392,67 @@ const CompanySettings = () => {
                     className="text-sm text-red"
                   />
                 </div>
+
+                <div>
+  <label className="text-gray-700 block text-base font-semibold">
+    Working Hours
+  </label>
+  <Field
+    type="number"
+    name="working_hours"
+    placeholder="Enter working hours per day"
+    className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
+  />
+  <ErrorMessage
+    name="working_hours"
+    component="div"
+    className="text-sm text-red"
+  />
+</div>
+   
+  <div>
+  <label className=" block text-base font-semibold">
+    Select Holidays
+  </label>
+  <Field name="holidays">
+    {({ field, form }: any) => (
+      <div className="w-full">
+        <Select
+          isMulti
+          options={holidayOptions}
+          value={holidayOptions.filter((option) =>
+            field.value.includes(option.value)
+          )}
+          onChange={(selectedOptions) => {
+            form.setFieldValue(
+              "holidays",
+              selectedOptions.map((option) => option.value)
+            );
+          }}
+          className="w-full"
+          styles={{
+            control: (base) => ({
+              ...base,
+              border: "1px solid ", // Match border-gray-300
+              borderRadius: "0.4rem", // Match rounded-lg
+              padding: "0.4rem", // Match p-3
+              fontSize: "1rem", // Match text size
+              width: "100%", // Ensure full width
+            }),
+          }}
+        />
+      </div>
+    )}
+  </Field>
+  <ErrorMessage
+    name="holidays"
+    component="div"
+    className="text-sm text-red"
+  />
+</div>      
+
+       
+
                 <div>
                   <label className="text-gray-700 block text-base text-base font-semibold">
                     Zip Code
@@ -374,14 +469,14 @@ const CompanySettings = () => {
                   />
                 </div>
               </div>
-              <MapContainer
+              {/* <MapContainer
                 center={position}
                 zoom={12}
                 style={{ height: '250px', width: '100%' }}
               >
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 <LocationMarker position={position} setPosition={setPosition} />
-              </MapContainer>
+              </MapContainer> */}
 
               <div className="mt-4 flex justify-end gap-4">
                 <button

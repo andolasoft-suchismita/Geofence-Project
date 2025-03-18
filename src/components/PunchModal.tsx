@@ -4,10 +4,9 @@ import { RootState } from '../redux/rootReducers';
 import { punchIn, punchOut } from '../redux/slices/attendanceSlice';
 import { MdCancel } from 'react-icons/md';
 import { AppDispatch } from '../redux/store';
-import Cookies from 'js-cookie';
-
+import { showToast } from '../utils/toast';
 const PunchModal: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>(); // ✅ Type dispatch with AppDispatch
+  const dispatch = useDispatch<AppDispatch>(); //  Type dispatch with AppDispatch
   const [showModal, setShowModal] = useState(true);
   const [loading, setLoading] = useState(false);
 
@@ -15,44 +14,24 @@ const PunchModal: React.FC = () => {
     setShowModal(true);
   }, []);
 
-  // const getCoordinates = async () => {
-  //   return new Promise<{ lat: number; lng: number }>((resolve, reject) => {
-  //     navigator.geolocation.getCurrentPosition(
-  //       (position) =>
-  //         resolve({
-  //           lat: position.coords.latitude,
-  //           lng: position.coords.longitude,
-  //         }),
-  //       () => {
-  //         alert('⚠️ Failed to get location. Please enable GPS and try again.');
-  //         reject({ lat: 0, lng: 0 });
-  //       }
-  //     );
-  //   });
-  // };
-const getCoordinates = async () => {
-  return new Promise<{ lat: number; lng: number }>((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const coords = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
+  const getCoordinates = async () => {
+    return new Promise<{ lat: number; lng: number }>((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          resolve({
+            lat: parseFloat(position.coords.latitude.toFixed(6)), // Round to 6 decimals
+            lng: parseFloat(position.coords.longitude.toFixed(6)),
+          });
+        },
+        () => {
+          alert('⚠️ Failed to get location. Please enable GPS and try again.');
+          reject({ lat: 0, lng: 0 });
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 } // High accuracy mode
+      );
+    });
+  };
 
-        // ✅ Store coordinates in cookies for 1 day
-        Cookies.set('lat', coords.lat.toString(), { expires: 1 });
-        Cookies.set('lng', coords.lng.toString(), { expires: 1 });
-
-        resolve(coords);
-        console.log(coords)
-      },
-      () => {
-        alert('⚠️ Failed to get location. Please enable GPS and try again.');
-        reject({ lat: 0, lng: 0 });
-      }
-    );
-  });
-};
   const user_id = useSelector((state: RootState) => state.authSlice.user_id);
   const userAttendance = useSelector(
     (state: RootState) => state.attendance[user_id] || []
@@ -62,66 +41,55 @@ const getCoordinates = async () => {
     userAttendance.length > 0 &&
     !userAttendance[userAttendance.length - 1].punchOut;
 
-  // const handlePunchIn = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await dispatch(punchIn()).unwrap();
-  //     console.log(' Punch In Success:', response);
-  //     localStorage.setItem('attendance_id', response.id); //  Store attendance_id
-  //   } catch (error) {
-  //     console.error(' Punch In Error:', error);
-  //     alert(`Punch In Failed: ${JSON.stringify(error, null, 2)}`);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const handlePunchIn = async () => {
+    setLoading(true);
+    try {
+      const { lat, lng } = await getCoordinates();
+      const check_in = new Date().toISOString(); // Ensure ISO format
 
-const handlePunchIn = async () => {
-  setLoading(true);
-  try {
-    const { lat, lng } = await getCoordinates(); // ✅ Get coordinates before punching in
+      console.log('Punch In Request:', {
+        check_in,
+        latitude: lat,
+        longitude: lng,
+      }); // Log the request
 
-    // ✅ Store coordinates in cookies
-    Cookies.set('lat', lat.toString());
-    Cookies.set('lng', lng.toString());
-    console.log(lat,lng)
-    const response = await dispatch(punchIn()).unwrap();
-    console.log(' Punch In Success:', response);
-    localStorage.setItem('attendance_id', response.id); // Store attendance_id
-  } catch (error) {
-    console.error(' Punch In Error:', error);
-    alert(`Punch In Failed: ${JSON.stringify(error, null, 2)}`);
-  } finally {
-    setLoading(false);
-  }
-};
+      const response = await dispatch(punchIn({ lat, lng, check_in })).unwrap();
+      showToast('Successfully Punched In!');
+      showToast('Have a Good day!');
+      console.log('Punch In Success:', response);
+      localStorage.setItem('attendance_id', response.id);
+    } catch (error) {
+      console.error('Punch In Error:', error);
+      alert(`Punch In Failed: ${JSON.stringify(error.detail, null, 2)}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const handlePunchOut = async () => {
+    const attendance_id = localStorage.getItem('attendance_id');
+    if (!attendance_id) return alert('⚠️ No active attendance record found!');
 
-const handlePunchOut = async () => {
-  const attendance_id = localStorage.getItem('attendance_id');
-  if (!attendance_id) return alert('⚠️ No active attendance record found!');
-
-  setLoading(true);
-  try {
-    await dispatch(
-      punchOut({
-        attendance_id,
-        check_out: new Date().toISOString(),
-      })
-    ).unwrap();
-    console.log(' Punch Out Success');
-  } catch (error) {
-    console.error(' Punch Out Error:', error);
-  } finally {
-    setLoading(false);
-  }
-};
-
-  
+    setLoading(true);
+    try {
+      await dispatch(
+        punchOut({
+          attendance_id,
+          check_out: new Date().toISOString(),
+        })
+      ).unwrap();
+      console.log(' Punch Out Success');
+      showToast('Successfully Punched Out!');
+    } catch (error) {
+      console.error(' Punch Out Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     showModal && (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
         <div className="relative rounded-lg bg-white p-6 text-center shadow-lg">
           <button
             className="text-gray-600 hover:text-gray-900 absolute right-3 top-3 text-xl"

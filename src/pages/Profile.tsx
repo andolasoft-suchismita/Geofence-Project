@@ -258,7 +258,8 @@
 import { useState,useEffect } from 'react';
 import { FaEdit } from "react-icons/fa";
 import EditProfile from "../components/EditProfile";
-import { getUserById, updateUser  } from "../api/services/profileService";
+import ProfilePicture from "../components/Images/profilepicture";
+import { getUserById,updateUser } from "../api/services/profileService";
 
 const ProfileSettings = () => {
   const [isEditing, setIsEditing] = useState(false); 
@@ -339,10 +340,10 @@ const ProfileSettings = () => {
   
         {/* 1️⃣ Profile Section */}
         <div className="flex items-center space-x-6 mb-8">
-          <img
+          {/* <img
             src="https://via.placeholder.com/100"
             alt="Profile"
-            className="w-20 h-20 rounded-full border-4 border-gray-300"
+            className="w-24 h-24 rounded-full border-4 border-gray-300"
           />
           <div>
             <h2 className="text-2xl font-bold text-gray-800">
