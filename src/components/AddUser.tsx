@@ -22,6 +22,8 @@ export interface User {
   dob: string;
   designation: string;
   hashed_password: string;
+  gender: string;
+  employee_type: string;
 }
 
 // Enum for Designations
@@ -70,6 +72,8 @@ const UserForm: React.FC<UserFormProps> = ({
             dob: selectedItem ? selectedItem?.dob : '',
             designation: selectedItem ? selectedItem?.designation : '',
             hashed_password: selectedItem ? selectedItem?.hashed_password : '',
+            gender: selectedItem ? selectedItem?.gender : '', // Add this
+            employee_type: selectedItem ? selectedItem?.employee_type : '', // Add this
           }}
           validationSchema={Yup.object({
             first_name: Yup.string()
@@ -114,6 +118,12 @@ const UserForm: React.FC<UserFormProps> = ({
                 'Password must contain at least one special character'
               )
               .required('Password is required'),
+            gender: Yup.string()
+              .oneOf(['Male', 'Female', 'Other'])
+              .required('Gender is required'), // Add this
+            employee_type: Yup.string()
+              .oneOf(['Full-time', 'Part-time', 'Intern'])
+              .required('Employee Type is required'), // Add this
           })}
           onSubmit={(values, { resetForm }) => {
             formType?.toLowerCase() === 'edit' && selectedItem
@@ -191,46 +201,88 @@ const UserForm: React.FC<UserFormProps> = ({
               </div>
 
               {/* Role Type Dropdown */}
-              <div>
-                <label className="block">Role Type</label>
-                <Field
-                  name="roletype"
-                  as="select"
-                  className="w-full rounded border p-2"
-                >
-                  <option value="">Select Role</option>
-                  <option value="Admin">Admin</option>
-                  <option value="User">User</option>
-                </Field>
-                <ErrorMessage
-                  name="roletype"
-                  className="text-sm text-red"
-                  component="div"
-                />
-              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block">Role Type</label>
+                  <Field
+                    name="roletype"
+                    as="select"
+                    className="w-full rounded border p-2"
+                  >
+                    <option value="">Select Role</option>
+                    <option value="Admin">Admin</option>
+                    <option value="User">User</option>
+                  </Field>
+                  <ErrorMessage
+                    name="roletype"
+                    className="text-sm text-red"
+                    component="div"
+                  />
+                </div>
 
-              {/* Designation Dropdown */}
-              <div>
-                <label className="block">Designation</label>
-                <Field
-                  as="select"
-                  name="designation"
-                  className="w-full rounded border p-2"
-                >
-                  <option value="">-- Select Designation --</option>
-                  {Object.values(CompanyDesignation).map((role) => (
-                    <option key={role} value={role}>
-                      {role.replace('_', ' ').toUpperCase()}
-                    </option>
-                  ))}
-                </Field>
-                <ErrorMessage
-                  name="designation"
-                  component="div"
-                  className="text-sm text-red"
-                />
+                {/* Designation Dropdown */}
+                <div>
+                  <label className="block">Designation</label>
+                  <Field
+                    as="select"
+                    name="designation"
+                    className="w-full rounded border p-2"
+                  >
+                    <option value="">-- Select Designation --</option>
+                    {Object.values(CompanyDesignation).map((role) => (
+                      <option key={role} value={role}>
+                        {role.replace('_', ' ').toUpperCase()}
+                      </option>
+                    ))}
+                  </Field>
+                  <ErrorMessage
+                    name="designation"
+                    component="div"
+                    className="text-sm text-red"
+                  />
+                </div>
               </div>
+              <div className="grid grid-cols-2 gap-4">
+                {/* Gender Field */}
+                <div>
+                  <label className="block">Gender</label>
+                  <Field
+                    as="select"
+                    name="gender"
+                    className="w-full rounded border p-2"
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </Field>
+                  <ErrorMessage
+                    name="gender"
+                    component="div"
+                    className="text-sm text-red"
+                  />
+                </div>
 
+                {/* Employee Type Field */}
+                <div>
+                  <label className="block">Employee Type</label>
+                  <Field
+                    as="select"
+                    name="employee_type"
+                    className="w-full rounded border p-2"
+                  >
+                    <option value="">Select Employee Type</option>
+                    <option value="Full-time">Full-time</option>
+                    <option value="Part-time">Part-time</option>
+                    <option value="Intern">Intern</option>
+                  </Field>
+                  <ErrorMessage
+                    name="employee_type"
+                    component="div"
+                    className="text-sm text-red"
+                  />
+                </div>
+              </div>
               {/* Date of Joining & Date of Birth */}
               <div className="grid grid-cols-2 gap-4">
                 <div>

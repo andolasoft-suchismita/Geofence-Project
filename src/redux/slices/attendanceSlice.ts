@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { punchInAPI, punchOutAPI} from '../../api/services/attendanceService';
+import { punchInAPI, punchOutAPI } from '../../api/services/attendanceService';
 
 interface PunchData {
   attendance_id: string; // Add this
@@ -7,7 +7,6 @@ interface PunchData {
   punchOut?: string;
   coordinates?: string;
 }
-
 
 interface AttendanceState {
   [user_id: string]: PunchData[];
@@ -19,18 +18,20 @@ const initialState: AttendanceState = {};
 
 export const punchIn = createAsyncThunk(
   'attendance/punchIn',
-  async (_, { rejectWithValue }) => {
+  async (
+    { lat, lng, check_in }: { lat: number; lng: number; check_in: string },
+    { rejectWithValue }
+  ) => {
     try {
-      const now = new Date();
-      const check_in = now.toTimeString().split(' ')[0]; //  Extract "HH:mm:ss" format
-
-      const response = await punchInAPI(check_in);
-      return response; //  Returns full attendance object with `attendance_id`
+      const response = await punchInAPI(check_in, lat, lng);
+      return response;
     } catch (error: any) {
+      console.error('Punch In API Error:', error.response?.data);
       return rejectWithValue(error.response?.data || 'Unknown error');
     }
   }
 );
+
 export const punchOut = createAsyncThunk(
   'attendance/punchOut',
   async (
@@ -45,7 +46,6 @@ export const punchOut = createAsyncThunk(
     }
   }
 );
-
 
 const attendanceSlice = createSlice({
   name: 'attendance',
@@ -76,6 +76,3 @@ const attendanceSlice = createSlice({
 });
 
 export default attendanceSlice.reducer;
-
-
-

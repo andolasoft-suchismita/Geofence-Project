@@ -1,230 +1,318 @@
-// import React, { useState } from "react";
-// import AttendanceTable from "../components/attendancetable";
-
-// const employees = ["Dibyajyoti Mishra", "John Doe", "Jane Smith"];
-// const months = [
-//   "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
-// ];
-// const years = [2023, 2024, 2025, 2026];
-
-// const Attendance: React.FC = () => {
-//   const [selectedEmployee, setSelectedEmployee] = useState(employees[0]);
-//   const [selectedMonth, setSelectedMonth] = useState(months[new Date().getMonth()]);
-//   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-
-//   const handleEmployeeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-//     setSelectedEmployee(event.target.value);
-//   };
-
-//   const handleMonthChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-//     setSelectedMonth(event.target.value);
-//   };
-
-//   const handleYearChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-//     setSelectedYear(Number(event.target.value));
-//   };
-
-//   const data = [
-//     { name: "Dibyajyoti Mishra", role: "Software Intern", attendance: ["✔", "✔", "✔", "✔", "✔", "✔", "X", "✔", "✔", "!"] },
-//     { name: "John Doe", role: "Developer", attendance: ["✔", "✔", "X", "✔", "✔", "✔", "✔", "✔", "✔", "★"] },
-//   ];
-
-//   return (
-//     <div className="p-4">
-//       <h2 className="text-2xl font-bold mb-4">Attendance</h2>
-//       <div className="flex gap-4 mb-4">
-//         <select className="border p-2 rounded" value={selectedEmployee} onChange={handleEmployeeChange}>
-//           {employees.map((emp) => (
-//             <option key={emp} value={emp}>{emp}</option>
-//           ))}
-//         </select>
-
-//         <select className="border p-2 rounded" value={selectedMonth} onChange={handleMonthChange}>
-//           {months.map((month) => (
-//             <option key={month} value={month}>{month}</option>
-//           ))}
-//         </select>
-
-//         <select className="border p-2 rounded" value={selectedYear} onChange={handleYearChange}>
-//           {years.map((year) => (
-//             <option key={year} value={year}>{year}</option>
-//           ))}
-//         </select>
-//       </div>
-      
-//       <AttendanceTable data={data} />
-//     </div>
-//   );
-// };
-
-// export default Attendance;
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-import React, { useState,  useEffect } from "react";
-import AttendanceTable from "../components/attendancetable";
-import { FaChevronLeft, FaChevronRight, FaSearch, FaCalendarAlt} from "react-icons/fa";
-import { format } from "date-fns";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-
-
+import React, { useState, useEffect } from 'react';
+import AttendanceTable from '../components/attendancetable';
+import {
+  FaChevronLeft,
+  FaChevronRight,
+  FaSearch,
+  FaCalendarAlt,
+} from 'react-icons/fa';
+import { format } from 'date-fns';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../redux/rootReducers';
+import { punchIn, punchOut } from '../redux/slices/attendanceSlice';
+import { AppDispatch } from '../redux/store';
+import { showToast } from '../utils/toast';
+import { useMemo } from 'react';
+import { getAttendanceByDate } from '../api/services/attendanceService';
 const Attendance: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>(); //  Type dispatch with AppDispatch
+  const [showModal, setShowModal] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [searchQuery, setSearchQuery] = useState("");
-  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
+    null,
+    null,
+  ]);
   const [startDate, endDate] = dateRange;
   const [attendanceData, setAttendanceData] = useState([]);
-  const [loading, setLoading] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
 
-    // Function to fetch attendance data
-    const fetchAttendance = async (date: Date) => {
-      setLoading(true);
-      setError(null);
-  
-      const formattedDate = format(date, "yyyy-MM-dd");
-      const url = `http://192.168.2.31:9009/attendanceapi/attendance/by-date/${formattedDate}`;
-  
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Error ${response.status}: Failed to fetch attendance`);
-        }
-  
-        const data = await response.json();
-        setAttendanceData(data); // Store the fetched attendance data
-      } catch (err) {
-        setError(err.message);
-        setAttendanceData([]); // Reset data on error
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    // Fetch data when the selected date changes
-    useEffect(() => {
-      fetchAttendance(selectedDate);
-    }, [selectedDate]);
-  
+  useEffect(() => {
+    setShowModal(true);
+  }, []);
 
- const handlePrevDate = () => {
-    setSelectedDate((prev) => new Date(prev.setDate(prev.getDate() - 1)));
+  const company_id = useSelector(
+    (state: RootState) => state.authSlice.company_id
+  );
+  const user_id = useSelector((state: RootState) => state.authSlice.user_id);
+  const userAttendance = useSelector(
+    (state: RootState) => state.attendance[user_id] || []
+  );
+
+  const getCoordinates = async () => {
+    return new Promise<{ lat: number; lng: number }>((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          resolve({
+            lat: parseFloat(position.coords.latitude.toFixed(6)), // Round to 6 decimals
+            lng: parseFloat(position.coords.longitude.toFixed(6)),
+          });
+        },
+        () => {
+          alert('⚠️ Failed to get location. Please enable GPS and try again.');
+          reject({ lat: 0, lng: 0 });
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 } // High accuracy mode
+      );
+    });
   };
 
-  const handleNextDate = () => {
-    setSelectedDate((prev) => new Date(prev.setDate(prev.getDate() + 1)));
+  const isPunchedIn =
+    userAttendance.length > 0 &&
+    !userAttendance[userAttendance.length - 1].punchOut;
+
+  const handlePunchIn = async () => {
+    setLoading(true);
+    try {
+      const { lat, lng } = await getCoordinates();
+      const check_in = new Date().toISOString(); // Ensure ISO format
+
+      console.log('Punch In Request:', {
+        check_in,
+        latitude: lat,
+        longitude: lng,
+      }); // Log the request
+
+      const response = await dispatch(punchIn({ lat, lng, check_in })).unwrap();
+      showToast('Successfully Punched In!');
+      showToast('Have a Good day!');
+      console.log('Punch In Success:', response);
+      localStorage.setItem('attendance_id', response.id);
+    } catch (error) {
+      console.error('Punch In Error:', error);
+      alert(`Punch In Failed: ${JSON.stringify(error.detail, null, 2)}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
-   const handleSearch = () => {
-  console.log("Searching for:", searchQuery);
-};
+  const handlePunchOut = async () => {
+    const attendance_id = localStorage.getItem('attendance_id');
+    if (!attendance_id) return alert('⚠️ No active attendance record found!');
+
+    setLoading(true);
+    try {
+      await dispatch(
+        punchOut({
+          attendance_id,
+          check_out: new Date().toISOString(),
+        })
+      ).unwrap();
+      console.log(' Punch Out Success');
+      showToast('Successfully Punched Out!');
+    } catch (error) {
+      console.error(' Punch Out Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Function to fetch attendance data
+  const fetchAttendance = async () => {
+    setLoading(true);
+    setError(null);
+    setAttendanceData([]); // Clear previous data before fetching
+
+    const attendance_date = format(selectedDate, 'yyyy-MM-dd');
+
+    try {
+      const data = await getAttendanceByDate(
+        attendance_date,
+        company_id.toString()
+      );
+      console.log('Fetched Attendance Data:', data);
+
+      setAttendanceData(Array.isArray(data) ? data : []);
+    } catch (err) {
+      setError(err.message);
+      setAttendanceData([]); // Ensure no data when there's an error
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAttendance();
+  }, [selectedDate]);
+
+  const filteredData = useMemo(() => {
+    console.log('Raw Attendance Data:', attendanceData);
+
+    if (!Array.isArray(attendanceData)) {
+      console.error('attendanceData is not an array:', attendanceData);
+      return [];
+    }
+
+    const query = searchQuery?.trim().toLowerCase();
+    if (!query) return attendanceData;
+
+    const result = attendanceData.filter(
+      (entry: any) =>
+        typeof entry.name === 'string' &&
+        entry.name.toLowerCase().includes(query)
+    );
+
+    console.log('Filtered Data:', result);
+    return result;
+  }, [searchQuery, attendanceData]);
+
+  useEffect(() => {
+    console.log('Fetched Attendance Data:', attendanceData);
+  }, [attendanceData]);
 
   return (
     <div className="p-2">
       {/* Date Selector & Buttons */}
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center space-x-2">
-          <FaChevronLeft onClick={handlePrevDate} className="cursor-pointer text-gray-600 hover:text-black" />
-          <span className="text-lg font-bold">{format(selectedDate, "EEEE, dd MMMM yyyy")}</span>
-          <FaChevronRight onClick={handleNextDate} className="cursor-pointer text-gray-600 hover:text-black" />
+      <div className="mb-6 flex items-center justify-between">
+        <div className="ml-3 flex items-center  space-x-2">
+          <FaChevronLeft
+            onClick={() =>
+              setSelectedDate(
+                new Date(selectedDate.setDate(selectedDate.getDate() - 1))
+              )
+            }
+            className="text-gray-600 cursor-pointer text-3xl hover:text-black"
+          />
+          <span className="text-lg font-bold">
+            {format(selectedDate, 'EEEE, dd MMMM yyyy')}
+          </span>
+          <FaChevronRight
+            onClick={() =>
+              setSelectedDate(
+                new Date(selectedDate.setDate(selectedDate.getDate() + 1))
+              )
+            }
+            className="text-gray-600 cursor-pointer text-3xl hover:text-black "
+          />
         </div>
-      </div>  
-  
+        {/*  Show Punch In/Out Button if modal was canceled */}
+        <div className=" text-center">
+          <button
+            className={`rounded px-4 py-2 text-white ${
+              isPunchedIn ? 'bg-gray-400' : 'bg-black'
+            }`}
+            disabled={isPunchedIn}
+            onClick={handlePunchIn}
+          >
+            Punch In
+          </button>
+          <button
+            className={`ml-4 rounded px-4 py-2 text-white ${
+              !isPunchedIn ? 'bg-gray-400' : 'bg-black'
+            }`}
+            disabled={!isPunchedIn}
+            onClick={handlePunchOut}
+          >
+            Punch Out
+          </button>
+        </div>
+      </div>
+
       {/* Attendance Summary */}
-      <div className="flex gap-4 mb-6">
+      <div className="mb-6 ml-4 flex gap-4">
         {/* Present Summary */}
-        <div className="bg-white p-4 shadow rounded-lg w-1/3">
+        <div className="w-1/3 rounded-lg bg-white p-4 shadow">
           <h3 className="text-lg font-bold">Present Summary</h3>
-          <div className="grid grid-cols-3 gap-4 mt-2 text-center">
+          <div className="mt-2 grid grid-cols-3 gap-4 text-center">
             <div>
-              <p className="text-sm text-gray-500">On time</p>
+              <p className="text-gray-500 text-sm">On time</p>
               <p className="text-xl font-bold">265</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Late clock-in</p>
+              <p className="text-gray-500 text-sm">Late clock-in</p>
               <p className="text-xl font-bold">62</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Early clock-in</p>
+              <p className="text-gray-500 text-sm">Early clock-in</p>
               <p className="text-xl font-bold">224</p>
             </div>
           </div>
         </div>
-  
+
         {/* Not Present Summary */}
-        <div className="bg-white p-4 shadow rounded-lg w-1/3">
+        <div className="w-1/3 rounded-lg bg-white p-4 shadow">
           <h3 className="text-lg font-bold">Not Present Summary</h3>
-          <div className="grid grid-cols-2 gap-4 mt-2 text-center">
+          <div className="mt-2 grid grid-cols-2 gap-4 text-center">
             <div>
-              <p className="text-sm text-gray-500">Absent</p>
+              <p className="text-gray-500 text-sm">Absent</p>
               <p className="text-xl font-bold">42</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">No clock-in</p>
+              <p className="text-gray-500 text-sm">No clock-in</p>
               <p className="text-xl font-bold">36</p>
             </div>
           </div>
         </div>
-  
+
         {/* Leave Summary */}
-        <div className="bg-white p-4 shadow rounded-lg w-1/3">
+        <div className="w-1/3 rounded-lg bg-white p-4 shadow">
           <h3 className="text-lg font-bold">Leave Summary</h3>
-          <div className="grid grid-cols-2 gap-4 mt-2 text-center">
+          <div className="mt-2 grid grid-cols-2 gap-4 text-center">
             <div>
-              <p className="text-sm text-gray-500">Day off</p>
+              <p className="text-gray-500 text-sm">Day off</p>
               <p className="text-xl font-bold">0</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Time off</p>
+              <p className="text-gray-500 text-sm">Time off</p>
               <p className="text-xl font-bold">0</p>
             </div>
           </div>
         </div>
       </div>
-  
+
       {/* Filters Section */}
-      <div className="flex space-x-4 mb-6">
+      <div className="mb-6 ml-4 flex  space-x-4">
         {/* Search Bar */}
-        <div className="relative flex items-center shadow-md rounded-lg w-72">
+        <div className="relative flex w-72 items-center rounded-lg shadow-md">
+          <div className="relative flex w-72 items-center rounded-lg shadow-md">
             <input
               type="text"
               placeholder="Search employee"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pr-10 pl-3 py-2 rounded-lg focus:outline-none w-full"
+              onChange={(e) => {
+                console.log('Search Query:', e.target.value); // Debugging log
+                setSearchQuery(e.target.value);
+              }}
+              className="w-full rounded-lg py-2 pl-3 pr-10 focus:outline-none"
             />
-            <button
-              onClick={() => handleSearch()} // Call search function when clicked
-              className="absolute right-3 text-gray-400 hover:text-gray-600"
-            >
+            <span className="text-gray-400 absolute right-3">
               <FaSearch />
-            </button>
+            </span>
           </div>
-  
-        {/* Date Range Dropdown */}
-        <div className="relative shadow-md rounded-lg flex items-center px-4 py-2 bg-white cursor-pointer">
-          <FaCalendarAlt className="mr-2 text-gray-500" />
-          <DatePicker
-            selectsRange={true}
-            startDate={startDate}
-            endDate={endDate}
-            onChange={(update) => setDateRange(update)}
-            isClearable={true}
-            className="focus:outline-none bg-transparent"
-            placeholderText="Select Date Range"
-          />
-        </div>
         </div>
 
+        {/* Date Range Dropdown */}
+        <div className="relative flex cursor-pointer items-center rounded-lg bg-white px-4 py-2 shadow-md">
+          <FaCalendarAlt className="text-gray-500 mr-2" />
+          <DatePicker
+            selected={selectedDate}
+            onChange={(date: Date | null) => setSelectedDate(date)}
+            isClearable
+            className="bg-transparent focus:outline-none"
+            placeholderText="Select Date"
+          />
+        </div>
+      </div>
+
       <div className="p-4">
-        <AttendanceTable />
+        {/* <AttendanceTable data={filteredData} /> */}
+        {loading ? (
+          <p className="text-gray-500 text-center">Loading...</p>
+        ) : !attendanceData || attendanceData.length === 0 ? (
+          <p className="text-gray-500 text-center">
+            No attendance data available.
+          </p>
+        ) : filteredData.length === 0 ? (
+          <p className="text-gray-500 text-center">No user found.</p>
+        ) : (
+          <AttendanceTable data={filteredData} />
+        )}
       </div>
     </div>
   );
 };
 export default Attendance;
-
-

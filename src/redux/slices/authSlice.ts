@@ -6,6 +6,7 @@ interface AuthState {
   user_id: string | null;
   company_id: number | null;
   user: {
+    id: any;
     name: string;
     email: string;
   } | null;
