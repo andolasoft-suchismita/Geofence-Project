@@ -438,6 +438,7 @@
 import { useState,useEffect } from 'react';
 import { FaEdit } from "react-icons/fa";
 import EditProfile from "../components/EditProfile";
+import ProfilePicture from "../components/Images/profilepicture";
 import { getUserById,updateUser } from "../api/services/profileService";
 
 const ProfileSettings = () => {
@@ -513,11 +514,15 @@ const ProfileSettings = () => {
   
         {/* 1️⃣ Profile Section */}
         <div className="flex items-center space-x-6 mb-8">
-          <img
+          {/* <img
             src="https://via.placeholder.com/100"
             alt="Profile"
             className="w-24 h-24 rounded-full border-4 border-gray-300"
-          />
+          /> */}
+          <div>
+       <ProfilePicture/>
+          </div>
+
           <div>
             <h2 className="text-3xl font-bold text-gray-800">
             {details.first_name || "N/A"} {details.last_name || "N/A"}</h2>
