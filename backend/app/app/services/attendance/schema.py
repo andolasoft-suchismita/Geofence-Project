@@ -44,3 +44,16 @@ class AttendanceResponseSchema(BaseModel):
     overtime: Optional[float] = None
 
     model_config = ConfigDict(from_attributes=True)  # ✅ Ensures compatibility with ORM
+    
+class AttendanceReportSchema(BaseModel):
+    """
+    Schema for returning attendance details in API responses.
+    """
+    id: UUID  # ✅ User ID (Primary Key)
+    employee_id: Optional[int] = None  # ✅ Employee ID (Unique)
+    name: Optional[str] = None
+    days_absent: Optional[int] = None
+    half_days: Optional[int] = None
+    deficit_hours: Optional[float] = None  # ✅ Fixed typo
+    
+    model_config = ConfigDict(from_attributes=True)  # ✅ Ensures compatibility with ORM

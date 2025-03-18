@@ -8,7 +8,7 @@ from services.company.repository import CompanyRepository
 from services.users.repository import UserRepository
 from services.attendance.model import Attendance
 from services.attendance.repository import AttendanceRepository
-from services.attendance.schema import AttendanceSchema, AttendanceStatus, AttendanceUpdateSchema, AttendanceResponseSchema
+from services.attendance.schema import AttendanceReportSchema, AttendanceSchema, AttendanceStatus, AttendanceUpdateSchema, AttendanceResponseSchema
 from services.users.model import User
 from config.settings import settings
 
@@ -251,3 +251,86 @@ class AttendanceService:
             attendance_list.append(absent_record)
 
         return attendance_list
+
+    async def get_attendance_reports(self, company_id: int) -> List[AttendanceReportSchema]:
+        """
+        Retrieves attendance reports for a company.
+        :param company_id: ID of the company.
+        :return: A list of AttendanceReportSchema objects.
+        """
+        # ✅ Fetch all employees for the company
+        all_users = await self.company_repository.get_employees_by_company(company_id)
+        if not all_users:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found.")
+
+        # ✅ Define date range (last 30 days)
+        end_date = date.today()
+        start_date = end_date - timedelta(days=30)
+
+        # ✅ Initialize report structure
+        report_dict = {
+            user.id: {
+                "id": str(user.id),  # Ensure UUID is passed as a string
+                "employee_id": user.employee_id,  # Ensure this is an integer
+                "name": f"{user.first_name} {user.last_name}",
+                "days_absent": 0,
+                "half_days": 0,
+                "deficit_hours": 0.0
+            }
+            for user in all_users
+        }
+
+        # ✅ Iterate over each user and fetch their attendance records
+        for user in all_users:
+            user_id = user.id
+            attendance_records = await self.attendance_repository.get_attendance_by_user(user_id, start_date, end_date)
+
+            if not attendance_records:
+                # ✅ If the user has no attendance records, assume they haven't started yet.
+                continue
+
+            # ✅ Get the first attendance date of the user
+            first_attendance = min(record.date for record in attendance_records)
+
+            total_absent_days = 0
+            total_half_days = 0
+            total_deficit_hours = 0.0
+
+            # ✅ Track attended dates
+            attended_dates = {record.date for record in attendance_records}
+
+            # ✅ Loop through each working day in the last 30 days
+            for single_date in (start_date + timedelta(days=n) for n in range(31)):
+                if single_date.weekday() >= 5:  # Skip weekends
+                    continue
+
+                if single_date < first_attendance:
+                    # ✅ Skip days before the user's first recorded attendance
+                    continue
+
+                # ✅ Check if user attended that day
+                user_record = next((r for r in attendance_records if r.date == single_date), None)
+
+                if not user_record:
+                    total_absent_days += 1
+                    continue
+
+                # ✅ Calculate working hours if check-in and check-out exist
+                working_hours = 0.0
+                if user_record.check_in and user_record.check_out:
+                    working_hours = (datetime.combine(date.today(), user_record.check_out) - 
+                                     datetime.combine(date.today(), user_record.check_in)).seconds / 3600
+
+                # ✅ Identify half-day and deficit hours
+                if 4 <= working_hours < 6:
+                    total_half_days += 1
+                elif working_hours < 8:
+                    total_deficit_hours += (8 - working_hours)
+
+            # ✅ Update report data
+            report_dict[user_id]["days_absent"] = total_absent_days
+            report_dict[user_id]["half_days"] = total_half_days
+            report_dict[user_id]["deficit_hours"] = round(total_deficit_hours, 2)
+
+        # ✅ Convert report dictionary to list of schemas
+        return [AttendanceReportSchema(**data) for data in report_dict.values()]

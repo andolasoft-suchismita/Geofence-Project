@@ -4,7 +4,7 @@ from uuid import UUID
 from datetime import date, datetime
 from services.attendance.service import AttendanceService
 from services.attendance.schema import (
-    AttendanceSchema, AttendanceUpdateSchema, AttendanceResponseSchema
+    AttendanceReportSchema, AttendanceSchema, AttendanceUpdateSchema, AttendanceResponseSchema
 )
 from services.auth.manager import current_active_user
 from fastapi import Request
@@ -83,3 +83,10 @@ async def delete_attendance(
     if not deleted:
         raise HTTPException(status_code=404, detail="Attendance record not found")
     return {"message": "Attendance record deleted successfully"}
+
+@MyAttendanceRouter.get("/attendance_reports/{company_id}", response_model=List[AttendanceReportSchema])
+async def get_attendance_reports(
+    company_id: int,
+    service: AttendanceService = Depends()
+):
+    return await service.get_attendance_reports(company_id)
