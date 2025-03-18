@@ -121,7 +121,7 @@ const handlePunchOut = async () => {
 
   return (
     showModal && (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
         <div className="relative rounded-lg bg-white p-6 text-center shadow-lg">
           <button
             className="text-gray-600 hover:text-gray-900 absolute right-3 top-3 text-xl"
