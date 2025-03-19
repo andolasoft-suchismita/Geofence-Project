@@ -64,6 +64,7 @@ class AttendanceSummarySchema(BaseModel):
     Schema for returning attendance summary in API responses.
     """
     total_employees: Optional[int] = None  # ✅ Total number of employees in the company
+    present_today: Optional[int] = None  # ✅ Number of employees present today
     absentees_today: Optional[int] = None  # ✅ Number of employees absent today
     late_comings_today: Optional[int] = None  # ✅ Number of employees late today
     department_wise_attendance: Optional[Dict[str, Dict[str, int]]] = None  # ✅ {Department: {Present, Absent}}

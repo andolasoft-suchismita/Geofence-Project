@@ -368,6 +368,10 @@ class AttendanceService:
         # ✅ Filter records belonging to the company
         filtered_attendance_records = [record for record in attendance_records if record.user_id in all_user_ids]
         present_user_ids = {record.user_id for record in filtered_attendance_records}
+        
+        # ✅ Number of employees present today
+        present_today = len(present_user_ids)
+
 
         # ✅ Identify absent users
         absent_user_ids = all_user_ids - present_user_ids  # Users without check-ins
@@ -399,6 +403,7 @@ class AttendanceService:
 
         return AttendanceSummarySchema(
             total_employees=total_employees,
+            present_today=present_today,
             absentees_today=absentees_today,
             late_comings_today=late_comings_today,
             department_wise_attendance=department_wise_attendance,
