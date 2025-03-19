@@ -55,11 +55,10 @@ class UpdateUserSchema(BaseModel):
     gender: Optional[str] = None
     marital_status: Optional[str] = None
     blood_group: Optional[str] = None
+    phone_number: Optional[str] = None
     emergency_contact: Optional[str] = None
     # email: Optional[str] = None
-    phone_number: Optional[str] = None
     address: Optional[str] = None
-    emergency_contact: Optional[str] = None
     department: Optional[str] = None
     
     @field_validator("doj", "dob", mode="before")
