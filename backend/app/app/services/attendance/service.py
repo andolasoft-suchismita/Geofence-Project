@@ -271,8 +271,8 @@ class AttendanceService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found.")
         
         # ✅ Fetch company holidays
-        company_holidays = await self.holiday_repository.get_holidays_by_company(company_id)
-        holiday_dates = {holiday.date for holiday in company_holidays}  # Convert to set for quick lookup
+        company_holidays = await self.holiday_repository.get_holidays_by_company(23)
+        holiday_dates = {holiday.holiday_date for holiday in company_holidays}  # Convert to set for quick lookup
 
         # ✅ Define date range (last 30 days)
         end_date = date.today()
