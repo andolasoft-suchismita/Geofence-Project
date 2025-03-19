@@ -3,6 +3,7 @@ from fastapi import Depends, HTTPException, Request,status
 from uuid import UUID
 from datetime import date, datetime, timedelta
 from geopy.distance import geodesic
+from pyparsing import Dict
 import pytz
 from services.company.repository import CompanyRepository
 from services.users.repository import UserRepository
@@ -335,3 +336,61 @@ class AttendanceService:
         # ✅ Convert report dictionary to list of schemas
         return [AttendanceReportSchema(**data) for data in report_dict.values()]
     
+    
+    async def get_attendance_summary(self, company_id: int) -> AttendanceSummarySchema:
+        """
+        Retrieves attendance summary for a company.
+        :param company_id: ID of the company.
+        :return: AttendanceSummarySchema object.
+        """
+        # ✅ Fetch all employees for the company
+        all_users = await self.company_repository.get_employees_by_company(company_id)
+        if not all_users:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found.")
+
+        total_employees = len(all_users)
+        all_user_ids = {user.id for user in all_users}
+
+        # ✅ Get attendance records for today
+        today = date.today()
+        attendance_records = await self.attendance_repository.get_attendance_by_date(today)
+
+        # ✅ Filter records belonging to the company
+        filtered_attendance_records = [record for record in attendance_records if record.user_id in all_user_ids]
+        present_user_ids = {record.user_id for record in filtered_attendance_records}
+
+        # ✅ Identify absent users
+        absent_user_ids = all_user_ids - present_user_ids  # Users without check-ins
+        absentees_today = len(absent_user_ids)
+
+        # ✅ Calculate late comers (check-in time available and is late)
+        late_comings_today = sum(
+            1 for record in filtered_attendance_records if record.check_in and record.check_in.hour > 10
+        )  # Assuming 10 AM as cutoff time
+
+        # ✅ Department-wise attendance
+        department_wise_attendance: Dict[str, Dict[str, int]] = {}
+        for user in all_users:
+            dept = user.department if user.department else "Unknown"
+            if dept not in department_wise_attendance:
+                department_wise_attendance[dept] = {"present": 0, "absent": 0}
+
+            if user.id in present_user_ids:
+                department_wise_attendance[dept]["present"] += 1
+            else:
+                department_wise_attendance[dept]["absent"] += 1
+
+        # ✅ Calculate overall attendance percentage
+        present_count = total_employees - absentees_today
+        overall_attendance = {
+            "present": round((present_count / total_employees) * 100, 2),
+            "absent": round((absentees_today / total_employees) * 100, 2),
+        }
+
+        return AttendanceSummarySchema(
+            total_employees=total_employees,
+            absentees_today=absentees_today,
+            late_comings_today=late_comings_today,
+            department_wise_attendance=department_wise_attendance,
+            overall_attendance=overall_attendance
+        )
