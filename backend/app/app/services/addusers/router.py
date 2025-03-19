@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from services.users.model import User
 from services.addusers.service import AddUserService
 from services.addusers.schema import AddUserSchema, UpdateUserSchema, UserResponseSchema
@@ -26,7 +26,7 @@ async def get_user(user_id: UUID, current_iuser :User= Depends(current_super_use
 
 # Update User
 @AddUserRouter.put("/{user_id}", response_model=UserResponseSchema)
-async def update_user(user_id: UUID, user_data: UpdateUserSchema, current_iuser :User= Depends(current_super_user), service: AddUserService = Depends()):
+async def update_user(user_id: UUID, user_data: UpdateUserSchema,  current_iuser :User= Depends(current_super_user), service: AddUserService = Depends()):
     updated_user = await service.update_user(user_id, user_data)
     if not updated_user:
         raise HTTPException(status_code=404, detail="User not found or update failed")
