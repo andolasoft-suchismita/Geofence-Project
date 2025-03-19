@@ -29,6 +29,7 @@ class CompanyBasedUpdate(BaseModel):
     country : Optional[str] = None
     zip_code : Optional[str] = None
     logo:  Optional[str] = None
+    working_hours : Optional[str] = None
     
 class CompanyBaseResponse(BaseModel):
     id: Optional[int] = None
@@ -42,3 +43,4 @@ class CompanyBaseResponse(BaseModel):
     currency_code: Optional[str] = None
     # api_key: Optional[str] = None
     logo: Optional[str] = None
+    working_hours: Optional[str] = None
