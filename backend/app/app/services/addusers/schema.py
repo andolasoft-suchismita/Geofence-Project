@@ -56,6 +56,10 @@ class UpdateUserSchema(BaseModel):
     marital_status: Optional[str] = None
     blood_group: Optional[str] = None
     emergency_contact: Optional[str] = None
+    email: Optional[str] = None
+    phone_number: Optional[str] = None
+    address: Optional[str] = None
+    emergency_contact: Optional[str] = None
     
     @field_validator("doj", "dob", mode="before")
     def validate_date(cls, value):
