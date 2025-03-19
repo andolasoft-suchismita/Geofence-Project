@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import Depends
+from fastapi import Depends, UploadFile
 from utility.get_tenant_name import getTenantInfo
 from services.companyuser.repository import CompanyUserRepository
 from services.companyuser.model import CompanyUser
@@ -77,6 +77,7 @@ class AddUserService:
 
         for key, value in user_data.dict(exclude_unset=True).items():
             setattr(existing_user, key, value)
+            
 
         return await self.adduser_repository.update_user(existing_user)
 

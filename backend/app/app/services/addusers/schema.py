@@ -1,5 +1,6 @@
 from datetime import datetime, date
 from typing import Optional
+from fastapi import File, UploadFile
 from pydantic import BaseModel, field_validator
 from enum import Enum
 from uuid import UUID
@@ -55,12 +56,12 @@ class UpdateUserSchema(BaseModel):
     gender: Optional[str] = None
     marital_status: Optional[str] = None
     blood_group: Optional[str] = None
+    phone_number: Optional[str] = None
     emergency_contact: Optional[str] = None
     # email: Optional[str] = None
-    phone_number: Optional[str] = None
     address: Optional[str] = None
-    emergency_contact: Optional[str] = None
     department: Optional[str] = None
+    profile_pic: Optional[str] = None
     
     @field_validator("doj", "dob", mode="before")
     def validate_date(cls, value):
@@ -90,6 +91,7 @@ class UserResponseSchema(BaseModel):
     department: Optional[str] = None
     doj: Optional[date] = None
     dob: Optional[date] = None
+    profile_pic: Optional[str]=None
     
     # ✅ Convert datetime to date for both doj and dob
     @field_validator("doj", "dob", mode="before")

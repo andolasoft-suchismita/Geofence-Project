@@ -5,8 +5,8 @@ All rights reserved. This code contains proprietary and confidential
 information of AndolaSoft Ince and is not to be disclosed, reproduced,
 or distributed without prior written permission from AndolaSoft.
 """
-from typing import List, Text
-from sqlalchemy import BIGINT, CHAR, TIMESTAMP, Column, DateTime, Integer, String, Sequence
+from typing import List
+from sqlalchemy import BIGINT, CHAR, TIMESTAMP, Column, DateTime, Integer, LargeBinary, String, Sequence, Text
 from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column, relationship
 from sqlalchemy.orm.base import Mapped
 from fastapi_users.db import SQLAlchemyBaseUserTableUUID, SQLAlchemyBaseOAuthAccountTableUUID
@@ -41,7 +41,6 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     designation = Column(String(255), nullable=True)
     doj = Column(TIMESTAMP, nullable=True)
     dob = Column(TIMESTAMP, nullable=True)
-    profile_pic = Column(String(255), nullable=True)
     address = Column(String(255), nullable=True)  # New address field
     employee_id = Column(Integer, server_default=employee_id_seq.next_value(), primary_key=False)
     gender = Column(String(50), nullable=True)
@@ -50,6 +49,7 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     emergency_contact = Column(String(255), nullable=True)
     employee_type = Column(String(255), nullable=True)
     department = Column(String(255), nullable=True)
+    profile_pic = Column(Text, nullable=True)
    
  
     oauth_accounts: Mapped[List[OAuthAccount]] = relationship(
