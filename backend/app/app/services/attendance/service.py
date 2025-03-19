@@ -5,6 +5,7 @@ from datetime import date, datetime, timedelta
 from geopy.distance import geodesic
 from pyparsing import Dict
 import pytz
+from services.companyholiday.repository import CompanyHolidayRepository
 from services.company.repository import CompanyRepository
 from services.users.repository import UserRepository
 from services.attendance.model import Attendance
@@ -23,6 +24,7 @@ class AttendanceService:
         self.attendance_repository = attendance_repository
         self.user_repository = UserRepository()
         self.company_repository = CompanyRepository()
+        self.holiday_repository = CompanyHolidayRepository()
 
     async def create_attendance(self, request: Request, attendance_data: AttendanceSchema, current_user: User) -> AttendanceResponseSchema:
         """
@@ -263,6 +265,10 @@ class AttendanceService:
         all_users = await self.company_repository.get_employees_by_company(company_id)
         if not all_users:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found.")
+        
+        # ✅ Fetch company holidays
+        company_holidays = await self.holiday_repository.get_holidays_by_company(company_id)
+        holiday_dates = {holiday.date for holiday in company_holidays}  # Convert to set for quick lookup
 
         # ✅ Define date range (last 30 days)
         end_date = date.today()
@@ -302,7 +308,7 @@ class AttendanceService:
 
             # ✅ Loop through each working day in the last 30 days
             for single_date in (start_date + timedelta(days=n) for n in range(31)):
-                if single_date.weekday() >= 5:  # Skip weekends
+                if single_date in holiday_dates:  
                     continue
 
                 if single_date < first_attendance:
