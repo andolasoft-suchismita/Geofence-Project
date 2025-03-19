@@ -24,6 +24,7 @@ class Company(Base):
     zip_code = mapped_column(String(255))
     email = mapped_column(String(255))
     logo = mapped_column(Text(255))
+    working_hours = mapped_column(String(255))
     
     
 

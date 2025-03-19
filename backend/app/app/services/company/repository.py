@@ -119,3 +119,10 @@ class CompanyRepository:
             query = select(Company).where(Company.name == company_name)
             result = await session.execute(query)
             return result.scalars().first()
+        
+    async def get_company_working_hours(self, company_id: int) -> Optional[int]:
+        async for session in get_db():
+            query = select(Company.working_hours).where(Company.id == company_id)
+            result = await session.execute(query)
+            working_hours = result.scalars().first()
+            return working_hours

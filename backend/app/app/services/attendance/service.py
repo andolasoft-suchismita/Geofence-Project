@@ -203,6 +203,10 @@ class AttendanceService:
         if not all_users:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found.")
         all_user_ids = {user.id for user in all_users}
+        
+        company_working_hours = await self.company_repository.get_company_working_hours(company_id)
+        if company_working_hours is None:
+            company_working_hours = 8  # Default working hours
 
         # ✅ Get all attendance records for the given date
         attendance_records = await self.attendance_repository.get_attendance_by_date(attendance_date)
@@ -227,7 +231,7 @@ class AttendanceService:
                     # ✅ Calculate working hours normally
                     record.working_hours = (datetime.combine(date.today(), record.check_out) -
                                             datetime.combine(date.today(), record.check_in)).seconds / 3600
-                    overtime = record.working_hours - 8
+                    overtime = record.working_hours - company_working_hours
                     record.overtime = overtime if overtime > 0 else 0
                 else:
                     # ✅ If check_out is missing, assume they are still working
