@@ -8,7 +8,7 @@ from services.company.repository import CompanyRepository
 from services.users.repository import UserRepository
 from services.attendance.model import Attendance
 from services.attendance.repository import AttendanceRepository
-from services.attendance.schema import AttendanceReportSchema, AttendanceSchema, AttendanceStatus, AttendanceUpdateSchema, AttendanceResponseSchema
+from services.attendance.schema import AttendanceReportSchema, AttendanceSchema, AttendanceStatus, AttendanceSummarySchema, AttendanceUpdateSchema, AttendanceResponseSchema
 from services.users.model import User
 from config.settings import settings
 
@@ -334,3 +334,14 @@ class AttendanceService:
 
         # ✅ Convert report dictionary to list of schemas
         return [AttendanceReportSchema(**data) for data in report_dict.values()]
+    
+    async def get_attendance_summary(self, company_id: int) -> List[AttendanceSummarySchema]:
+        """
+        Retrieves attendance summary for a company.
+        :param company_id: ID of the company.
+        :return: A list of AttendanceSummarySchema objects.
+        """
+        # ✅ Fetch all employees for the company
+        all_users = await self.company_repository.get_employees_by_company(company_id)
+        if not all_users:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found.")

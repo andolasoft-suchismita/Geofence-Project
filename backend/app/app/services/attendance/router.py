@@ -90,3 +90,10 @@ async def get_attendance_reports(
     service: AttendanceService = Depends()
 ):
     return await service.get_attendance_reports(company_id)
+
+@MyAttendanceRouter.get("/attendance_summary/{company_id}", response_model=List[AttendanceReportSchema])
+async def get_attendance_summary(
+    company_id: int,
+    service: AttendanceService = Depends()
+):
+    return await service.get_attendance_summary(company_id)

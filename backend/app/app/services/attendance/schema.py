@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, ConfigDict
 import datetime
-from typing import Optional
+from typing import Dict, Optional
 from uuid import UUID
 from enum import Enum
 
@@ -57,3 +57,16 @@ class AttendanceReportSchema(BaseModel):
     deficit_hours: Optional[float] = None  # ✅ Fixed typo
     
     model_config = ConfigDict(from_attributes=True)  # ✅ Ensures compatibility with ORM
+    
+    
+class AttendanceSummarySchema(BaseModel):
+    """
+    Schema for returning attendance summary in API responses.
+    """
+    total_employees: int  # ✅ Total number of employees in the company
+    absentees_today: int  # ✅ Number of employees absent today
+    late_comings_today: int  # ✅ Number of employees late today
+    department_wise_attendance: Dict[str, Dict[str, int]]  # ✅ {Department: {Present, Absent}}
+    overall_attendance: Dict[str, float]  # ✅ {"present": %, "absent": %}
+
+    model_config = ConfigDict(from_attributes=True)  # ✅ Ensures ORM compatibility
