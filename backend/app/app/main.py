@@ -126,10 +126,10 @@ MyAttendanceApp.include_router(MyAttendanceRouter)
 app.mount("/registeredusersapi", registeredusers_app)
 app.mount("/usersapi", users_app)
 app.mount("/users2api", MyUserApp)
-app.mount("/companyapi", MyCompanyApp)
-app.mount("/addusersapi", MyAddUserApp)
-app.mount("/companyholidaysapi", MyCompanyHolidayApp)
-app.mount("/attendanceapi", MyAttendanceApp)
+app.mount("/company", MyCompanyApp)
+app.mount("/users", MyAddUserApp)
+app.mount("/companyholidays", MyCompanyHolidayApp)
+app.mount("/attendance", MyAttendanceApp)
 
 
 # Run `init_db()` on app startup

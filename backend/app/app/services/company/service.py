@@ -28,7 +28,7 @@ class CompanyService:
         tenant_user_instance = CompanyUser(
             company_id = tenant.id, 
             user_id = str(user.id),
-            user_type = 'owner', 
+            user_type = 'admin', 
             status = 'active',
         )
         tenantUserRepository = CompanyUserRepository()
