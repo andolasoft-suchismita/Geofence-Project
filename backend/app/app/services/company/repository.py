@@ -126,3 +126,10 @@ class CompanyRepository:
             result = await session.execute(query)
             working_hours = result.scalars().first()
             return working_hours
+        
+    async def get_company_week_off(self, company_id: int) -> Optional[str]:
+        async for session in get_db():
+            query = select(Company.week_off).where(Company.id == company_id)
+            result = await session.execute(query)
+            week_off = result.scalar()
+            return week_off.split(",") if week_off else []  # Convert to list

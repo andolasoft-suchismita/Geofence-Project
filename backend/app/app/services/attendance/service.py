@@ -13,6 +13,8 @@ from services.attendance.repository import AttendanceRepository
 from services.attendance.schema import AttendanceReportSchema, AttendanceSchema, AttendanceStatus, AttendanceSummarySchema, AttendanceUpdateSchema, AttendanceResponseSchema
 from services.users.model import User
 from config.settings import settings
+from dateutil.relativedelta import relativedelta
+
 
 
 class AttendanceService:
@@ -259,7 +261,7 @@ class AttendanceService:
 
         return attendance_list
 
-    async def get_attendance_reports(self, company_id: int) -> List[AttendanceReportSchema]:
+    async def get_attendance_reports(self, company_id: int, months: int = 1) -> List[AttendanceReportSchema]:
         """
         Retrieves attendance reports for a company.
         :param company_id: ID of the company.
@@ -272,11 +274,31 @@ class AttendanceService:
         
         # ✅ Fetch company holidays
         company_holidays = await self.holiday_repository.get_holidays_by_company(23)
-        holiday_dates = {holiday.holiday_date for holiday in company_holidays}  # Convert to set for quick lookup
-
-        # ✅ Define date range (last 30 days)
+        # Fetch company week_off
+        company_week_off = await self.company_repository.get_company_week_off(company_id)
+        # ✅ Ensure week_off is a valid list
+        if not company_week_off:
+            company_week_off = []
+            
+        # ✅ Define date range
         end_date = date.today()
-        start_date = end_date - timedelta(days=30)
+        start_date = (end_date.replace(day=1) - relativedelta(months=months-1)).replace(day=1)
+        
+        # ✅ Convert holidays into a set covering the full range
+        holiday_dates = {holiday.holiday_date for holiday in company_holidays if start_date <= holiday.holiday_date <= end_date}
+        
+        # ✅ Convert company week_off into actual dates in the full period
+        week_off_dates = set()
+        days_range = (end_date - start_date).days + 1
+        for day_offset in range(days_range):  
+            current_date = start_date + timedelta(days=day_offset)
+            if current_date.strftime("%A") in company_week_off:
+                week_off_dates.add(current_date)
+                
+        # ✅ Combine company holidays & week_off dates
+        non_working_days = holiday_dates.union(week_off_dates)
+
+
 
         # ✅ Initialize report structure
         report_dict = {
@@ -302,6 +324,9 @@ class AttendanceService:
 
             # ✅ Get the first attendance date of the user
             first_attendance = min(record.date for record in attendance_records)
+            # ✅ Skip users who joined after the selected months
+            if first_attendance > end_date:
+                continue
 
             total_absent_days = 0
             total_half_days = 0
@@ -310,10 +335,10 @@ class AttendanceService:
             # ✅ Track attended dates
             attended_dates = {record.date for record in attendance_records}
 
-            # ✅ Loop through each working day in the last 30 days
-            for single_date in (start_date + timedelta(days=n) for n in range(31)):
-                if single_date in holiday_dates:  
-                    continue
+            # ✅ Loop through each working day in the full range
+            for single_date in (start_date + timedelta(days=n) for n in range(days_range)):
+                if single_date in non_working_days:  
+                    continue  # ✅ Skip non-working days
 
                 if single_date < first_attendance:
                     # ✅ Skip days before the user's first recorded attendance

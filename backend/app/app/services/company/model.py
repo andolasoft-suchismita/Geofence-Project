@@ -25,6 +25,7 @@ class Company(Base):
     email = mapped_column(String(255))
     logo = mapped_column(Text(255))
     working_hours = mapped_column(String(255))
+    week_off = mapped_column(String(255))
     
     
 

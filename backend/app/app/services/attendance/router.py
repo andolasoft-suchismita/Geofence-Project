@@ -84,12 +84,13 @@ async def delete_attendance(
         raise HTTPException(status_code=404, detail="Attendance record not found")
     return {"message": "Attendance record deleted successfully"}
 
-@MyAttendanceRouter.get("/attendance_reports/{company_id}", response_model=List[AttendanceReportSchema])
+@MyAttendanceRouter.get("/attendance_reports/{company_id}/months{number_of_months}", response_model=List[AttendanceReportSchema])
 async def get_attendance_reports(
     company_id: int,
+    number_of_months: int,
     service: AttendanceService = Depends()
 ):
-    return await service.get_attendance_reports(company_id)
+    return await service.get_attendance_reports(company_id, number_of_months)
 
 @MyAttendanceRouter.get("/attendance_summary/{company_id}", response_model=AttendanceSummarySchema)
 async def get_attendance_summary(
