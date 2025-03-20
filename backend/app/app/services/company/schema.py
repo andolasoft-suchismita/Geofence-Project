@@ -29,7 +29,7 @@ class CompanyBasedUpdate(BaseModel):
     country : Optional[str] = None
     zip_code : Optional[str] = None
     logo:  Optional[str] = None
-    working_hours : Optional[str] = None
+    working_hours : Optional[float] = None
     week_off : Optional[str] = None
     
 class CompanyBaseResponse(BaseModel):
