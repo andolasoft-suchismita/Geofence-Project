@@ -14,6 +14,7 @@ from services.attendance.schema import AttendanceReportSchema, AttendanceSchema,
 from services.users.model import User
 from config.settings import settings
 from dateutil.relativedelta import relativedelta
+import calendar
 
 
 
@@ -261,12 +262,32 @@ class AttendanceService:
 
         return attendance_list
 
-    async def get_attendance_reports(self, company_id: int, months: int = 1) -> List[AttendanceReportSchema]:
+    async def get_attendance_reports(self, company_id: int, month_name: str, year: int) -> List[AttendanceReportSchema]:
         """
         Retrieves attendance reports for a company.
         :param company_id: ID of the company.
         :return: A list of AttendanceReportSchema objects.
         """
+        month_name = month_name.capitalize()
+        # ✅ Convert month name to month number
+        try:
+            month = list(calendar.month_name).index(month_name)
+        except ValueError:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid month name. Use full month name like 'February'.")
+        
+        if month == 0:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Month name cannot be empty.")
+        
+        # ✅ Define date range for the selected month
+        start_date = date(year, month, 1)
+        
+        # ✅ Check if the selected month is the current month
+        today = date.today()
+        if year == today.year and month == today.month:
+            end_date = today  # Use today's date if it's the current month
+        else:
+            end_date = date(year, month, calendar.monthrange(year, month)[1])  # Last day of the month
+    
         # ✅ Fetch all employees for the company
         all_users = await self.company_repository.get_employees_by_company(company_id)
         if not all_users:
@@ -279,12 +300,9 @@ class AttendanceService:
         # ✅ Ensure week_off is a valid list
         if not company_week_off:
             company_week_off = []
-            
-        # ✅ Define date range
-        end_date = date.today()
-        start_date = (end_date.replace(day=1) - relativedelta(months=months-1)).replace(day=1)
+
         
-        # ✅ Convert holidays into a set covering the full range
+        # ✅ Convert holidays into a set for the selected month
         holiday_dates = {holiday.holiday_date for holiday in company_holidays if start_date <= holiday.holiday_date <= end_date}
         
         # ✅ Convert company week_off into actual dates in the full period
