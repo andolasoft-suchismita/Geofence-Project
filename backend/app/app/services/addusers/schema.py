@@ -22,6 +22,11 @@ class CompanyDesignation(str, Enum):
     SALES_MANAGER = "sales_manager"
     MARKETING_MANAGER = "marketing_manager"
     INTERN = "intern"
+    
+    
+class UserRoleType(str, Enum):
+    ADMIN = "admin"
+    USER = "user"
 
 
 class AddUserSchema(BaseModel):
@@ -29,7 +34,7 @@ class AddUserSchema(BaseModel):
     last_name: str
     email: str
     hashed_password: str
-    roletype: str
+    roletype: UserRoleType = UserRoleType.USER
     designation: CompanyDesignation = CompanyDesignation.JUNIOR_ENGINEER
     doj: date
     dob: date
