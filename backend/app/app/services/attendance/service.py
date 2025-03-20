@@ -171,7 +171,7 @@ class AttendanceService:
 
         # ✅ Check if the request is for check-out
         if "check_out" in update_dict:
-            update_dict["check_out"] = datetime.now().time()  # Update check-out time
+            # update_dict["check_out"] = datetime.now().time()  # Update check-out time
 
             # ✅ Calculate work duration & update status
             timezone = pytz.UTC  # Change this if needed
