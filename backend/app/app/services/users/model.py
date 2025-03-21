@@ -6,7 +6,7 @@ information of AndolaSoft Ince and is not to be disclosed, reproduced,
 or distributed without prior written permission from AndolaSoft.
 """
 from typing import List
-from sqlalchemy import BIGINT, CHAR, TIMESTAMP, Column, DateTime, Integer, LargeBinary, String, Sequence, Text
+from sqlalchemy import BIGINT, CHAR, TIMESTAMP, Boolean, Column, DateTime, Integer, LargeBinary, String, Sequence, Text
 from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column, relationship
 from sqlalchemy.orm.base import Mapped
 from fastapi_users.db import SQLAlchemyBaseUserTableUUID, SQLAlchemyBaseOAuthAccountTableUUID
@@ -50,6 +50,8 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     employee_type = Column(String(255), nullable=True)
     department = Column(String(255), nullable=True)
     profile_pic = Column(Text, nullable=True)
+    is_superuser = Column(Boolean, nullable=False, default=True)
+    is_verified = Column(Boolean, nullable=False, default=True)
    
  
     oauth_accounts: Mapped[List[OAuthAccount]] = relationship(

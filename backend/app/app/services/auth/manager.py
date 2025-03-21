@@ -53,6 +53,21 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     #     registered_email = user.email
     #     # Create new Tenant and add User to Tenant
     #     tenant = await CompanyService().create_from_user(user)
+    
+    async def create(self, user_create: schemas.BaseUserCreate, safe: bool = False, request: Optional[Request] = None):
+        user_data = user_create.model_dump()
+        
+        # ✅ Ensure password exists
+        if "password" not in user_data or not user_data["password"]:
+            raise ValueError("Password is required")
+
+        # ✅ Hash password
+        hashed_password = self.password_helper.hash(user_data.pop("password"))
+
+        # ✅ Pass password explicitly to BaseUserCreate
+        return await super().create(
+            schemas.BaseUserCreate(**user_data, password=hashed_password), safe, request
+        )
 
         
         
@@ -74,6 +89,10 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
         :raises InvalidPasswordException: The password is invalid.
         :return: None if the password is valid.
         """
+        if password.startswith("$argon2id$"):  # Argon2 hashed passwords start with this
+            print("Skipping password validation (Password is already hashed)")
+            return
+        
         # Length Requirement
         if len(password) < 8 or len(password) > 30:
             raise InvalidPasswordException("Password must be between 8 and 30 characters long")
