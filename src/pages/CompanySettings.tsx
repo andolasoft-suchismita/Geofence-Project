@@ -62,10 +62,13 @@ const LocationMarker = ({
   });
 
   return position ? (
-    <Marker position={position} icon={customIcon} draggable />
+    <Marker 
+      position={[position.lat, position.lng]} 
+      icon={customIcon} 
+      draggable={true} 
+    />
   ) : null;
-};
-// Validation Schema
+};// Validation Schema
 const validationSchema = Yup.object({
   name: Yup.string().required('Company Name is required'),
   email: Yup.string().email('Invalid email').required('Email is required'),

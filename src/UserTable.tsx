@@ -62,7 +62,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, setSelectedItem, setForm
             </button>
 
             {dropdownIndex === index && (
-              <div className="dropdown-menu absolute  z-10 flex rounded border bg-white shadow-md">
+              <div className="dropdown-menu absolute  z-10 flex rounded border bg-white shadow-md ml-6">
                 <button
                   title="View User Details"
                   className="hover:bg-gray-200 block w-full px-4 py-2 text-left"
@@ -135,7 +135,8 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, setSelectedItem, setForm
         User List
       </h2>
 
-      <table className="border-gray-300 w-full table-auto border bg-white">
+      <div className="overflow-x-auto w-full">
+      <table className="border-gray-300 w-full table-auto border bg-white min-w-[600px]">
         <thead className="border-gray-300 top-0 bg-[#4B5563] text-white shadow-md">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
@@ -162,7 +163,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, setSelectedItem, setForm
           ))}
         </tbody>
       </table>
-
+      </div>
       {/* <EditUserModal
         isOpen={isEditModalOpen}
         user={editUser}

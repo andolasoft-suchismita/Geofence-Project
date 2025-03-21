@@ -1,12 +1,11 @@
 import API from '../axiosInstance';
-import { User } from '../../redux/slices/userSlice'; // Import User interface
 
 //  Fetch All Users
 export const fetchUsersAPI = async (company_id: number) => {
   try {
     // const response = await API.get('/v1/users');
     const response = await API.get(
-      `/companyapi/company/${company_id}/employees`
+      `/company/company/${company_id}/employees`
     );
     return response.data;
   } catch (error) {
@@ -15,20 +14,28 @@ export const fetchUsersAPI = async (company_id: number) => {
 };
 
 //  Create a New User
-export const createUserAPI = async (userData: User) => {
+export const createUserAPI = async (userData: any) => {
   try {
-    const response = await API.post('/addusersapi/addusers/', userData);
-    return response.data;
+    const response = await API.post('/users/users/', userData);
+     return response.data; //Return data; components can handle Redux updates
   } catch (error) {
     throw error;
   }
 };
+
+ 
+
+
+
 //  Update User
-export const updateUserAPI = async (id: string, userData: Partial<User>) => {
+export const updateUserAPI = async (id: string, userData: Partial<any>) => {
   try {
-    const response = await API.put(`/addusersapi/addusers/${id}`, userData);
+    const response = await API.put(`/users/users/${id}`, userData);
+
+
     return response.data;
   } catch (error) {
+    console.error("Error updating user:", error);
     throw error;
   }
 };
@@ -36,8 +43,19 @@ export const updateUserAPI = async (id: string, userData: Partial<User>) => {
 //  Delete User
 export const deleteUserAPI = async (id: string) => {
   try {
-    await API.delete(`/addusersapi/addusers/${id}`);
+    await API.delete(`/users/users/${id}`);
     return id; // Return deleted user ID for Redux state update
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const fetchCurrentUserAPI = async (user_id: string) => {
+  try {
+    const response = await API.get(`/users/users/${user_id}`); // Ensure correct API route
+    console.log("Fetched User Data:", response.data);
+
+    return response.data;
   } catch (error) {
     throw error;
   }

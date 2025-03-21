@@ -76,6 +76,7 @@ const initialState: CompanyState = {
   latitude: 28.6139,
   longitude: 77.209,
   logo: null,
+  website:""
 };
 
 const companySlice = createSlice({
