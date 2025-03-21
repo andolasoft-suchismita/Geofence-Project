@@ -50,8 +50,8 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     employee_type = Column(String(255), nullable=True)
     department = Column(String(255), nullable=True)
     profile_pic = Column(Text, nullable=True)
-    is_superuser = Column(Boolean, nullable=False, default=True)
-    is_verified = Column(Boolean, nullable=False, default=True)
+    is_superuser = Column(Boolean, nullable=True, default=False)
+    is_verified = Column(Boolean, nullable=True, default=False)
    
  
     oauth_accounts: Mapped[List[OAuthAccount]] = relationship(

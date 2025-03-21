@@ -23,6 +23,9 @@ class CompanyHolidayService:
         :return: The created CompanyHoliday object.
         """
         holiday_instance = CompanyHoliday(**holiday_data.dict())
+        if holiday_instance.start_date:
+            holiday_instance.holiday_date = holiday_instance.start_date
+            
         return await self.holiday_repository.create_holiday(holiday_instance)
 
     async def get_holiday(self, holiday_id: UUID) -> Optional[CompanyHoliday]:

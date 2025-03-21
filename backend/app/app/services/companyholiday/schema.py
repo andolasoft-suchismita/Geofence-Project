@@ -7,6 +7,11 @@ class CompanyHolidayBase(BaseModel):
     company_id: int  # Foreign key to the company
     holiday_name: str  # Name of the holiday
     holiday_date: date  # Date of the holiday
+    status: Optional[str] = None
+    holiday_type: Optional[str] = None
+    description: Optional[str] = None
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
     is_recurring: bool = False  # True if the holiday repeats yearly
 
     @field_validator("holiday_date", mode="before")
@@ -29,11 +34,21 @@ class CompanyHolidayUpdate(BaseModel):
     holiday_name: Optional[str] = None
     holiday_date: Optional[date] = None
     is_recurring: Optional[bool] = None
+    status: Optional[str] = None
+    holiday_type: Optional[str] = None
+    description: Optional[str] = None
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
 
 
 class CompanyHolidayResponse(CompanyHolidayBase):
     """Schema for returning company holiday data"""
     id: int
+    status: Optional[str] = None
+    holiday_type: Optional[str] = None
+    description: Optional[str] = None
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
     created_at: datetime
     updated_at: datetime
 

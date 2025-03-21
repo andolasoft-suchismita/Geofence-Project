@@ -5,7 +5,7 @@ from services.addusers.schema import AddUserSchema, UpdateUserSchema, UserRespon
 from typing import List, Optional
 from uuid import UUID
 from fastapi_query.pagination import PaginationParams
-from services.auth.manager import current_super_user
+from services.auth.manager import current_super_user, current_active_user
 
 AddUserRouter = APIRouter(prefix="/users", tags=["User-Management"])
 
@@ -18,7 +18,7 @@ async def create_user(user: AddUserSchema,
 
 # Get User by ID
 @AddUserRouter.get("/{user_id}", response_model=UserResponseSchema)
-async def get_user(user_id: UUID, current_iuser :User= Depends(current_super_user), service: AddUserService = Depends()):
+async def get_user(user_id: UUID, current_iuser :User= Depends(current_active_user), service: AddUserService = Depends()):
     user = await service.get_user(user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")

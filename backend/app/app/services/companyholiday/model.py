@@ -14,4 +14,10 @@ class CompanyHoliday(Base):
     is_recurring = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    status = Column(String, nullable= True)
+    holiday_type = Column(String, nullable=True)
+    description = Column(String, nullable=True)
+    start_date = Column(Date, nullable=True)
+    end_date = Column(Date, nullable=True)
+    
 
