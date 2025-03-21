@@ -9,6 +9,7 @@ or distributed without prior written permission from AndolaSoft.
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
+from services.companyevent.router import CompanyEventRouter
 from services.users.router import UserRouter
 from services.users2.router import MyUserRouter
 from services.company.router import MyCompanyRouter
@@ -122,6 +123,9 @@ MyCompanyHolidayApp.include_router(CompanyHolidayRouter)
 MyAttendanceApp = FastAPI()
 MyAttendanceApp.include_router(MyAttendanceRouter)
 
+MyCompanyEventApp = FastAPI()
+MyCompanyEventApp.include_router(CompanyEventRouter)
+
 
 app.mount("/registeredusersapi", registeredusers_app)
 app.mount("/usersapi", users_app)
@@ -130,6 +134,7 @@ app.mount("/company", MyCompanyApp)
 app.mount("/users", MyAddUserApp)
 app.mount("/companyholidays", MyCompanyHolidayApp)
 app.mount("/attendance", MyAttendanceApp)
+app.mount("/companyevent", MyCompanyEventApp)
 
 
 # Run `init_db()` on app startup
