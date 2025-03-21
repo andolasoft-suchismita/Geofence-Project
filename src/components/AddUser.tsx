@@ -210,8 +210,8 @@ const UserForm: React.FC<UserFormProps> = ({
                     className="w-full rounded border p-2"
                   >
                     <option value="">Select Role</option>
-                    <option value="Admin">Admin</option>
-                    <option value="User">User</option>
+                    <option value="admin">Admin</option>
+                    <option value="user">User</option>
                   </Field>
                   <ErrorMessage
                     name="roletype"
