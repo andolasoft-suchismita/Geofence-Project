@@ -7,13 +7,16 @@ import { showToast } from '../../utils/toast';
 import { MdEmail } from 'react-icons/md';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import API from '../../api/axiosInstance';
+import { AppDispatch } from '../../redux/store'; //  Import AppDispatch
+import {setUserInfo } from '../../redux/slices/userSlice';
 
 import { Formik, Form, Field, ErrorMessage } from 'formik'; //Use Formik for form handling
 import * as Yup from 'yup'; //Use Yup for validation schema
+import { fetchUserDetailsAPI } from '../../api/services/userService';
 
 const SignIn: React.FC = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -28,32 +31,34 @@ const SignIn: React.FC = () => {
 
   const handleSignin = async (values: { email: string; password: string }) => {
     try {
-      // Step 1: Login and get the access token
       const userData = await loginUser(values.email, values.password);
-      const token = userData.access_token;
+      const { access_token: token } = userData;
 
       if (!token) {
         showToast('Login failed: No token received!', 'error');
         return;
       }
-      // Step 2: Fetch user details from the tenants API
-      const userDetailsResponse = await API.get('/usersapi/users/tenants', {
+
+      const { data: userDetails } = await API.get('/usersapi/users/tenants', {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const user_id = userDetailsResponse.data?.user_id;
-      const company_id = userDetailsResponse.data?.tenants?.[0]?.id || null;
-      // Step 3: Store data in Redux
-      dispatch(login({ token, user_id, company_id }));
-      // Step 4: Show success message and navigate
+      const user_id = userDetails?.user_id;
+      const company_id = userDetails?.tenants?.[0]?.id || null;
+      const authData = { token, user_id, company_id };
+
+      dispatch(login(authData));
+      localStorage.setItem('authToken', JSON.stringify(authData));
+
+      const userInfo = await fetchUserDetailsAPI(user_id);
+      dispatch(setUserInfo(userInfo));
+
       showToast('Login Successful!', 'success');
       navigate('/dashboard');
     } catch (error) {
-      console.error('Error during login:', error);
       showToast('Invalid credentials', 'error');
     }
   };
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-white">
       <div className="w-full max-w-md">

@@ -11,7 +11,7 @@ import {
 } from '../api/services/userService';
 import { showToast } from '../utils/toast';
 import DeleteConfirmationModal from '../components/Modal/DeleteConfirmationModal';
-import { useSelector } from 'react-redux';
+import { useSelector ,useDispatch} from 'react-redux';
 import { RootState } from '../redux/rootReducers';
 
 const Users: React.FC = () => {
@@ -24,7 +24,8 @@ const Users: React.FC = () => {
   const company_id = useSelector(
     (state: RootState) => state.authSlice.company_id
   ); // Get company_id from Redux
-  const resetStates = () => {
+
+  const afterSubmit = () => {
     setFormType(null);
     setSelectedItem(null);
   };
@@ -56,9 +57,10 @@ const Users: React.FC = () => {
   ///////////////////////////////////////////
   const addUser = async (values: any) => {
     try {
-      const newUser = await createUserAPI(values);
-      setUsers((prev) => [...prev, newUser]); // Update users list without refetching
-      resetStates();
+      const response = await createUserAPI(values);// ✅ Call API to add user
+      const updatedData = await fetchUsersAPI(company_id);
+      if (updatedData) setUsers(updatedData);
+      afterSubmit();
       showToast('User created successfully', 'success');
     } catch (error) {
       showToast('Failed to create user', 'error');
@@ -68,13 +70,9 @@ const Users: React.FC = () => {
   const updateUser = async (id: string, values: any) => {
     try {
       await updateUserAPI(id, values);
-
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === id ? { ...user, ...values } : user
-        )
-      );
-      resetStates();
+      const updatedData = await fetchUsersAPI(company_id);
+      if (updatedData) setUsers(updatedData);
+      afterSubmit();
       showToast('User updated successfully', 'success');
     } catch (error) {
       showToast('Failed to update user', 'error');
@@ -86,7 +84,7 @@ const Users: React.FC = () => {
       await deleteUserAPI(id);
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id)); // Remove deleted user without refetching
       showToast('User deleted successfully', 'success');
-      resetStates();
+      afterSubmit();
     } catch (error) {
       showToast('Failed to delete user', 'error');
     }
@@ -129,7 +127,7 @@ const Users: React.FC = () => {
       {formType && ['create', 'edit'].includes(formType?.toLowerCase()) && (
         <UserForm
           formType={formType}
-          onClose={() => resetStates()}
+          onClose={() => afterSubmit()}
           addUser={addUser}
           updateUser={updateUser}
           selectedItem={selectedItem}
@@ -140,7 +138,7 @@ const Users: React.FC = () => {
       {formType?.toLowerCase() === 'delete' && (
         <DeleteConfirmationModal
           onConfirm={() => handleDelete(selectedItem?.id)}
-          onCancel={() => resetStates()}
+          onCancel={() => afterSubmit()}
         />
       )}
 

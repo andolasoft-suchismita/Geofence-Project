@@ -1,5 +1,4 @@
 import API from '../axiosInstance';
-import { User } from '../../redux/slices/userSlice'; // Import User interface
 
 //  Fetch All Users
 export const fetchUsersAPI = async (company_id: number) => {
@@ -15,7 +14,7 @@ export const fetchUsersAPI = async (company_id: number) => {
 };
 
 //  Create a New User
-export const createUserAPI = async (userData: User) => {
+export const createUserAPI = async (userData: any) => {
   try {
     const response = await API.post('/users/users/', userData);
     return response.data;
@@ -25,11 +24,12 @@ export const createUserAPI = async (userData: User) => {
 };
 
 //  Update User
-export const updateUserAPI = async (id: string, userData: Partial<User>) => {
+export const updateUserAPI = async (id: string, userData: Partial<any>) => {
   try {
     const response = await API.put(`/users/users/${id}`, userData);
     return response.data;
   } catch (error) {
+    console.error("Error updating user:", error);
     throw error;
   }
 };

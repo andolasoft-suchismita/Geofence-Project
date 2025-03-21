@@ -94,7 +94,7 @@ const companySlice = createSlice({
   initialState,
   reducers: {
     setCompanyData: (state, action: PayloadAction<CompanyState>) => {
-      return { ...state, ...action.payload }; // ✅ Ensures persistence
+      return { ...state, ...action.payload }; // Ensures persistence
     },
   },
 });

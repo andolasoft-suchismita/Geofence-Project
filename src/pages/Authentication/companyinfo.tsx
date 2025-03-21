@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 const CompanyInfo: React.FC = () => {
+  // userData={{
+  //   email: '',
+  //   password: '',
+  //   rePassword: ''
+  // }}
+
   const navigate = useNavigate();
   const [companyName, setCompanyName] = useState('');
   const [email, setEmail] = useState('');
