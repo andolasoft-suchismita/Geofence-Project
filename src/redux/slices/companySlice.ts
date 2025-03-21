@@ -48,7 +48,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface CompanyState {
-  website: string;
+  
   id: string;
   name: string;
   email: string;
@@ -60,7 +60,12 @@ interface CompanyState {
   zip_code: string;
   latitude: number;
   longitude: number;
-  logo: string | null;
+  logo: string ;
+  website: string;
+  description: string;
+  reg_no: string;
+  working_hours: string;
+  week_off: string;
 }
 
 const initialState: CompanyState = {
@@ -73,10 +78,16 @@ const initialState: CompanyState = {
   state: '',
   city: '',
   zip_code: '',
-  latitude: 28.6139,
-  longitude: 77.209,
-  logo: null,
+  latitude: 0,
+  longitude: 0,
+  logo: '',
+  website: '',
+  description: '',
+  reg_no: '',
+  working_hours: '',
+  week_off: '',
 };
+
 
 const companySlice = createSlice({
   name: 'company',
