@@ -132,3 +132,14 @@ class CompanyUserRepository:
         except ValueError:
             print(f"Invalid UUID format: {user_id}")
             return []
+        
+        
+    async def get_company_id(self, user_id: UUID) -> int:
+        """
+        Retrieves the CompanyUser objects associated with a specific user ID.
+        """
+        async for session in get_db():
+            async with session.begin():
+                stmt = select(CompanyUser.company_id).where(CompanyUser.user_id == str(user_id))
+                result = await session.execute(stmt)
+                return result.scalar()

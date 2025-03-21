@@ -5,6 +5,7 @@ from datetime import date, datetime, timedelta
 from geopy.distance import geodesic
 from pyparsing import Dict
 import pytz
+from services.companyuser.repository import CompanyUserRepository
 from services.companyholiday.repository import CompanyHolidayRepository
 from services.company.repository import CompanyRepository
 from services.users.repository import UserRepository
@@ -28,6 +29,7 @@ class AttendanceService:
         self.user_repository = UserRepository()
         self.company_repository = CompanyRepository()
         self.holiday_repository = CompanyHolidayRepository()
+        self.companyuser_repository = CompanyUserRepository()
 
     async def create_attendance(self, request: Request, attendance_data: AttendanceSchema, current_user: User) -> AttendanceResponseSchema:
         """
@@ -140,12 +142,51 @@ class AttendanceService:
         :param end_date: (Optional) End date filter for attendance records.
         :return: A list of AttendanceResponseSchema objects.
         """
+        user = await self.user_repository.get_user_by_id(user_id)
+        if not user:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        
+        username = user.first_name+ " " +user.last_name
         # Fetch attendance records with filters applied
         attendance_records = await self.attendance_repository.get_attendance_by_user(user_id, start_date, end_date)
         
+        company_id = await self.companyuser_repository.get_company_id(user_id)
+        company_working_hours = await self.company_repository.get_company_working_hours(company_id)
+        
+        result = []
+        for record in attendance_records:
+            working_hours = None
+            overtime = 0
+            
+            if record.check_in:
+                    if record.check_out:
+                        # ✅ Calculate working hours normally
+                        working_hours = (datetime.combine(date.today(), record.check_out) -
+                                                datetime.combine(date.today(), record.check_in)).seconds / 3600
+                        overtime = working_hours - company_working_hours
+                        overtime = overtime if overtime > 0 else 0
+                    else:
+                        # ✅ If check_out is missing, assume they are still working
+                        working_hours = (datetime.now() - datetime.combine(date.today(), record.check_in)).seconds / 3600
+            else:
+                working_hours = None
+                
+            result.append({
+                "id": record.id,
+                "user_id": record.user_id,
+                "date": record.date,
+                "check_in": record.check_in,
+                "check_out": record.check_out,
+                "status": record.status,
+                "name": username,
+                "date": record.date,  # Assuming `record` has a `date` field
+                "working_hours": working_hours,
+                "overtime": overtime,
+            })
+        
 
         # Convert records to schema and return
-        return [AttendanceResponseSchema.model_validate(record) for record in attendance_records]
+        return result
 
 
     async def update_attendance(self, attendance_id: int, attendance_data: AttendanceUpdateSchema) -> Optional[AttendanceResponseSchema]:
