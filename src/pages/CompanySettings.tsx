@@ -20,7 +20,7 @@ import { showToast } from '../utils/toast';
 import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import Select from "react-select";
+import Select from 'react-select';
 
 // Custom Marker Icon
 
@@ -80,27 +80,36 @@ const validationSchema = Yup.object({
   state: Yup.string().required('State is required'),
   city: Yup.string().required('City is required'),
   zip_code: Yup.string().required('Zip Code is required'),
-  website: Yup.string().url('Invalid URL').required('Website is required'),                                                                         
-    working_hours: Yup.number()
-      .min(1, 'Working hours must be at least 1 hour')
-      .max(24, 'Working hours cannot exceed 24 hours')
-      .required('Working hours are required'),
-  
-    holidays: Yup.array()
-      .of(Yup.string().oneOf(["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]))
-      .min(1, 'At least one holiday must be selected')
-      .required('Holidays are required'),
-  });
+  website: Yup.string().url('Invalid URL').required('Website is required'),
+  working_hours: Yup.number()
+    .min(1, 'Working hours must be at least 1 hour')
+    .max(24, 'Working hours cannot exceed 24 hours')
+    .required('Working hours are required'),
 
+  holidays: Yup.array()
+    .of(
+      Yup.string().oneOf([
+        'Sunday',
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+      ])
+    )
+    .min(1, 'At least one holiday must be selected')
+    .required('Holidays are required'),
+});
 
 const holidayOptions = [
-  { value: "Sunday", label: "Sunday" },
-  { value: "Monday", label: "Monday" },
-  { value: "Tuesday", label: "Tuesday" },
-  { value: "Wednesday", label: "Wednesday" },
-  { value: "Thursday", label: "Thursday" },
-  { value: "Friday", label: "Friday" },
-  { value: "Saturday", label: "Saturday" },
+  { value: 'Sunday', label: 'Sunday' },
+  { value: 'Monday', label: 'Monday' },
+  { value: 'Tuesday', label: 'Tuesday' },
+  { value: 'Wednesday', label: 'Wednesday' },
+  { value: 'Thursday', label: 'Thursday' },
+  { value: 'Friday', label: 'Friday' },
+  { value: 'Saturday', label: 'Saturday' },
 ];
 
 const CompanySettings = () => {
@@ -114,22 +123,17 @@ const CompanySettings = () => {
   const [loading, setLoading] = useState(true);
 
   const [logo, setLogo] = useState<string | null>(null);
-  const [position, setPosition] = useState<{ lat: number; lng: number }>({
-    lat: 28.6139,
-    lng: 77.209,
-  });
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setLogo(reader.result as string); // Store Base64 string
+        setLogo(reader.result as string); // Store Base64
       };
       reader.readAsDataURL(file);
     }
   };
-
 
   useEffect(() => {
     const fetchCompany = async () => {
@@ -137,6 +141,9 @@ const CompanySettings = () => {
         try {
           const data = await getCompanyDetails(company_id);
           dispatch(setCompanyData(data));
+          if (data.logo) {
+            setLogo(data.logo); // Set logo from API
+          }
         } catch (error) {
           console.error('Error fetching company data:', error);
         } finally {
@@ -148,27 +155,6 @@ const CompanySettings = () => {
     fetchCompany();
   }, [company_id, dispatch]);
 
-  // const handleUpdateCompany = async (values: any, { setSubmitting }: any) => {
-  //   if (!company_id) {
-  //     showToast('No company selected!');
-  //     return;
-  //   }
-
-  //   try {
-  //     console.log('Submitting data:', values); // Debugging
-  //     await validationSchema.validate(values); //  Explicit validation check
-
-  //     const updatedCompany = await updateCompany(company_id, values);
-  //     dispatch(setCompanyData(updatedCompany));
-  //     showToast('Company updated successfully!');
-  //     setSubmitting(false);
-  //   } catch (error) {
-  //     console.error('Validation/API Error:', error);
-  //     showToast(error.message || 'Failed to update company details.');
-  //     setSubmitting(false);
-  //   }
-  // };
-  
   const handleUpdateCompany = async (values: any, { setSubmitting }: any) => {
     if (!company_id) {
       showToast('No company selected!');
@@ -178,20 +164,18 @@ const CompanySettings = () => {
     try {
       await validationSchema.validate(values);
 
-       const payload = {
-      ...values,
-      holidays: Array.isArray(values.holidays) ? values.holidays : [values.holidays], // Convert to array if needed
-      logo: logo || company.logo, // Keep existing logo if not updated
-    };
+      const payload = {
+        ...values,
 
-    console.log("Sending Data:", payload); // Debugging
-    
-    const updatedCompany = await updateCompany(company_id, payload);
+        week_off: Array.isArray(values.holidays)
+          ? values.holidays.join(',')
+          : '', // Convert array to comma-separated string
+        logo: logo || company.logo, // Keep existing logo if not updated
+      };
 
-      // const updatedCompany = await updateCompany(company_id, {
-      //   ...values,
-      //   logo: logo || company.logo, // Include logo (keep old one if not changed)
-      // });
+      console.log('Sending Data:', payload); // Debugging
+
+      const updatedCompany = await updateCompany(company_id, payload);
 
       dispatch(setCompanyData(updatedCompany));
       showToast('Company updated successfully!');
@@ -207,7 +191,7 @@ const CompanySettings = () => {
     <div className="container mx-auto w-full max-w-6xl rounded-lg bg-white p-8 shadow-lg">
       {loading ? (
         <div className="flex h-screen items-center justify-center">
-          <div className="h-12 w-12 animate-spin rounded-full border-t-4 border-solid border-blue-500"></div>
+          <div className="border-gray-500 h-12 w-12 animate-spin rounded-full border-t-4 border-solid"></div>
         </div>
       ) : (
         <Formik
@@ -221,8 +205,12 @@ const CompanySettings = () => {
             city: company?.city || '',
             zip_code: company?.zip_code || '',
             website: company?.website || '',
-            working_hours: "",
-            holidays: [], 
+            description: company?.description || '',
+            working_hours: company?.working_hours
+              ? String(company.working_hours)
+              : '',
+            holidays: company?.week_off ? company.week_off.split(',') : [],
+            logo: company?.logo || '',
           }}
           validationSchema={validationSchema}
           onSubmit={handleUpdateCompany}
@@ -230,11 +218,44 @@ const CompanySettings = () => {
         >
           {({ isSubmitting }) => (
             <Form>
-              <h2 className="text-gray-800 text-2xl font-bold">
+              <h2 className="text-gray-800 mb-2 text-2xl font-bold ">
                 Company Settings
               </h2>
+
+              <div className=" mb-8 flex w-1/3">
+                <label
+                  htmlFor="logo-upload"
+                  className="relative cursor-pointer"
+                >
+                  <div className="border-gray-300 bg-gray-100 relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border">
+                    {logo ? (
+                      <img
+                        src={logo}
+                        alt="Company Logo"
+                        title="Click here to Upload Logo"
+                        className="h-full w-full rounded-full object-cover"
+                      />
+                    ) : (
+                      <img
+                        src="https://www.shutterstock.com/image-vector/image-icon-trendy-flat-style-600nw-643080895.jpg"
+                        title="Upload Company Logo Here"
+                        alt="Company Logo"
+                        className="h-full w-full"
+                      />
+                    )}
+                  </div>
+                </label>
+                <input
+                  id="logo-upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleLogoChange}
+                />
+              </div>
+
               <div className="mb-8 flex items-center justify-between">
-                <div className="w-2/3">
+                <div className="w-full">
                   <label className="text-gray-700 block text-base  font-semibold">
                     Company Name
                   </label>
@@ -251,7 +272,7 @@ const CompanySettings = () => {
                   />
                 </div>
 
-                <div className="flex w-1/3 justify-end">
+                {/* <div className="flex w-1/3 justify-end">
                   <label
                     htmlFor="logo-upload"
                     className="relative cursor-pointer"
@@ -261,6 +282,7 @@ const CompanySettings = () => {
                         <img
                           src={logo}
                           alt="Company Logo"
+                          title="Click here to Upload Logo"
                           className="h-full w-full rounded-full object-cover"
                         />
                       ) : (
@@ -280,7 +302,7 @@ const CompanySettings = () => {
                     className="hidden"
                     onChange={handleLogoChange}
                   />
-                </div>
+                </div> */}
               </div>
 
               <div className="mb-8 grid grid-cols-2 gap-6">
@@ -316,8 +338,8 @@ const CompanySettings = () => {
                   />
                 </div>
               </div>
-              
-              <div  className="mb-8">
+
+              <div className="mb-8">
                 <label className="text-gray-700 block text-base font-semibold">
                   Website
                 </label>
@@ -331,10 +353,9 @@ const CompanySettings = () => {
                   component="div"
                   className="text-sm text-red"
                 />
-
               </div>
               <div className="mb-8">
-          <label className="text-gray-700 block text-base font-semibold">
+                <label className="text-gray-700 block text-base font-semibold">
                   Address
                 </label>
                 <Field
@@ -397,64 +418,62 @@ const CompanySettings = () => {
                 </div>
 
                 <div>
-  <label className="text-gray-700 block text-base font-semibold">
-    Working Hours
-  </label>
-  <Field
-    type="number"
-    name="working_hours"
-    placeholder="Enter working hours per day"
-    className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
-  />
-  <ErrorMessage
-    name="working_hours"
-    component="div"
-    className="text-sm text-red"
-  />
-</div>
-   
-  <div>
-  <label className=" block text-base font-semibold">
-    Select Holidays
-  </label>
-  <Field name="holidays">
-    {({ field, form }: any) => (
-      <div className="w-full">
-        <Select
-          isMulti
-          options={holidayOptions}
-          value={holidayOptions.filter((option) =>
-            field.value.includes(option.value)
-          )}
-          onChange={(selectedOptions) => {
-            form.setFieldValue(
-              "holidays",
-              selectedOptions.map((option) => option.value)
-            );
-          }}
-          className="w-full"
-          styles={{
-            control: (base) => ({
-              ...base,
-              border: "1px solid ", // Match border-gray-300
-              borderRadius: "0.4rem", // Match rounded-lg
-              padding: "0.4rem", // Match p-3
-              fontSize: "1rem", // Match text size
-              width: "100%", // Ensure full width
-            }),
-          }}
-        />
-      </div>
-    )}
-  </Field>
-  <ErrorMessage
-    name="holidays"
-    component="div"
-    className="text-sm text-red"
-  />
-</div>      
+                  <label className="text-gray-700 block text-base font-semibold">
+                    Working Hours
+                  </label>
+                  <Field
+                    type="text"
+                    name="working_hours"
+                    placeholder="Enter working hours per day"
+                    className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
+                  />
+                  <ErrorMessage
+                    name="working_hours"
+                    component="div"
+                    className="text-sm text-red"
+                  />
+                </div>
 
-       
+                <div>
+                  <label className=" block text-base font-semibold">
+                    Select Holidays
+                  </label>
+                  <Field name="holidays">
+                    {({ field, form }: any) => (
+                      <div className="w-full">
+                        <Select
+                          isMulti
+                          options={holidayOptions}
+                          value={holidayOptions.filter((option) =>
+                            field.value.includes(option.value)
+                          )}
+                          onChange={(selectedOptions) => {
+                            form.setFieldValue(
+                              'holidays',
+                              selectedOptions.map((option) => option.value)
+                            );
+                          }}
+                          className="w-full"
+                          styles={{
+                            control: (base) => ({
+                              ...base,
+                              border: '1px solid ', // Match border-gray-300
+                              borderRadius: '0.4rem', // Match rounded-lg
+                              padding: '0.4rem', // Match p-3
+                              fontSize: '1rem', // Match text size
+                              width: '100%', // Ensure full width
+                            }),
+                          }}
+                        />
+                      </div>
+                    )}
+                  </Field>
+                  <ErrorMessage
+                    name="holidays"
+                    component="div"
+                    className="text-sm text-red"
+                  />
+                </div>
 
                 <div>
                   <label className="text-gray-700 block text-base text-base font-semibold">
@@ -472,14 +491,18 @@ const CompanySettings = () => {
                   />
                 </div>
               </div>
-              {/* <MapContainer
-                center={position}
-                zoom={12}
-                style={{ height: '250px', width: '100%' }}
-              >
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                <LocationMarker position={position} setPosition={setPosition} />
-              </MapContainer> */}
+              <div>
+                <label className="text-gray-700 block text-base text-base font-semibold">
+                  Description
+                </label>
+                <Field
+                  as="textarea"
+                  name="description"
+                  placeholder="Write something here about your company..."
+                  className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
+                />
+                
+              </div>
 
               <div className="mt-4 flex justify-end gap-4">
                 <button

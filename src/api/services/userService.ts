@@ -17,22 +17,16 @@ export const fetchUsersAPI = async (company_id: number) => {
 export const createUserAPI = async (userData: any) => {
   try {
     const response = await API.post('/users/users/', userData);
-     return response.data; //Return data; components can handle Redux updates
+    return response.data;
   } catch (error) {
     throw error;
   }
 };
 
- 
-
-
-
 //  Update User
 export const updateUserAPI = async (id: string, userData: Partial<any>) => {
   try {
     const response = await API.put(`/users/users/${id}`, userData);
-
-
     return response.data;
   } catch (error) {
     console.error("Error updating user:", error);
@@ -50,11 +44,10 @@ export const deleteUserAPI = async (id: string) => {
   }
 };
 
-export const fetchCurrentUserAPI = async (user_id: string) => {
+// Fetch User Details by ID
+export const fetchUserDetailsAPI = async (id: string) => {
   try {
-    const response = await API.get(`/users/users/${user_id}`); // Ensure correct API route
-    console.log("Fetched User Data:", response.data);
-
+    const response = await API.get(`/users/users/${id}`);
     return response.data;
   } catch (error) {
     throw error;
