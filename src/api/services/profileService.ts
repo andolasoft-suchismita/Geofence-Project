@@ -1,31 +1,31 @@
-import API from "../axiosInstance";
-//const API_BASE_URL = "http://192.168.2.31:9009/addusersapi/addusers"; 
+import API from '../axiosInstance';
 
-export const getUserById = async (userId) => {
+// Fetch user profile by ID
+export const getUserById = async (id: string) => {
   try {
-    const response = await API.get(`/users/users/${userId}`);
-    console.log("User Data:", response.data);
+    const response = await API.get(`/users/users/${id}`);
+    console.log('Fetched User Data:', response.data);
     return response.data;
   } catch (error) {
-    console.error("Error fetching user data:", error.response?.data || error.message);
+    console.error(
+      'Error fetching user data:',
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
 
-
-
-// Update user details by ID
-
-import axios from 'axios';
-
-const updateUser = async (userId, updatedData) => {
+// Update user profile (both fields and profile picture)
+export const updateUser = async (id: string, updatedData: any) => {
   try {
-    const response = await axios.put(`/users/users/${userId}`, updatedData);
-    return response.data; // Assuming the updated user data is returned
+    const response = await API.put(`/users/users/${id}`, updatedData);
+    console.log('Updated User Data:', response.data);
+    return response.data;
   } catch (error) {
-    console.error("Error updating user:", error);
-    throw new Error("Failed to update user data.");
+    console.error(
+      'Error updating user profile:',
+      error.response?.data || error.message
+    );
+    throw error;
   }
 };
-
-export { updateUser };
