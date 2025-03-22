@@ -11,8 +11,7 @@ class CompanyEvent(Base):
     company_id = Column(BigInteger, ForeignKey("company.id"), nullable=False)
     event_name = Column(String, nullable=False)  # Title of the event
     event_date = Column(Date, nullable=False)  # Date of the event
-    start_time = Column(Time, nullable=False)  # Start time of the event
-    end_time = Column(Time, nullable=False)  # End time of the event
+    event_time = Column(Time, nullable=False)  # Start time of the event
     event_type = Column(String, nullable=False)  # Type of event (Meeting, Training, etc.)
     description = Column(String, nullable=True)  # Brief details about the event
     created_at = Column(DateTime, default=datetime.utcnow)

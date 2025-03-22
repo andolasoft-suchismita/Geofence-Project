@@ -31,3 +31,51 @@ class CompanyEventService:
         
         event_instance = CompanyEvent(**event_data.dict())
         return await self.event_repository.create_event(event_instance)
+    
+    async def get_by_event_id(self, event_id: int) -> CompanyEvent:
+        """
+        Retrieves an event by its ID.
+        :param event_id: ID of the event to be retrieved.
+        :return: The retrieved CompanyEvent object.
+        """
+        event = await self.event_repository.get_by_event_id(event_id)
+        if not event:
+            raise HTTPException(status_code=404, detail="Event not found")
+        return event
+    
+    async def get_events_by_company(self, company_id: int) -> List[CompanyEvent]:
+        """
+        Retrieves all events for a given company.
+        :param company_id: ID of the company.
+        :return: A list of CompanyEvent objects.
+        """
+        get_company = await self.company_repository.get_by_id(company_id)
+        if not get_company:
+            raise HTTPException(status_code=404, detail="Company not found")
+        
+        return await self.event_repository.get_events_by_company(company_id)
+    
+    async def update_event(self, event_id: int, event_data: CompanyEventCreate) -> CompanyEvent:
+        """
+        Updates an existing event record.
+        :param event_id: ID of the event to be updated.
+        :param event_data: Data required to update the event.
+        :return: The updated CompanyEvent object.
+        """
+        event = await self.event_repository.get_by_event_id(event_id)
+        if not event:
+            raise HTTPException(status_code=404, detail="Event not found")
+
+        for key, value in event_data.dict().items():
+            setattr(event, key, value)
+            
+        return await self.event_repository.update_event(event)
+    
+    async def delete_event(self, event_id: int) -> None:
+        """
+        Deletes an event record.
+        :param event_id: ID of the event to be deleted.
+        """
+        event = await self.event_repository.get_by_event_id(event_id)
+        if not event:
+            raise HTTPException(status_code=404, detail="Event not found")

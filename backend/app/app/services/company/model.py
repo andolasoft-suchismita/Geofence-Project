@@ -1,4 +1,4 @@
-from sqlalchemy import BigInteger, String, Boolean, DateTime, Text
+from sqlalchemy import BigInteger, Float, String, Boolean, DateTime, Text
 from sqlalchemy.orm import mapped_column, declarative_base
 from datetime import datetime
 from db.database import Base 
@@ -24,7 +24,7 @@ class Company(Base):
     zip_code = mapped_column(String(255))
     email = mapped_column(String(255))
     logo = mapped_column(Text(255))
-    working_hours = mapped_column(String(255))
+    working_hours = mapped_column(Float)
     week_off = mapped_column(String(255))
     
     

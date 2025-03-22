@@ -44,5 +44,5 @@ class CompanyBaseResponse(BaseModel):
     currency_code: Optional[str] = None
     # api_key: Optional[str] = None
     logo: Optional[str] = None
-    working_hours: Optional[str] = None
+    working_hours : Optional[float] = None
     week_off: Optional[str] = None
