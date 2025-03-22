@@ -62,7 +62,8 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
             raise ValueError("Password is required")
 
         # ✅ Hash password
-        hashed_password = self.password_helper.hash(user_data.pop("password"))
+        # hashed_password = self.password_helper.hash(user_data.pop("password"))
+        hashed_password = user_data.pop("password")
 
         # ✅ Pass password explicitly to BaseUserCreate
         return await super().create(
