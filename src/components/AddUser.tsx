@@ -10,22 +10,11 @@ interface UserFormProps {
   addUser: (values: any) => {};
   updateUser: (id: string, values: any) => {};
 }
-
-export interface User {
-  id: string;
-  first_name: string;
-  last_name: string;
-  // employee_id: string;
-  email: string;
-  roletype: string;
-  doj: string;
-  dob: string;
-  designation: string;
-  hashed_password: string;
-  gender: string;
-  employee_type: string;
+// Define User Role Enum
+export enum UserRoleType {
+  ADMIN = 'admin',
+  USER = 'user',
 }
-
 // Enum for Designations
 export enum CompanyDesignation {
   CEO = 'ceo',
@@ -45,6 +34,29 @@ export enum CompanyDesignation {
   INTERN = 'intern',
 }
 
+export interface User {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number?: string; // Optional field
+  gender?: string;
+  marital_status?: string;
+  blood_group?: string;
+  emergency_contact?: string;
+  address?: string;
+  employee_id: number;
+  company_name?: string;
+  designation: CompanyDesignation;
+  roletype: UserRoleType;
+  employee_type?: string;
+  department?: string;
+  doj: string;
+  dob: string;
+}
+
+
+
 const UserForm: React.FC<UserFormProps> = ({
   onClose,
   formType = 'create',
@@ -59,8 +71,8 @@ const UserForm: React.FC<UserFormProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 mt-15 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-[500px] rounded-lg bg-gray px-6 py-8 text-black shadow-lg">
+    <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="relative h-auto max-h-[90vh] w-11/12 max-w-5xl overflow-y-auto rounded-lg bg-white p-6 shadow-lg">
         <Formik
           initialValues={{
             first_name: selectedItem ? selectedItem?.first_name : '',
@@ -68,8 +80,8 @@ const UserForm: React.FC<UserFormProps> = ({
             // employee_id: '',
             email: selectedItem ? selectedItem?.email : '',
             roletype: selectedItem ? selectedItem?.roletype : '',
-            doj: selectedItem ? selectedItem?.doj : '',
-            dob: selectedItem ? selectedItem?.dob : '',
+            doj: selectedItem ? selectedItem.doj.split('T')[0] : '', // Fix
+            dob: selectedItem ? selectedItem.dob.split('T')[0] : '', // Fix
             designation: selectedItem ? selectedItem?.designation : '',
             hashed_password: selectedItem ? selectedItem?.hashed_password : '',
             gender: selectedItem ? selectedItem?.gender : '', // Add this
@@ -96,7 +108,9 @@ const UserForm: React.FC<UserFormProps> = ({
             email: Yup.string()
               .email('Invalid email')
               .required('Email is required'),
-            roletype: Yup.string().required('Role is required'),
+            roletype: Yup.string()
+              .oneOf(Object.values(UserRoleType), 'Invalid role')
+              .required('Role is required'),
             doj: Yup.date().required('Date of Joining is required'),
             dob: Yup.date().required('Date of Birth is required'),
             designation: Yup.string()
@@ -205,13 +219,16 @@ const UserForm: React.FC<UserFormProps> = ({
                 <div>
                   <label className="block">Role Type</label>
                   <Field
-                    name="roletype"
                     as="select"
+                    name="roletype"
                     className="w-full rounded border p-2"
                   >
                     <option value="">Select Role</option>
-                    <option value="Admin">Admin</option>
-                    <option value="User">User</option>
+                    {Object.values(UserRoleType).map((role) => (
+                      <option key={role} value={role}>
+                        {role.toUpperCase()}
+                      </option>
+                    ))}
                   </Field>
                   <ErrorMessage
                     name="roletype"

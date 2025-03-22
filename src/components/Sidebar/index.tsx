@@ -1,32 +1,42 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useSelector } from "react-redux";
 import { NavLink } from 'react-router-dom';
 import {
   FiHome,
   FiUsers,
   FiClock,
   FiFileText,
-  FiSettings,
-  
-  FiChevronDown,
-  FiChevronRight
 } from 'react-icons/fi'; // Importing icons from react-icons
-
+import { RootState } from "../../redux/store";
 
 interface SidebarProps {
   sidebarOpen: boolean;
   setSidebarOpen: (arg: boolean) => void;
 }
-
+// const type = "user"
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const trigger = useRef<any>(null);
   const sidebar = useRef<any>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false); // State for toggling Settings menu
-
   const storedSidebarExpanded = localStorage.getItem('sidebar-expanded');
   const [sidebarExpanded, setSidebarExpanded] = useState(
-    storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true'
+    storedSidebarExpanded === "true" ? true : false
+    
   );
 
+  //  Fetch currentUser role from Redux
+  const currentUser = useSelector((state: RootState) => state.userSlice.userInfo);
+  const isAdmin = currentUser?.roletype === "admin"; // Admin role check
+
+  useEffect(() => {
+    localStorage.setItem("sidebar-expanded", sidebarExpanded.toString());
+    if (sidebarExpanded) {
+      document.querySelector("body")?.classList.add("sidebar-expanded");
+    } else {
+      document.querySelector("body")?.classList.remove("sidebar-expanded");
+    }
+  }, [sidebarExpanded]);
+ 
   // close on click outside
   useEffect(() => {
     const clickHandler = ({ target }: MouseEvent) => {
@@ -123,7 +133,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   Dashboard
                 </NavLink>
               </li>
-
+            
+              {isAdmin && (
               <li>
                 <NavLink
                   to="/users"
@@ -137,6 +148,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   Users
                 </NavLink>
               </li>
+              )} 
 
               <li>
                 <NavLink
@@ -152,6 +164,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </NavLink>
               </li>
 
+              {isAdmin && (
               <li>
                 <NavLink
                   to="/weeklyreport"
@@ -165,7 +178,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   Report
                 </NavLink>
               </li>
-
+              )}
+             
               <li>
                 <NavLink
                   to="/calendar"
@@ -179,7 +193,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   Calendar
                 </NavLink>
               </li>
-            
+              
               {/* <li>
                 <button
                   className="flex w-full items-center justify-between rounded-sm py-2 px-4 font-medium text-bodydark1 hover:bg-graydark dark:hover:bg-meta-4"

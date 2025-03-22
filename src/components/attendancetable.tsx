@@ -12,7 +12,7 @@ import {
 } from '../api/services/attendanceService';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/rootReducers';
-
+import Pagination from './UiElements/Pagination';
 const getMonthOptions = () => {
   const months = [
     'January',
@@ -119,8 +119,33 @@ const EmployeeDetailsModal = ({ employee, onClose }) => {
         header: 'Check-Out',
         cell: ({ getValue }) => formatCheck(getValue() as string),
       },
-      { accessorKey: 'status', header: 'Status' }, // Fix here
-      { accessorKey: 'overtime', header: 'Overtime' },
+      {
+        accessorKey: 'status',
+        header: 'Status',
+        cell: ({ getValue }) => {
+          const status = getValue() as string;
+          return status
+            .split('-')
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+        },
+      },
+      {
+        accessorKey: 'overtime',
+        header: 'Overtime',
+        cell: ({ getValue }) => {
+          const value = getValue() as number;
+          return formatTime(value);
+        },
+      },
+      {
+        accessorKey: 'working_hours',
+        header: 'Working Hours',
+        cell: ({ getValue }) => {
+          const value = getValue() as number;
+          return formatTime(value);
+        },
+      },
     ],
     []
   );
@@ -132,18 +157,18 @@ const EmployeeDetailsModal = ({ employee, onClose }) => {
   });
 
   return (
-    <div className="fixed left-0 top-0 flex h-full w-full items-center justify-center bg-black bg-opacity-30">
-      <div className="w-[70%] max-w-4xl overflow-hidden rounded-lg bg-white shadow-lg">
+    <div className="fixed inset-0 z-50 z-9999 flex items-center justify-center bg-black bg-opacity-50 p-4">
+      <div className="h-auto max-h-[90vh] w-11/12 max-w-5xl overflow-y-auto rounded-lg bg-white  shadow-lg">
         {/* Modal Header */}
-        <div className="bg-gray-100 flex items-center justify-between p-4">
+        <div className="bg-gray flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
-            <img
+            {/* <img
               src={employee.profile}
               alt={employee.name}
               className="h-12 w-12 rounded-full shadow-md"
-            />
+            /> */}
             <div>
-              <h2 className="text-lg font-semibold">{employee.name}</h2>
+              <h2 className="text-xl font-semibold text-black">{employee.name}</h2>
               <p className="text-gray-500 text-sm">{employee.designation}</p>
             </div>
           </div>
@@ -223,6 +248,10 @@ interface AttendanceTableProps {
   data: any[];
 }
 const AttendanceTable: React.FC<AttendanceTableProps> = ({ data }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 5; // Display 10 rows per page
+  const totalPages = Math.ceil(data.length / rowsPerPage); // Calculate total pages
+
   console.log('Received Data in Table:', data);
 
   const [attendanceData, setAttendanceData] = useState([]);
@@ -312,17 +341,22 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ data }) => {
       },
     },
   ];
+  // Slice data based on pagination
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    return data.slice(startIndex, startIndex + rowsPerPage);
+  }, [data, currentPage]);
 
   //  Initialize TanStack Table
   const table = useReactTable({
-    data,
+    data: paginatedData,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
   return (
     <div className="relative">
-      {loading && <p>Loading...</p>}
+      {/* {loading && <p>Loading...</p>} */}
 
       <table className="w-full border-collapse rounded-lg shadow-lg">
         <thead className="bg-[#4B5563] text-white">
@@ -389,6 +423,11 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ data }) => {
           onClose={() => setSelectedEmployee(null)}
         />
       )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 };
