@@ -12,7 +12,7 @@ import {setUserInfo } from '../../redux/slices/userSlice';
 
 import { Formik, Form, Field, ErrorMessage } from 'formik'; //Use Formik for form handling
 import * as Yup from 'yup'; //Use Yup for validation schema
-import { fetchUserDetailsAPI } from '../../api/services/userService';
+import { fetchCurrentUserAPI } from '../../api/services/userService';
 
 const SignIn: React.FC = () => {
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ const SignIn: React.FC = () => {
       dispatch(login(authData));
       localStorage.setItem('authToken', JSON.stringify(authData));
 
-      const userInfo = await fetchUserDetailsAPI(user_id);
+      const userInfo = await fetchCurrentUserAPI(user_id);
       dispatch(setUserInfo(userInfo));
 
       showToast('Login Successful!', 'success');

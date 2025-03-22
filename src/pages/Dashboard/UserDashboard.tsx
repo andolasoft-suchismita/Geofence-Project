@@ -19,7 +19,7 @@ import PunchModal from '../../components/PunchModal';
 import { ResponsiveContainer } from 'recharts';
 import Card from '../../components/Card';
 
-const Dashboard = () => {
+const UserDashboard = () => {
   // Monthly Present vs Absent Data
   const employeeData = [
     { month: 'Jan', present: 900, absent: 100 },
@@ -159,4 +159,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default UserDashboard;

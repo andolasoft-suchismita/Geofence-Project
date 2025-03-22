@@ -3,7 +3,7 @@ import API from "../axiosInstance";
 
 export const getUserById = async (userId) => {
   try {
-    const response = await API.get(`/addusersapi/addusers/${userId}`);
+    const response = await API.get(`/users/users/${userId}`);
     console.log("User Data:", response.data);
     return response.data;
   } catch (error) {
@@ -20,7 +20,7 @@ import axios from 'axios';
 
 const updateUser = async (userId, updatedData) => {
   try {
-    const response = await axios.put(`/addusersapi/addusers/${userId}`, updatedData);
+    const response = await axios.put(`/users/users/${userId}`, updatedData);
     return response.data; // Assuming the updated user data is returned
   } catch (error) {
     console.error("Error updating user:", error);
