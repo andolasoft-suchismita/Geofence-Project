@@ -6,6 +6,8 @@ import userReducer from "./slices/userSlice"; //  Import userSlice
 import companyReducer from './slices/companySlice'; 
 // Combine all reducers into one root reducer
 import attendanceReducer from './slices/attendanceSlice';
+import profileReducer from "./slices/profileSlice";
+
 
 const MainReducer = combineReducers({
   //Add Slices Here
@@ -14,6 +16,8 @@ const MainReducer = combineReducers({
   users: userReducer, //  Add userSlice
   company: companyReducer, // ✅ Ensure key is "company"
   attendance: attendanceReducer,
+  profile: profileReducer, 
+ 
 });
  
 // Define the root reducer function
