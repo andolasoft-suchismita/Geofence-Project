@@ -1,13 +1,5 @@
 import { useState, useEffect } from 'react';
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  useMapEvents,
-  useMap,
-} from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
 import 'leaflet-control-geocoder';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCompanyData } from '../redux/slices/companySlice';
@@ -21,54 +13,9 @@ import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import Select from 'react-select';
+import { MdDelete } from 'react-icons/md';
 
-// Custom Marker Icon
-
-const customIcon = new L.Icon({
-  iconUrl:
-    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl:
-    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
-
-// Map Click Handler
-const LocationMarker = ({
-  position,
-  setPosition,
-}: {
-  position: { lat: number; lng: number };
-  setPosition: (pos: { lat: number; lng: number }) => void;
-}) => {
-  const map = useMap();
-
-  useEffect(() => {
-    if (position) map.setView([position.lat, position.lng], 12);
-  }, [position, map]);
-
-  useMapEvents({
-    click(e) {
-      const newPosition = { lat: e.latlng.lat, lng: e.latlng.lng };
-      setPosition(newPosition);
-
-      fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${newPosition.lat}&lon=${newPosition.lng}`
-      )
-        .then((res) => res.json())
-        .then((data) => setPosition(newPosition))
-        .catch(() => alert('Failed to get address'));
-    },
-  });
-
-  return position ? (
-    <Marker 
-      position={[position.lat, position.lng]} 
-      icon={customIcon} 
-      draggable={true} 
-    />
-  ) : null;
-};// Validation Schema
+// Validation Schema
 const validationSchema = Yup.object({
   name: Yup.string().required('Company Name is required'),
   email: Yup.string().email('Invalid email').required('Email is required'),
@@ -178,7 +125,7 @@ const CompanySettings = () => {
       const updatedCompany = await updateCompany(company_id, payload);
 
       dispatch(setCompanyData(updatedCompany));
-      showToast('Company updated successfully!');
+      showToast('Company updated successfully!', 'success');
       setSubmitting(false);
     } catch (error) {
       console.error('Validation/API Error:', error);
@@ -222,38 +169,6 @@ const CompanySettings = () => {
                 Company Settings
               </h2>
 
-              <div className=" mb-8 flex w-1/3">
-                <label
-                  htmlFor="logo-upload"
-                  className="relative cursor-pointer"
-                >
-                  <div className="border-gray-300 bg-gray-100 relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border">
-                    {logo ? (
-                      <img
-                        src={logo}
-                        alt="Company Logo"
-                        title="Click here to Upload Logo"
-                        className="h-full w-full rounded-full object-cover"
-                      />
-                    ) : (
-                      <img
-                        src="https://www.shutterstock.com/image-vector/image-icon-trendy-flat-style-600nw-643080895.jpg"
-                        title="Upload Company Logo Here"
-                        alt="Company Logo"
-                        className="h-full w-full"
-                      />
-                    )}
-                  </div>
-                </label>
-                <input
-                  id="logo-upload"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleLogoChange}
-                />
-              </div>
-
               <div className="mb-8 flex items-center justify-between">
                 <div className="w-full">
                   <label className="text-gray-700 block text-base  font-semibold">
@@ -271,13 +186,11 @@ const CompanySettings = () => {
                     className="text-sm text-red"
                   />
                 </div>
-
-                {/* <div className="flex w-1/3 justify-end">
-                  <label
-                    htmlFor="logo-upload"
-                    className="relative cursor-pointer"
-                  >
-                    <div className="border-gray-300 bg-gray-100 relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border">
+                {/* Company logo */}
+                <div className="relative flex w-1/3 justify-end">
+                  <label htmlFor="logo-upload" className="cursor-pointer">
+                    {/* Move `group` class here */}
+                    <div className="border-gray-300 bg-gray-100 group relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border">
                       {logo ? (
                         <img
                           src={logo}
@@ -293,8 +206,23 @@ const CompanySettings = () => {
                           className="h-full w-full"
                         />
                       )}
+
+                      {/* Delete Button (Now inside the correct `group` div) */}
+                      {logo && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent triggering file upload
+                            setLogo(null); // Clear the logo
+                          }}
+                          className="absolute  rounded-full p-2 text-xl text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover:!opacity-100"
+                          title="Click here to Delete Logo"
+                        >
+                          <MdDelete />
+                        </button>
+                      )}
                     </div>
                   </label>
+
                   <input
                     id="logo-upload"
                     type="file"
@@ -302,7 +230,7 @@ const CompanySettings = () => {
                     className="hidden"
                     onChange={handleLogoChange}
                   />
-                </div> */}
+                </div>
               </div>
 
               <div className="mb-8 grid grid-cols-2 gap-6">
@@ -501,7 +429,6 @@ const CompanySettings = () => {
                   placeholder="Write something here about your company..."
                   className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
                 />
-                
               </div>
 
               <div className="mt-4 flex justify-end gap-4">

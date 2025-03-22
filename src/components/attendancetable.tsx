@@ -160,7 +160,7 @@ const EmployeeDetailsModal = ({ employee, onClose }) => {
     <div className="fixed inset-0 z-50 z-9999 flex items-center justify-center bg-black bg-opacity-50 p-4">
       <div className="h-auto max-h-[90vh] w-11/12 max-w-5xl overflow-y-auto rounded-lg bg-white  shadow-lg">
         {/* Modal Header */}
-        <div className="bg-gray flex items-center justify-between p-4">
+        <div className="flex items-center justify-between bg-gray p-4">
           <div className="flex items-center gap-3">
             {/* <img
               src={employee.profile}
@@ -168,7 +168,9 @@ const EmployeeDetailsModal = ({ employee, onClose }) => {
               className="h-12 w-12 rounded-full shadow-md"
             /> */}
             <div>
-              <h2 className="text-xl font-semibold text-black">{employee.name}</h2>
+              <h2 className="text-xl font-semibold text-black">
+                {employee.name}
+              </h2>
               <p className="text-gray-500 text-sm">{employee.designation}</p>
             </div>
           </div>
