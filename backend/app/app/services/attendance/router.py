@@ -4,7 +4,7 @@ from uuid import UUID
 from datetime import date, datetime
 from services.attendance.service import AttendanceService
 from services.attendance.schema import (
-    AttendanceReportSchema, AttendanceSchema, AttendanceSummarySchema, AttendanceUpdateSchema, AttendanceResponseSchema
+    AttendanceReportSchema, AttendanceSchema, AttendanceSummarySchema, AttendanceUpdateSchema, AttendanceResponseSchema, DashboardSummarySchema
 )
 from services.auth.manager import current_active_user
 from fastapi import Request
@@ -99,3 +99,10 @@ async def get_attendance_summary(
     service: AttendanceService = Depends()
 ):
     return await service.get_attendance_summary(company_id)
+
+@MyAttendanceRouter.get("/attendance_summary_by_user/{user_id}", response_model=DashboardSummarySchema)
+async def get_attendance_summary_by_user(
+    user_id: UUID,
+    service: AttendanceService = Depends()
+):
+    return await service.get_attendance_summary_by_user(user_id)

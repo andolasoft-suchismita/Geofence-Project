@@ -5,13 +5,14 @@ from datetime import date, datetime, timedelta
 from geopy.distance import geodesic
 from pyparsing import Dict
 import pytz
+from utility.tenant_info import getTenantInfo
 from services.companyuser.repository import CompanyUserRepository
 from services.companyholiday.repository import CompanyHolidayRepository
 from services.company.repository import CompanyRepository
 from services.users.repository import UserRepository
 from services.attendance.model import Attendance
 from services.attendance.repository import AttendanceRepository
-from services.attendance.schema import AttendanceReportSchema, AttendanceSchema, AttendanceStatus, AttendanceSummarySchema, AttendanceUpdateSchema, AttendanceResponseSchema
+from services.attendance.schema import AttendanceReportSchema, AttendanceSchema, AttendanceStatus, AttendanceSummarySchema, AttendanceUpdateSchema, AttendanceResponseSchema, DashboardSummarySchema, HolidaySchema, LoginOvertimeTrendSchema
 from services.users.model import User
 from config.settings import settings
 from dateutil.relativedelta import relativedelta
@@ -492,4 +493,104 @@ class AttendanceService:
             late_comings_today=late_comings_today,
             department_wise_attendance=department_wise_attendance,
             overall_attendance=overall_attendance
+        )
+        
+    async def get_attendance_summary_by_user(self, user_id: int) -> DashboardSummarySchema:
+        """
+        Retrieves attendance summary for a specific user.
+        :param user_id: ID of the user.
+        :return: DashboardSummarySchema object.
+        """
+        # Fetch upcoming holidays
+        upcoming_holidays = await self.holiday_repository.get_upcoming_holidays_for_user(23)
+        upcoming_holiday = (
+            HolidaySchema(name=upcoming_holidays[0].holiday_name, date=str(upcoming_holidays[0].holiday_date))
+            if upcoming_holidays else None
+        )
+
+        # Fetch attendance records
+        attendance_records = await self.attendance_repository.get_attendance_by_user(user_id)
+        if not attendance_records:
+            return DashboardSummarySchema(
+                upcoming_holiday=upcoming_holiday,
+                total_invested_time=0,
+                total_overtime=0,
+                total_present_days=0,
+                total_absent_days=0,
+                login_overtime_trends={}
+            )
+
+        # First & last attendance dates
+        first_attendance = min(record.date for record in attendance_records)
+        last_attendance = max(record.date for record in attendance_records)
+        start_date, end_date = first_attendance, last_attendance
+
+        # Get company working hours
+        company = await getTenantInfo(user_id)
+        company_working_hours = company.working_hours
+
+        # Fetch holidays & week-offs
+        company_holidays = await self.holiday_repository.get_holidays_by_company(23)
+        holiday_dates = {holiday.holiday_date for holiday in company_holidays if start_date <= holiday.holiday_date <= end_date}
+        company_week_off = await self.company_repository.get_company_week_off(company.id) or []
+
+        # Convert week-offs into actual dates
+        week_off_dates = set()
+        for day_offset in range((end_date - start_date).days + 1):
+            current_date = start_date + timedelta(days=day_offset)
+            if current_date.strftime("%A") in company_week_off:
+                week_off_dates.add(current_date)
+
+        # Non-working days (holidays + week-offs)
+        non_working_days = holiday_dates.union(week_off_dates)
+
+        # Attended dates & working days
+        attended_dates = {record.date for record in attendance_records if record.check_in and record.check_out}
+        all_working_days = {start_date + timedelta(days=n) for n in range((end_date - start_date).days + 1)} - non_working_days
+
+        # Calculate present & absent days
+        total_present_days = len(attended_dates)
+        total_absent_days = len(all_working_days - attended_dates)
+
+        # Group attendance by month
+        login_overtime_trends = {}
+        total_invested_hours, total_overtime_hours = 0, 0
+
+        for record in attendance_records:
+            if record.date in non_working_days or not (record.check_in and record.check_out):
+                continue  # Skip non-working days or incomplete records
+            
+            check_in_datetime = datetime.combine(record.date, record.check_in)
+            check_out_datetime = datetime.combine(record.date, record.check_out)
+
+        
+            worked_hours = (check_out_datetime - check_in_datetime).total_seconds() / 3600
+            month_key = record.date.strftime("%Y-%m")
+            if month_key not in login_overtime_trends:
+                login_overtime_trends[month_key] = {"login_hours": 0, "working_days": 0}
+
+            login_overtime_trends[month_key]["login_hours"] += worked_hours
+            login_overtime_trends[month_key]["working_days"] += 1
+
+        # Compute final overtime trends
+        final_trends = {}
+        for month, data in login_overtime_trends.items():
+            total_company_hours = company_working_hours * data["working_days"]
+            overtime = max(0, data["login_hours"] - total_company_hours)
+            total_invested_hours += data["login_hours"]
+            total_overtime_hours += overtime
+
+            final_trends[month] = LoginOvertimeTrendSchema(
+                login_hours=round(data["login_hours"], 2),
+                overtime=round(overtime, 2),
+                company_hours=round(total_company_hours, 2)
+            )
+
+        return DashboardSummarySchema(
+            upcoming_holiday=upcoming_holiday,
+            total_invested_time=round(total_invested_hours, 2),
+            total_overtime=round(total_overtime_hours, 2),
+            total_present_days=total_present_days,
+            total_absent_days=total_absent_days,
+            login_overtime_trends=final_trends
         )

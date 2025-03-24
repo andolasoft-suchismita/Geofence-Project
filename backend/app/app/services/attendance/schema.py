@@ -71,3 +71,26 @@ class AttendanceSummarySchema(BaseModel):
     overall_attendance: Optional[Dict[str, float]] = None  # ✅ {"present": %, "absent": %}
 
     model_config = ConfigDict(from_attributes=True)  # ✅ Ensures ORM compatibility
+    
+class HolidaySchema(BaseModel):
+    name: str
+    date: str
+    
+    model_config = ConfigDict(from_attributes=True)
+    
+class LoginOvertimeTrendSchema(BaseModel):
+    login_hours: Optional[float]
+    overtime: Optional[float]
+    company_hours: Optional[float]
+    
+    model_config = ConfigDict(from_attributes=True)
+
+class DashboardSummarySchema(BaseModel):
+    upcoming_holiday: Optional[HolidaySchema]
+    total_invested_time: Optional[float]  # Total working hours
+    total_overtime: Optional[float]  # Total overtime hours
+    total_present_days: Optional[float]  # Total days the user was present ✅
+    total_absent_days: Optional[float]  # Total days the user was absent ✅
+    login_overtime_trends: Dict[str, LoginOvertimeTrendSchema]
+
+    model_config = ConfigDict(from_attributes=True)

@@ -1,3 +1,4 @@
+from datetime import date
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from db.database import get_db
@@ -91,3 +92,14 @@ class CompanyHolidayRepository:
                     await session.delete(holiday_to_delete)
             await session.commit()
         return True
+    
+    async def get_upcoming_holidays_for_user(self, company_id: int) -> CompanyHoliday:
+        """
+        Retrieve upcoming holidays for a given company.
+        :param company_id: ID of the company.
+        :return: List of upcoming holidays.
+        """
+        async for session in get_db():
+            query = select(CompanyHoliday).filter(CompanyHoliday.company_id == company_id, CompanyHoliday.start_date >= date.today())
+            result = await session.execute(query)
+            return result.scalars().all()
