@@ -96,3 +96,4 @@ const handleAddEvent = (newEvent) => {
 };
 
 export default CalendarPage;
+

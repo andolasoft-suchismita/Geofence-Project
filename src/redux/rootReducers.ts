@@ -7,6 +7,9 @@ import companyReducer from './slices/companySlice';
 // Combine all reducers into one root reducer
 import attendanceReducer from './slices/attendanceSlice';
 import profileReducer from "./slices/profileSlice";
+import holidayReducer from './slices/holidaySlice';
+import dashboardReducer from "./slices/userdashboardSlice";
+
 
 
 const MainReducer = combineReducers({
@@ -16,7 +19,9 @@ const MainReducer = combineReducers({
   users: userReducer, //  Add userSlice
   company: companyReducer, // ✅ Ensure key is "company"
   attendance: attendanceReducer,
-  profile: profileReducer, 
+  profile: profileReducer,
+  holidays: holidayReducer,
+  dashboard: dashboardReducer,
  
 });
  
