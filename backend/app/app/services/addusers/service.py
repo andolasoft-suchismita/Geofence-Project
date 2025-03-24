@@ -1,11 +1,12 @@
 from typing import List
 from fastapi import Depends, UploadFile
+from services.company.repository import CompanyRepository
 from utility.get_tenant_name import getTenantInfo
 from services.companyuser.repository import CompanyUserRepository
 from services.companyuser.model import CompanyUser
 from services.users.model import User
 from services.addusers.repository import AddUserRepository
-from services.addusers.schema import AddUserSchema
+from services.addusers.schema import AddUserSchema, UserResponseSchema
 from typing import List, Optional
 from services.addusers.schema import AddUserSchema, UpdateUserSchema
 from uuid import UUID
@@ -23,6 +24,7 @@ class AddUserService:
         self.adduser_repository = adduser_repository
         self.pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
         self.company_user_repository =  CompanyUserRepository()
+        self.company_repository = CompanyRepository()
 
     async def create_adduser(self, adduser_data: AddUserSchema,current_super_user:User) -> User:
         """
@@ -54,7 +56,16 @@ class AddUserService:
         :param user_id: UUID of the user.
         :return: The User object if found, otherwise None.
         """
-        return await self.adduser_repository.get_user(user_id)
+        company_id = await self.company_user_repository.get_company_id(str(user_id))
+        company = await self.company_repository.get_by_id(company_id)
+        
+        user = await self.adduser_repository.get_user(user_id)
+        
+        if user:
+            user_response = UserResponseSchema(**user.__dict__)
+            user_response.company_name = company.name if company else None
+            return user_response
+        return None
 
     async def get_user_by_email(self, email: str) -> Optional[User]:
         """
