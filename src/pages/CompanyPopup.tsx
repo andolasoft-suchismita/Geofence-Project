@@ -32,7 +32,7 @@ const CompanyPopup = ({ onClose }: { onClose: () => void }) => {
   ) => {
     try {
       const response = await API.post(
-        '/companyapi/company/create',
+        '/company/company/create',
         {
           name: values.companyName,
           email: values.companyEmail,
@@ -44,7 +44,7 @@ const CompanyPopup = ({ onClose }: { onClose: () => void }) => {
 
       // Update Redux store with new company_id
       dispatch(login({ token, user_id, company_id: newCompanyId }));
-      showToast('Company created Successfully!')
+      showToast('Company created Successfully!');
       onClose(); // Close popup after successful creation
     } catch (error) {
       showToast('Error creating company');
