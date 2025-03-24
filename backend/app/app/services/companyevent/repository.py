@@ -1,3 +1,4 @@
+from fastapi import Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from services.companyevent.model import CompanyEvent
@@ -27,14 +28,13 @@ class CompanyEventRepository:
             await session.refresh(event)
         return event
     
-    async def get_by_event_id(self, event_id: int) -> CompanyEvent | None:
-        """
-        Retrieve an event by its ID.
-        """
-        async with self.session as session:  # Ensure proper session handling
+    async def get_by_event_id(self, event_id: int, session: AsyncSession = Depends(get_db)) -> CompanyEvent | None:
+        async for session in get_db():
             query = select(CompanyEvent).where(CompanyEvent.id == event_id)
             result = await session.execute(query)
-            return result.scalar_one_or_none()  # Fetches a single row or None
+            event = result.scalar_one_or_none()
+            return event
+
                 
     
     async def get_events_by_company(self, company_id: int) -> List[CompanyEvent]:
@@ -50,7 +50,7 @@ class CompanyEventRepository:
                 events = result.scalars().all()
                 return events
             
-    async def update_event(self, event_id: int, event_data: CompanyEvent) -> CompanyEvent:
+    async def update_event(self, event_id: int, event_data: dict) -> CompanyEvent:
         """
         Update an existing event in the database.
         :param event_id: ID of the event to be updated.
@@ -58,13 +58,31 @@ class CompanyEventRepository:
         :return: The updated CompanyEvent object.
         """
         async for session in get_db():
+            async with session.begin(): 
+                existing_event = await session.get(CompanyEvent, event_id)
+                if not existing_event:
+                    raise HTTPException(status_code=404, detail="Event not found")
+
+                # Update the fields dynamically
+                for key, value in event_data.items():
+                    setattr(existing_event, key, value)
+
+            await session.commit()
+            await session.refresh(existing_event)
+            return existing_event
+
+
+        
+    async def delete_event(self, event_id: int) -> None:
+        """
+        Delete an event from the database.
+        :param event_id: ID of the event to be deleted.
+        """
+        async for session in get_db():
             async with session.begin():
-                query = select(CompanyEvent).filter(CompanyEvent.id == event_id)
-                result = await session.execute(query)
-                event = result.scalar()
-                if event:
-                    for key, value in event_data.dict().items():
-                        setattr(event, key, value)
-                    await session.commit()
-                    await session.refresh(event)
-                return event
+                existing_event = await session.get(CompanyEvent, event_id)
+                if not existing_event:
+                    raise HTTPException(status_code=404, detail="Event not found")
+                await session.delete(existing_event)
+                await session.commit()
+            return existing_event

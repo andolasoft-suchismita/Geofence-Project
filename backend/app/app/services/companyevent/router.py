@@ -25,7 +25,7 @@ async def get_events(
 ):
     return await service.get_events_by_company(company_id)
 
-@CompanyEventRouter.get("/{event_id}", response_model=CompanyEventResponse)
+@CompanyEventRouter.get("/event/{event_id}", response_model=CompanyEventResponse)
 async def get_event(
     event_id: int,
     service: CompanyEventService = Depends()
@@ -40,9 +40,13 @@ async def update_event(
 ):
     return await service.update_event(event_id, event_data)
 
-@CompanyEventRouter.delete("/{event_id}", status_code=204)
+@CompanyEventRouter.delete("/delete/{event_id}", response_model=dict)
 async def delete_event(
     event_id: int,
     service: CompanyEventService = Depends()
 ):
-    return await service.delete_event(event_id)
+    deleted_event =  await service.delete_event(event_id)
+    if deleted_event:
+        return {"message": f"Event with id {deleted_event.id} deleted successfully"}
+    else:
+        raise HTTPException(status_code=404, detail="Event not found")

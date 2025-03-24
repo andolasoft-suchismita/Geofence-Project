@@ -66,10 +66,9 @@ class CompanyEventService:
         if not event:
             raise HTTPException(status_code=404, detail="Event not found")
 
-        for key, value in event_data.dict().items():
-            setattr(event, key, value)
+        update_data = event_data.model_dump()
             
-        return await self.event_repository.update_event(event)
+        return await self.event_repository.update_event(event_id, update_data)
     
     async def delete_event(self, event_id: int) -> None:
         """
@@ -79,3 +78,9 @@ class CompanyEventService:
         event = await self.event_repository.get_by_event_id(event_id)
         if not event:
             raise HTTPException(status_code=404, detail="Event not found")
+        
+        delete_event = await self.event_repository.delete_event(event_id)
+        
+        if not delete_event:
+            raise HTTPException(status_code=500, detail="Failed to delete event")
+        return delete_event
