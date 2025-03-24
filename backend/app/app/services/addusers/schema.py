@@ -97,6 +97,7 @@ class UserResponseSchema(BaseModel):
     doj: Optional[date] = None
     dob: Optional[date] = None
     profile_pic: Optional[str]=None
+    is_superuser: Optional[bool] = None
     
     # ✅ Convert datetime to date for both doj and dob
     @field_validator("doj", "dob", mode="before")

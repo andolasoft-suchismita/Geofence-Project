@@ -57,8 +57,8 @@ async def get_attendance_by_date(
 
     attendance_records = await service.get_attendance_by_date(attendance_date, company_id)
 
-    if not attendance_records:
-        raise HTTPException(status_code=404, detail="No attendance records found for this date")
+    # if not attendance_records:
+    #     raise HTTPException(status_code=404, detail="No attendance records found for this date")
 
     return attendance_records
 ###  **Update Attendance**
@@ -84,7 +84,7 @@ async def delete_attendance(
         raise HTTPException(status_code=404, detail="Attendance record not found")
     return {"message": "Attendance record deleted successfully"}
 
-@MyAttendanceRouter.get("/attendance_reports/{company_id}/months{month_name}/year{year}", response_model=List[AttendanceReportSchema])
+@MyAttendanceRouter.get("/attendance_reports/{company_id}/months/{month_name}/year{year}", response_model=List[AttendanceReportSchema])
 async def get_attendance_reports(
     company_id: int,
     month_name: str,

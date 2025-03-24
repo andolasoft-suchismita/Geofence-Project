@@ -26,7 +26,7 @@ async def get_user(user_id: UUID, current_iuser :User= Depends(current_active_us
 
 # Update User
 @AddUserRouter.put("/{user_id}", response_model=UserResponseSchema)
-async def update_user(user_id: UUID, user_data: UpdateUserSchema,  current_iuser :User= Depends(current_super_user), service: AddUserService = Depends()):
+async def update_user(user_id: UUID, user_data: UpdateUserSchema,  current_iuser :User= Depends(current_active_user), service: AddUserService = Depends()):
     updated_user = await service.update_user(user_id, user_data)
     if not updated_user:
         raise HTTPException(status_code=404, detail="User not found or update failed")
@@ -44,7 +44,7 @@ async def update_user(user_id: UUID, user_data: UpdateUserSchema,  current_iuser
 
 # Delete User
 @AddUserRouter.delete("/{user_id}", response_model=dict)
-async def delete_user(user_id: UUID, current_iuser :User= Depends(current_super_user), service: AddUserService = Depends()):
+async def delete_user(user_id: UUID, current_iuser :User= Depends(current_active_user), service: AddUserService = Depends()):
     deleted = await service.delete_user(user_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="User not found")
