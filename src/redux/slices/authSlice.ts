@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction} from "@reduxjs/toolkit";
-import { fetchCurrentUserAPI } from "../../api/services/userService"; // ✅ Import function
-import { RootState } from "../../redux/store"; // ✅ Import RootState for selectors
+import { fetchCurrentUserAPI } from "../../api/services/userService"; // Import function
+import { RootState } from "../../redux/store"; // Import RootState for selectors
 
 
 
@@ -10,7 +10,7 @@ interface AuthState {
   token: string | null;
   user_id: string | null;
   company_id: number | null;
-  roletype: string | null; // ✅ Added role field
+  roletype: string | null; // Added role field
   user: {
     id: any;
     name: string;
@@ -23,7 +23,7 @@ const initialState: AuthState = {
   token: null,
   user_id: null,
   company_id: null,
-  roletype:  "null",// ✅ Initialize role
+  roletype:  "null",// Initialize role
   user: null,
 };
  
@@ -46,7 +46,7 @@ const authSlice = createSlice({
       state.user_id = action.payload.user_id;
       state.company_id = action.payload.company_id;
 
-      // // ✅ Default to "pending" on signup
+      // // Default to "pending" on signup
       // state.roletype = "null";
       
       localStorage.setItem('authToken',
@@ -55,9 +55,9 @@ const authSlice = createSlice({
    
     
 
- // ✅ New action to update role after profile update
+ // New action to update role after profile update
  updateRole: (state, action: PayloadAction<{ roletype: string }>) => {
-   const normalizedRole = action.payload.roletype.trim().toLowerCase(); // ✅ Normalize
+   const normalizedRole = action.payload.roletype.trim().toLowerCase(); //Normalize
    console.log("Updated Role in Redux:", normalizedRole);
 
    state.roletype = normalizedRole;
@@ -65,7 +65,7 @@ const authSlice = createSlice({
      "authToken",
      JSON.stringify({
        ...JSON.parse(localStorage.getItem("authToken") || "{}"),
-       roletype: normalizedRole, // ✅ Update role in localStorage
+       roletype: normalizedRole, // Update role in localStorage
      })
    );
  },
@@ -77,7 +77,7 @@ const authSlice = createSlice({
       state.token = null;
       state.user_id = null;
       state.company_id = null;
-      state.roletype = "null";// ✅ Clear role on logout
+      state.roletype = "null";// Clear role on logout
       localStorage.removeItem('authToken');
     },
   },

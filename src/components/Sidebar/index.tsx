@@ -24,9 +24,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     
   );
 
+  const menuItems = [
+    { name: "Dashboard", path: "/dashboard", allowedRoles: ["admin", "user"] },
+    { name: "Users", path: "/users", allowedRoles: ["admin"] }, // Only admin
+    { name: "Reports", path: "/reports", allowedRoles: ["admin"] }, // Only admin
+    { name: "Calender", path: "/", allowedRoles: ["admin", "user"] }
+  ];
+
   //  Fetch currentUser role from Redux
   const currentUser = useSelector((state: RootState) => state.userSlice.userInfo);
-  const isAdmin = currentUser?.roletype === "admin"; // Admin role check
+  const isAdmin = currentUser?.roletype === "admin"; 
+  // .is_superuser == true ; // Admin role check
 
   useEffect(() => {
     localStorage.setItem("sidebar-expanded", sidebarExpanded.toString());
@@ -230,3 +238,5 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 };
 
 export default Sidebar;
+ 
+// isAdmin ? <AdminDashboard/> : <UserDashboard/>

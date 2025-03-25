@@ -15,11 +15,7 @@ import { punchIn, punchOut } from '../redux/slices/attendanceSlice';
 import { AppDispatch } from '../redux/store';
 import { showToast } from '../utils/toast';
 import { useMemo } from 'react';
-import {
-  getAttendanceByDate,
-  getAttendanceSummary,
-} from '../api/services/attendanceService';
-import Card from '../components/Card';
+import { getAttendanceByDate } from '../api/services/attendanceService';
 const Attendance: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>(); //  Type dispatch with AppDispatch
   const [showModal, setShowModal] = useState(true);
@@ -30,7 +26,7 @@ const Attendance: React.FC = () => {
     null,
     null,
   ]);
-  // const [startDate, endDate] = dateRange;
+  const [startDate, endDate] = dateRange;
   const [attendanceData, setAttendanceData] = useState([]);
 
   const [error, setError] = useState<string | null>(null);
@@ -46,14 +42,7 @@ const Attendance: React.FC = () => {
   const userAttendance = useSelector(
     (state: RootState) => state.attendance[user_id] || []
   );
-  const [summary, setSummary] = useState({
-    total: 0,
-    present: 0,
-    absentees: 0,
-    late: 0,
-  });
 
-  //Get coordinates Function
   const getCoordinates = async () => {
     return new Promise<{ lat: number; lng: number }>((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(
@@ -72,7 +61,6 @@ const Attendance: React.FC = () => {
     });
   };
 
-  ///////////////////
   const isPunchedIn =
     userAttendance.length > 0 &&
     !userAttendance[userAttendance.length - 1].punchOut;
@@ -102,7 +90,6 @@ const Attendance: React.FC = () => {
     }
   };
 
-  ////////////////////
   const handlePunchOut = async () => {
     const attendance_id = localStorage.getItem('attendance_id');
     if (!attendance_id) return alert('⚠️ No active attendance record found!');
@@ -177,22 +164,6 @@ const Attendance: React.FC = () => {
     console.log('Fetched Attendance Data:', attendanceData);
   }, [attendanceData]);
 
-  // Get Attendance Summary
-  useEffect(() => {
-    if (!company_id) return;
-
-    const fetchSummary = async () => {
-      try {
-        const data = await getAttendanceSummary(company_id);
-        setSummary(data);
-      } catch (error) {
-        console.error('Failed to load attendance summary.');
-      }
-    };
-
-    fetchSummary();
-  }, [company_id]);
-
   return (
     <div className="p-2">
       {/* Date Selector & Buttons */}
@@ -242,28 +213,55 @@ const Attendance: React.FC = () => {
       </div>
 
       {/* Attendance Summary */}
-      <div className="mb-6 ml-4 flex grid grid-cols-1 gap-4 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Total Employees */}
-        <div>
-          <Card title="Total Employee" count={summary.total} type="total" />
+      <div className="mb-6 ml-4 flex gap-4">
+        {/* Present Summary */}
+        <div className="w-1/3 rounded-lg bg-white p-4 shadow">
+          <h3 className="text-lg font-bold">Present Summary</h3>
+          <div className="mt-2 grid grid-cols-3 gap-4 text-center">
+            <div>
+              <p className="text-gray-500 text-sm">On time</p>
+              <p className="text-xl font-bold">265</p>
+            </div>
+            <div>
+              <p className="text-gray-500 text-sm">Late clock-in</p>
+              <p className="text-xl font-bold">62</p>
+            </div>
+            <div>
+              <p className="text-gray-500 text-sm">Early clock-in</p>
+              <p className="text-xl font-bold">224</p>
+            </div>
+          </div>
         </div>
-        {/* Present */}
-        <div>
-          <Card
-            title="Present Summary"
-            count={summary.present}
-            type="present"
-          />
-        </div>
-        {/* Absentees */}
-        <Card
-          title="Absent Summary"
-          count={summary.absentees}
-          type="absentees"
-        />
 
-        {/* Late Employees */}
-        <Card title="Late Comings" count={summary.late} type="late" />
+        {/* Not Present Summary */}
+        <div className="w-1/3 rounded-lg bg-white p-4 shadow">
+          <h3 className="text-lg font-bold">Not Present Summary</h3>
+          <div className="mt-2 grid grid-cols-2 gap-4 text-center">
+            <div>
+              <p className="text-gray-500 text-sm">Absent</p>
+              <p className="text-xl font-bold">42</p>
+            </div>
+            <div>
+              <p className="text-gray-500 text-sm">No clock-in</p>
+              <p className="text-xl font-bold">36</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Leave Summary */}
+        <div className="w-1/3 rounded-lg bg-white p-4 shadow">
+          <h3 className="text-lg font-bold">Leave Summary</h3>
+          <div className="mt-2 grid grid-cols-2 gap-4 text-center">
+            <div>
+              <p className="text-gray-500 text-sm">Day off</p>
+              <p className="text-xl font-bold">0</p>
+            </div>
+            <div>
+              <p className="text-gray-500 text-sm">Time off</p>
+              <p className="text-xl font-bold">0</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Filters Section */}
@@ -271,9 +269,6 @@ const Attendance: React.FC = () => {
         {/* Search Bar */}
         <div className="relative flex w-72 items-center rounded-lg shadow-md">
           <div className="relative flex w-72 items-center rounded-lg shadow-md">
-            <span className="text-gray-400 absolute pl-4">
-              <FaSearch />
-            </span>
             <input
               type="text"
               placeholder="Search employee"
@@ -282,16 +277,11 @@ const Attendance: React.FC = () => {
                 console.log('Search Query:', e.target.value); // Debugging log
                 setSearchQuery(e.target.value);
               }}
-              className="w-full rounded-lg py-2 pl-10 pr-10 focus:outline-none"
+              className="w-full rounded-lg py-2 pl-3 pr-10 focus:outline-none"
             />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="text-gray-400 hover:text-gray-600 absolute right-3"
-              >
-                ✕
-              </button>
-            )}
+            <span className="text-gray-400 absolute right-3">
+              <FaSearch />
+            </span>
           </div>
         </div>
 
