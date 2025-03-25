@@ -285,11 +285,11 @@ const DropdownUser = () => {
       My Profile
     </Link>
   </li>
-  <li>
+  {/* <li>
     <Link to="/companysettings" className="flex items-center gap-3.5 text-sm font-medium hover:text-primary lg:text-base">
       Company Setting
     </Link>
-  </li>
+  </li> */}
 </ul>
 
         <button

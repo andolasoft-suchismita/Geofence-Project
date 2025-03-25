@@ -11,7 +11,7 @@ import {
 } from '../api/services/userService';
 import { showToast } from '../utils/toast';
 import DeleteConfirmationModal from '../components/Modal/DeleteConfirmationModal';
-import { useSelector ,useDispatch} from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/rootReducers';
 
 const Users: React.FC = () => {
@@ -50,14 +50,17 @@ const Users: React.FC = () => {
   // Filter users based on search input
   const filteredUsers = users.filter(
     (user) =>
-      user.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+      (user.first_name ?? '')
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      (user.last_name ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (user.email ?? '').toLowerCase().includes(searchTerm.toLowerCase())
   );
+
   ///////////////////////////////////////////
   const addUser = async (values: any) => {
     try {
-      const response = await createUserAPI(values);// ✅ Call API to add user
+      const response = await createUserAPI(values); // ✅ Call API to add user
       const updatedData = await fetchUsersAPI(company_id);
       if (updatedData) setUsers(updatedData);
       afterSubmit();
