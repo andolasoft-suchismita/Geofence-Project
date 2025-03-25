@@ -42,3 +42,4 @@ const DetailsModal = ({ event, setIsOpen }) => {
   
   export default DetailsModal;
   
+

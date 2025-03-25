@@ -199,3 +199,5 @@ const HolidayModal = ({ setIsOpen, addEvent }) => {
 };
 
 export default HolidayModal;
+
+
