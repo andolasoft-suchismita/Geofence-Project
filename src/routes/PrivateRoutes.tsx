@@ -6,11 +6,12 @@ import CompanySettings from '../pages/CompanySettings';
 import DefaultLayout from '../layout/DefaultLayout';
 import Users from '../pages/Users';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-// import DashboardHome from '../pages/dashboard';
+import DashboardHome from '../pages/dashboard';
 import UserDashboard from '../pages/dashboard/UserDashboard';
 import NotFoundPage from '../pages/NotFoundPage';
 
 import { useEffect } from 'react';
+import { truncateByDomain } from 'recharts/types/util/ChartUtils';
 // import Users from '../pages/dashboard/Users';
 // import Attendance from '../pages/dashboard/Attendance';
 // import WeeklyReport from '../pages/dashboard/WeeklyReport';
@@ -26,11 +27,16 @@ const PrivateRoutes = () => {
     }
   }, [location.pathname]);
 
+  const is_superuser = true;
+
   return (
     <DefaultLayout>
       <Routes>
         {/* <Route path="/dashboard" element={<DashboardHome />} /> */}
-         <Route path="/dashboard" element={<UserDashboard />} />
+        <Route
+          path="/dashboard"
+          element={is_superuser ? <DashboardHome /> : <UserDashboard />}
+        />
         <Route path="/attendance" element={<Attendance />} />
         <Route path="/weeklyreport" element={<WeeklyReport />} />
         <Route path="/companysettings" element={<CompanySettings />} />

@@ -20,6 +20,7 @@ import {
   getAttendanceSummary,
 } from '../api/services/attendanceService';
 import Card from '../components/Card';
+
 const Attendance: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>(); //  Type dispatch with AppDispatch
   const [showModal, setShowModal] = useState(true);
