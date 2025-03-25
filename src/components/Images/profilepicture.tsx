@@ -101,7 +101,7 @@ const ProfilePicture = ({ profilePic, updateProfilePicture , isEditing }: Profil
   };
 
   const handleRemovePicture = () => {
-    updateProfilePicture(null); // Reset to default
+    updateProfilePicture(""); // Reset to default
   };
 
   return (

@@ -26,7 +26,7 @@ export const  getattendanceReports = async (
     console.log("API Response:", response.data); 
     return response.data;
   } catch (error) {
-    console.error("Error fetching attendance reports:", error);
+    console.error("Error fetching attendance reports:",  error?.response?.data || error.message);
     throw error;
   }
 };

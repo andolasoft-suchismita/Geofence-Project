@@ -23,7 +23,7 @@ const MainReducer = combineReducers({
   dashboard:dashboardSlice,
   profile: profileReducer,
   holidays: holidayReducer,
-  dashboard: dashboardReducer,
+  userdashboard: dashboardReducer,
  
 });
  

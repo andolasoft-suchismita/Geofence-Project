@@ -180,6 +180,7 @@ import EditProfile from "../components/EditProfile";
 import { getUserById, updateUser } from "../api/services/profileService";
 import ProfilePicture from "../components/Images/profilepicture";
 import { RootState } from "../redux/store";
+import { showToast } from "../utils/toast";
  
 const ProfileSettings = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -222,43 +223,64 @@ const ProfileSettings = () => {
     setIsEditing(false);
   };
  
-  const handleSave = async (updatedData: any) => {
-  //   try {
-  //     await updateUser(userId, updatedData);
-  //     setDetails(updatedData);
-  //     setIsEditing(false);
-  //   } catch (error) {
-  //     console.error("Failed to update user:", error);
-  //     setError("Error updating profile. Try again.");
-  //   }
-  // };
+//   const handleSave = async (updatedData: any) => {
+//   //   try {
+//   //     await updateUser(userId, updatedData);
+//   //     setDetails(updatedData);
+//   //     setIsEditing(false);
+//   //   } catch (error) {
+//   //     console.error("Failed to update user:", error);
+//   //     setError("Error updating profile. Try again.");
+//   //   }
+//   // };
+//   try {
+//     const updatedData = { ...editData };
+//     await updateUser(userId, updatedData);
+//     setDetails(updatedData);
+//     setIsEditing(false);
+//     // showToast("Edit failed!",'error')
+//   } catch (error) {
+//     console.error("Failed to update user:", error);
+//     setError("Error updating profile. Try again.");
+//   }
+// };
+const handleSave = async (updatedData: any) => {
   try {
-    const updatedData = { ...editData };
-    await updateUser(userId, updatedData);
-    setDetails(updatedData);
+    await updateUser(userId, updatedData); // API call to update user
+
+    // Fetch updated user details again from the API
+    const updatedUserDetails = await getUserById(userId);
+    
+    setDetails(updatedUserDetails);
     setIsEditing(false);
+
+    //  Show success toast
+    showToast("Profile updated successfully!", "success");
   } catch (error) {
     console.error("Failed to update user:", error);
     setError("Error updating profile. Try again.");
+    
+    // Show error toast
+    showToast("Failed to update profile!", "error");
   }
 };
-
  
-  const updateProfilePicture = async (base64String: string) => {
-  //   try {
-  //     const updatedData = { ...details, profile_pic: base64String };
-  //     await updateUser(userId, updatedData);
-  //     setDetails(updatedData);
-  //   } catch (error) {
-  //     console.error("Error updating profile picture:", error);
-  //     setError("Failed to update profile picture.");
-  //   }
-  // };
-  setEditData((prevData: any) => ({
-    ...prevData,
-    profile_pic: base64String,  // Store in editData instead of updating details
-  }));
-};
+  const updateProfilePicture = async (base64String: string |null ) => {
+    try {
+      const updatedData = { ...details, profile_pic: base64String };
+      await updateUser(userId, updatedData); // Save in the database
+  
+      // Fetch updated user details again
+      const updatedUserDetails = await getUserById(userId);
+  
+      setDetails(updatedUserDetails); // Update UI
+      showToast("Profile picture updated successfully!", "success");
+    } catch (error) {
+      console.error("Error updating profile picture:", error);
+      setError("Failed to update profile picture.");
+      showToast("Failed to update profile picture!", "error");
+    }
+  };
  
   if (loading) return <div className="text-center text-gray-600">Loading...</div>;
   if (error) return <div className="text-center text-red-500">{error}</div>;

@@ -39,7 +39,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     (state: RootState) => state.userSlice.userInfo
   );
   const isAdmin = currentUser?.is_superuser == true || currentUser?.roletype === "admin"; // Admin role check
-
+console.log({isAdmin})
   useEffect(() => {
     localStorage.setItem('sidebar-expanded', sidebarExpanded.toString());
     if (sidebarExpanded) {

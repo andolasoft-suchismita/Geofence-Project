@@ -44,6 +44,12 @@ const Attendance: React.FC = () => {
   const userAttendance = useSelector(
     (state: RootState) => state.attendance[user_id] || []
   );
+  const [summary, setSummary] = useState({
+    total: 0,
+    present: 0,
+    absentees: 0,
+    late: 0,
+  });
 
   const getCoordinates = async () => {
     return new Promise<{ lat: number; lng: number }>((resolve, reject) => {
@@ -237,58 +243,31 @@ const Attendance: React.FC = () => {
         </div>
       </div>
 
-      {/* Attendance Summary */}
-      <div className="mb-6 ml-4 flex gap-4">
-        {/* Present Summary */}
-        <div className="w-1/3 rounded-lg bg-white p-4 shadow">
-          <h3 className="text-lg font-bold">Present Summary</h3>
-          <div className="mt-2 grid grid-cols-3 gap-4 text-center">
-            <div>
-              <p className="text-gray-500 text-sm">On time</p>
-              <p className="text-xl font-bold">265</p>
-            </div>
-            <div>
-              <p className="text-gray-500 text-sm">Late clock-in</p>
-              <p className="text-xl font-bold">62</p>
-            </div>
-            <div>
-              <p className="text-gray-500 text-sm">Early clock-in</p>
-              <p className="text-xl font-bold">224</p>
-            </div>
-          </div>
+       {/* Attendance Summary */}
+       <div className="mb-6 ml-4 flex grid grid-cols-1 gap-4 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {/* Total Employees */}
+        <div>
+          <Card title="Total Employee" count={summary.total} type="total" />
         </div>
-
-        {/* Not Present Summary */}
-        <div className="w-1/3 rounded-lg bg-white p-4 shadow">
-          <h3 className="text-lg font-bold">Not Present Summary</h3>
-          <div className="mt-2 grid grid-cols-2 gap-4 text-center">
-            <div>
-              <p className="text-gray-500 text-sm">Absent</p>
-              <p className="text-xl font-bold">42</p>
-            </div>
-            <div>
-              <p className="text-gray-500 text-sm">No clock-in</p>
-              <p className="text-xl font-bold">36</p>
-            </div>
-          </div>
+        {/* Present */}
+        <div>
+          <Card
+            title="Present Summary"
+            count={summary.present}
+            type="present"
+          />
         </div>
-
-        {/* Leave Summary */}
-        <div className="w-1/3 rounded-lg bg-white p-4 shadow">
-          <h3 className="text-lg font-bold">Leave Summary</h3>
-          <div className="mt-2 grid grid-cols-2 gap-4 text-center">
-            <div>
-              <p className="text-gray-500 text-sm">Day off</p>
-              <p className="text-xl font-bold">0</p>
-            </div>
-            <div>
-              <p className="text-gray-500 text-sm">Time off</p>
-              <p className="text-xl font-bold">0</p>
-            </div>
-          </div>
-        </div>
+        {/* Absentees */}
+        <Card
+          title="Absent Summary"
+          count={summary.absentees}
+          type="absentees"
+        />
+ 
+        {/* Late Employees */}
+        <Card title="Late Comings" count={summary.late} type="late" />
       </div>
-
+ 
       {/* Filters Section */}
       <div className="mb-6 ml-4 flex  space-x-4">
         {/* Search Bar */}
