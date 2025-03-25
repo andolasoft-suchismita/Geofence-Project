@@ -1,5 +1,4 @@
 import API from '../axiosInstance';
- 
 // Fetch user profile by ID
 export const getUserById = async (id: string) => {
   try {
@@ -8,13 +7,12 @@ export const getUserById = async (id: string) => {
     return response.data;
   } catch (error) {
     console.error(
-      'Error pfetching user data:',
+      'Error fetching user data:',
       error.response?.data || error.message
     );
     throw error;
   }
 };
- 
 // Update user profile (both fields and profile picture)
 export const updateUser = async (id: string, updatedData: any) => {
   try {
@@ -29,4 +27,3 @@ export const updateUser = async (id: string, updatedData: any) => {
     throw error;
   }
 };
- 

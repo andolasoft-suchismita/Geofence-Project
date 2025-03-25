@@ -68,24 +68,16 @@ const ViewUserDetails: React.FC<ViewUserDetailsProps> = ({
           <DetailItem label="Company Name" value={user.company_name} />
           <DetailItem
             label="Designation"
-            value={
-              user.designation
-                .replace(/_/g, ' ') // Replace underscores with spaces
-                .split(' ') // Split into words
-                .map(
-                  (word) =>
-                    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-                ) // Capitalize each word
-                .join(' ') // Join words back
-            }
+            value={user.designation
+              .replace(/_/g, ' ') 
+              .replace(/\b\w/g, (char) => char.toUpperCase())}
           />
 
           <DetailItem
             label="Role Type"
-            value={
-              user.roletype.charAt(0).toUpperCase() +
-              user.roletype.slice(1).toLowerCase()
-            }
+            value={user.roletype
+              .replace(/_/g, ' ') 
+              .replace(/\b\w/g, (char) => char.toUpperCase())}
           />
 
           <DetailItem label="Employee Type" value={user.employee_type} />

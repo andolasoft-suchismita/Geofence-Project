@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useSelector } from "react-redux";
+import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import {
   FiHome,
   FiUsers,
   FiClock,
   FiFileText,
+  FiSettings,
 } from 'react-icons/fi'; // Importing icons from react-icons
-import { RootState } from "../../redux/store";
+import { RootState } from '../../redux/store';
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -20,8 +21,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false); // State for toggling Settings menu
   const storedSidebarExpanded = localStorage.getItem('sidebar-expanded');
   const [sidebarExpanded, setSidebarExpanded] = useState(
-    storedSidebarExpanded === "true" ? true : false
-    
+    storedSidebarExpanded === 'true' ? true : false
   );
 
   const menuItems = [
@@ -31,20 +31,24 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     { name: "Calender", path: "/", allowedRoles: ["admin", "user"] }
   ];
 
-  //  Fetch currentUser role from Redux
-  const currentUser = useSelector((state: RootState) => state.userSlice.userInfo);
-  const isAdmin = currentUser?.roletype === "admin"; 
-  // .is_superuser == true ; // Admin role check
+  // //  Fetch currentUser role from Redux
+  // const currentUser = useSelector((state: RootState) => state.userSlice.userInfo);
+  // const isAdmin = currentUser?.roletype === "admin"; 
+  // // .is_superuser == true ; // Admin role check
+  const currentUser = useSelector(
+    (state: RootState) => state.userSlice.userInfo
+  );
+  const isAdmin = currentUser?.is_superuser == true || currentUser?.roletype === "admin"; // Admin role check
 
   useEffect(() => {
-    localStorage.setItem("sidebar-expanded", sidebarExpanded.toString());
+    localStorage.setItem('sidebar-expanded', sidebarExpanded.toString());
     if (sidebarExpanded) {
-      document.querySelector("body")?.classList.add("sidebar-expanded");
+      document.querySelector('body')?.classList.add('sidebar-expanded');
     } else {
-      document.querySelector("body")?.classList.remove("sidebar-expanded");
+      document.querySelector('body')?.classList.remove('sidebar-expanded');
     }
   }, [sidebarExpanded]);
- 
+
   // close on click outside
   useEffect(() => {
     const clickHandler = ({ target }: MouseEvent) => {
@@ -141,22 +145,22 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   Dashboard
                 </NavLink>
               </li>
-            
+
               {isAdmin && (
-              <li>
-                <NavLink
-                  to="/users"
-                  className={({ isActive }) =>
-                    `group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out
+                <li>
+                  <NavLink
+                    to="/users"
+                    className={({ isActive }) =>
+                      `group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out
                     ${isActive ? 'bg-graydark text-white' : 'text-bodydark1'}
                     hover:bg-graydark dark:hover:bg-meta-4`
-                  }
-                >
-                  <FiUsers size={18} />
-                  Users
-                </NavLink>
-              </li>
-              )} 
+                    }
+                  >
+                    <FiUsers size={18} />
+                    Users
+                  </NavLink>
+                </li>
+              )}
 
               <li>
                 <NavLink
@@ -173,21 +177,21 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               </li>
 
               {isAdmin && (
-              <li>
-                <NavLink
-                  to="/weeklyreport"
-                  className={({ isActive }) =>
-                    `group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out
+                <li>
+                  <NavLink
+                    to="/weeklyreport"
+                    className={({ isActive }) =>
+                      `group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out
                     ${isActive ? 'bg-graydark text-white' : 'text-bodydark1'}
                     hover:bg-graydark dark:hover:bg-meta-4`
-                  }
-                >
-                  <FiFileText size={18} />
-                  Report
-                </NavLink>
-              </li>
+                    }
+                  >
+                    <FiFileText size={18} />
+                    Report
+                  </NavLink>
+                </li>
               )}
-             
+
               <li>
                 <NavLink
                   to="/calendar"
@@ -201,7 +205,22 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   Calendar
                 </NavLink>
               </li>
-              
+              {isAdmin && (
+                <li>
+                  <NavLink
+                    to="/companysettings"
+                    className={({ isActive }) =>
+                      `group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out
+                    ${isActive ? 'bg-graydark text-white' : 'text-bodydark1'}
+                    hover:bg-graydark dark:hover:bg-meta-4`
+                    }
+                  >
+                    <FiSettings size={18} />
+                    Settings
+                  </NavLink>
+                </li>
+              )}
+
               {/* <li>
                 <button
                   className="flex w-full items-center justify-between rounded-sm py-2 px-4 font-medium text-bodydark1 hover:bg-graydark dark:hover:bg-meta-4"
@@ -214,7 +233,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </button>
 
                 {/* Submenu */}
-               {/* {isSettingsOpen && (
+              {/* {isSettingsOpen && (
                   <ul className="ml-8 mt-2 space-y-2">
                     <li>
                       <NavLink to="/profilesetting" className="sidebar-sub-link">

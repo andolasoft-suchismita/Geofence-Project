@@ -54,12 +54,13 @@ export const fetchUserDetailsAPI = async (id: string) => {
   }
 };
 
-//fetch current user by id
+ 
+
 export const fetchCurrentUserAPI = async (user_id: string) => {
   try {
     const response = await API.get(`/users/users/${user_id}`); // Ensure correct API route
-    console.log("Fetched User Data:", response.data);
- 
+    console.log('Fetched User Data:', response.data);
+
     return response.data;
   } catch (error) {
     throw error;

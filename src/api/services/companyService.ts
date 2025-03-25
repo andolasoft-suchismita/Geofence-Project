@@ -1,4 +1,4 @@
-import API from "../axiosInstance";
+import API from '../axiosInstance';
 
 export const getCompanyDetails = async (companyId: number) => {
   try {
@@ -9,7 +9,6 @@ export const getCompanyDetails = async (companyId: number) => {
     throw error;
   }
 };
-
 
 //Add Update API
 export const updateCompany = async (companyId: number, updatedData: any) => {

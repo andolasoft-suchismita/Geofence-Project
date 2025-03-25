@@ -47,10 +47,10 @@ const PrivateRoutes = () => {
   return (
     <DefaultLayout>
       <Routes>
-        <Route path="/dashboard" element={<DashboardHome />} />
+        {/* <Route path="/dashboard" element={<DashboardHome />} /> */}
+         {/* <Route path="/dashboard" element={<UserDashboard />} /> */}
         <Route path="/attendance" element={<Attendance />} />
-        {/* <Route path="/weeklyreport" element={<WeeklyReport />} />
-        <Route path="/companysettings" element={<CompanySettings />} /> */}
+     
         <Route path="/calendar" element={<MyCalendar />} />
         {/* <Route path="/users" element={<Users />} /> */}
         <Route path="/profile" element={<Profile />} />
@@ -71,7 +71,6 @@ const PrivateRoutes = () => {
         {/* <Route path="/dashboard/attendance" element={<Attendance />} />
                 <Route path="/dashboard/weeklyreport" element={<WeeklyReport />} /> */}
         {/* <Route path="*" element={<Navigate to="/calendar" replace />} /> */}
-
       </Routes>
     </DefaultLayout>
   );

@@ -1,54 +1,6 @@
-// import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-// interface CompanyState {
-  
-//   id: string;
-//   name: string;
-//   email: string;
-//   contact: string;
-//   address1: string;
-//   address2: string;
-//   country: string;
-//   state: string;
-//   city: string;
-//   zipCode: string;
-//   location: { lat: number; lng: number };
-//   logo: string | null;
-// }
-
-// const initialState: CompanyState = {
-//   id: "",
-//   name: "",
-//   email: "",
-//   contact: "",
-//   address1: "",
-//   address2: "",
-//   country: "",
-//   state: "",
-//   city: "",
-//   zipCode: "",
-//   location: { lat: 28.6139, lng: 77.209 },
-//   logo: null,
-// };
-
-// const companySlice = createSlice({
-//   name: "company",
-//   initialState,
-//   reducers: {
-//     setCompanyData: (state, action: PayloadAction<CompanyState>) => {
-//       return { ...state, ...action.payload }; // ✅ Ensures persistence
-//     },
-//   },
-// });
-
-// export const { setCompanyData } = companySlice.actions;
-// export default companySlice.reducer;
-
-
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface CompanyState {
-  
   id: string;
   name: string;
   email: string;
@@ -60,7 +12,7 @@ interface CompanyState {
   zip_code: string;
   latitude: number;
   longitude: number;
-  logo: string ;
+  logo: string;
   website: string;
   description: string;
   reg_no: string;
@@ -87,7 +39,6 @@ const initialState: CompanyState = {
   working_hours: '',
   week_off: '',
 };
-
 
 const companySlice = createSlice({
   name: 'company',

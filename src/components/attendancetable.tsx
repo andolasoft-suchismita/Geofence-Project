@@ -45,28 +45,21 @@ const EmployeeDetailsModal = ({ employee, onClose }) => {
 
   const fetchAttendanceData = async () => {
     if (!employee?.user_id) {
-      console.error('Employee user ID is missing');
       return;
     }
 
     const userId = employee.user_id.trim(); // Fetch based on selected employee
-    console.log('Fetching attendance for Employee ID:', userId);
-
     setLoading(true);
     setError('');
 
     try {
       const attendanceData = await getAttendanceByUserId(userId); // API fetches based on employee ID
-      console.log('Received attendance data:', attendanceData);
-
       const filteredData = attendanceData.filter((item) => {
         // console.log('Checking date:', item.date, 'against', selectedMonth);
         // return item.date.startsWith(selectedMonth);
         const formattedDate = format(new Date(item.date), 'yyyy-MM'); // Convert item.date to 'YYYY-MM'
         return formattedDate === selectedMonth; // Compare formatted date with selected month
       });
-      console.log('Filtered attendance data:', filteredData);
-
       setAttendanceData(filteredData);
     } catch (err) {
       setError('Failed to fetch attendance data.');
@@ -160,7 +153,7 @@ const EmployeeDetailsModal = ({ employee, onClose }) => {
     <div className="fixed inset-0 z-50 z-9999 flex items-center justify-center bg-black bg-opacity-50 p-4">
       <div className="h-auto max-h-[90vh] w-11/12 max-w-5xl overflow-y-auto rounded-lg bg-white  shadow-lg">
         {/* Modal Header */}
-        <div className="bg-gray flex items-center justify-between p-4">
+        <div className="flex items-center justify-between bg-gray p-4">
           <div className="flex items-center gap-3">
             {/* <img
               src={employee.profile}
@@ -168,7 +161,9 @@ const EmployeeDetailsModal = ({ employee, onClose }) => {
               className="h-12 w-12 rounded-full shadow-md"
             /> */}
             <div>
-              <h2 className="text-xl font-semibold text-black">{employee.name}</h2>
+              <h2 className="text-xl font-semibold text-black">
+                {employee.name}
+              </h2>
               <p className="text-gray-500 text-sm">{employee.designation}</p>
             </div>
           </div>
@@ -252,8 +247,6 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ data }) => {
   const rowsPerPage = 5; // Display 10 rows per page
   const totalPages = Math.ceil(data.length / rowsPerPage); // Calculate total pages
 
-  console.log('Received Data in Table:', data);
-
   const [attendanceData, setAttendanceData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -265,26 +258,25 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ data }) => {
   const attendance_date = new Date().toISOString().split('T')[0]; //  Current date
 
   //  Fetch attendance when date or company changes
-  useEffect(() => {
-    const fetchAttendance = async () => {
-      if (!attendance_date || !company_id) return;
-
-      setLoading(true);
-      try {
-        const data = await getAttendanceByDate(
-          attendance_date,
-          company_id.toString()
-        ); //  Convert to string
-        setAttendanceData(data);
-      } catch (error) {
-        console.error('Failed to load attendance data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAttendance();
-  }, [attendance_date, company_id]);
+  // const fetchAttendance = async () => {
+  //   setLoading(true);
+  //   console.log('attendance in table');
+  //   try {
+  //     const data = await getAttendanceByDate(
+  //       attendance_date,
+  //       company_id.toString()
+  //     );
+  //     setAttendanceData(data);
+  //   } catch (error) {
+  //     console.error('Failed to load attendance data');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  // useEffect(() => {
+  //   if (!attendance_date || !company_id) return;
+  //   fetchAttendance();
+  // }, [attendance_date, company_id]);
 
   const formatTime = (decimalHours: number) => {
     if (!decimalHours || decimalHours <= 0) return '-';
@@ -389,7 +381,6 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ data }) => {
                     className="text-gray-800 p-4 text-center"
                     onClick={() => {
                       if (cell.column.id === 'name') {
-                        console.log('Opening modal for:', row.original.user_id);
                         setSelectedEmployee(row.original); // Just open modal with selected data
                       }
                     }}

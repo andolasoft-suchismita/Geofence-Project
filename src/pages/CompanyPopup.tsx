@@ -44,7 +44,7 @@ const CompanyPopup = ({ onClose }: { onClose: () => void }) => {
 
       // Update Redux store with new company_id
       dispatch(login({ token, user_id, company_id: newCompanyId }));
-      showToast('Company created Successfully!')
+      showToast('Company created Successfully!');
       onClose(); // Close popup after successful creation
     } catch (error) {
       showToast('Error creating company');

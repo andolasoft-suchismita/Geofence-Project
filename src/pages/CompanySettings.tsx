@@ -1,14 +1,9 @@
 import { useState, useEffect } from 'react';
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  useMapEvents,
-  useMap,
-} from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet-control-geocoder';
+import L from "leaflet";
+import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCompanyData } from '../redux/slices/companySlice';
 import {
@@ -21,54 +16,10 @@ import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import Select from 'react-select';
+import { MdDelete } from 'react-icons/md';
+import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';
 
-// Custom Marker Icon
-
-const customIcon = new L.Icon({
-  iconUrl:
-    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl:
-    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
-
-// Map Click Handler
-const LocationMarker = ({
-  position,
-  setPosition,
-}: {
-  position: { lat: number; lng: number };
-  setPosition: (pos: { lat: number; lng: number }) => void;
-}) => {
-  const map = useMap();
-
-  useEffect(() => {
-    if (position) map.setView([position.lat, position.lng], 12);
-  }, [position, map]);
-
-  useMapEvents({
-    click(e) {
-      const newPosition = { lat: e.latlng.lat, lng: e.latlng.lng };
-      setPosition(newPosition);
-
-      fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${newPosition.lat}&lon=${newPosition.lng}`
-      )
-        .then((res) => res.json())
-        .then((data) => setPosition(newPosition))
-        .catch(() => alert('Failed to get address'));
-    },
-  });
-
-  return position ? (
-    <Marker 
-      position={[position.lat, position.lng]} 
-      icon={customIcon} 
-      draggable={true} 
-    />
-  ) : null;
-};// Validation Schema
+// Validation Schema
 const validationSchema = Yup.object({
   name: Yup.string().required('Company Name is required'),
   email: Yup.string().email('Invalid email').required('Email is required'),
@@ -83,7 +34,7 @@ const validationSchema = Yup.object({
   website: Yup.string().url('Invalid URL').required('Website is required'),
   working_hours: Yup.number()
     .min(1, 'Working hours must be at least 1 hour')
-    .max(24, 'Working hours cannot exceed 24 hours')
+    .max(12, 'Working hours cannot exceed 12 hours')
     .required('Working hours are required'),
 
   holidays: Yup.array()
@@ -112,6 +63,34 @@ const holidayOptions = [
   { value: 'Saturday', label: 'Saturday' },
 ];
 
+
+const GeocoderControl = ({ setFieldValue }: { setFieldValue: Function }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    const geocoder = L.Control.geocoder({
+      defaultMarkGeocode: false,
+    })
+      .on('markgeocode', function (e: any) {
+        const latlng = e.geocode.center;
+        L.marker(latlng).addTo(map).bindPopup(e.geocode.name).openPopup();
+        map.setView(latlng, 13);
+
+        // Update Formik fields with selected location
+        setFieldValue('latitude', latlng.lat);
+        setFieldValue('longitude', latlng.lng);
+      })
+      .addTo(map);
+
+    return () => {
+      map.removeControl(geocoder);
+    };
+  }, [map, setFieldValue]);
+
+  return null;
+};
+
+
 const CompanySettings = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -135,6 +114,7 @@ const CompanySettings = () => {
     }
   };
 
+  
   useEffect(() => {
     const fetchCompany = async () => {
       if (company_id) {
@@ -166,7 +146,8 @@ const CompanySettings = () => {
 
       const payload = {
         ...values,
-
+        latitude: String(values.latitude), // Convert latitude to string
+        longitude: String(values.longitude), // Convert longitude to string
         week_off: Array.isArray(values.holidays)
           ? values.holidays.join(',')
           : '', // Convert array to comma-separated string
@@ -178,11 +159,11 @@ const CompanySettings = () => {
       const updatedCompany = await updateCompany(company_id, payload);
 
       dispatch(setCompanyData(updatedCompany));
-      showToast('Company updated successfully!');
+      showToast('Company updated successfully!', 'success');
       setSubmitting(false);
     } catch (error) {
       console.error('Validation/API Error:', error);
-      showToast(error.message || 'Failed to update company details.');
+      showToast(error.message || 'Failed to update company details.', 'error');
       setSubmitting(false);
     }
   };
@@ -211,48 +192,18 @@ const CompanySettings = () => {
               : '',
             holidays: company?.week_off ? company.week_off.split(',') : [],
             logo: company?.logo || '',
+            longitude: company?.longitude || '',
+            latitude: company?.latitude || '',
           }}
           validationSchema={validationSchema}
           onSubmit={handleUpdateCompany}
           enableReinitialize={true} // Ensure data updates correctly
         >
-          {({ isSubmitting }) => (
+          {({ values, isSubmitting, setFieldValue }) => (
             <Form>
               <h2 className="text-gray-800 mb-2 text-2xl font-bold ">
                 Company Settings
               </h2>
-
-              <div className=" mb-8 flex w-1/3">
-                <label
-                  htmlFor="logo-upload"
-                  className="relative cursor-pointer"
-                >
-                  <div className="border-gray-300 bg-gray-100 relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border">
-                    {logo ? (
-                      <img
-                        src={logo}
-                        alt="Company Logo"
-                        title="Click here to Upload Logo"
-                        className="h-full w-full rounded-full object-cover"
-                      />
-                    ) : (
-                      <img
-                        src="https://www.shutterstock.com/image-vector/image-icon-trendy-flat-style-600nw-643080895.jpg"
-                        title="Upload Company Logo Here"
-                        alt="Company Logo"
-                        className="h-full w-full"
-                      />
-                    )}
-                  </div>
-                </label>
-                <input
-                  id="logo-upload"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleLogoChange}
-                />
-              </div>
 
               <div className="mb-8 flex items-center justify-between">
                 <div className="w-full">
@@ -271,13 +222,11 @@ const CompanySettings = () => {
                     className="text-sm text-red"
                   />
                 </div>
-
-                {/* <div className="flex w-1/3 justify-end">
-                  <label
-                    htmlFor="logo-upload"
-                    className="relative cursor-pointer"
-                  >
-                    <div className="border-gray-300 bg-gray-100 relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border">
+                {/* Company logo */}
+                <div className="relative flex w-1/3 justify-end">
+                  <label htmlFor="logo-upload" className="cursor-pointer">
+                    {/* Move `group` class here */}
+                    <div className="border-gray-300 bg-gray-100 group relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border">
                       {logo ? (
                         <img
                           src={logo}
@@ -293,8 +242,23 @@ const CompanySettings = () => {
                           className="h-full w-full"
                         />
                       )}
+
+                      {/* Delete Button (Now inside the correct `group` div) */}
+                      {logo && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent triggering file upload
+                            setLogo(null); // Clear the logo
+                          }}
+                          className="absolute  rounded-full p-2 text-xl text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover:!opacity-100"
+                          title="Click here to Delete Logo"
+                        >
+                          <MdDelete />
+                        </button>
+                      )}
                     </div>
                   </label>
+
                   <input
                     id="logo-upload"
                     type="file"
@@ -302,7 +266,7 @@ const CompanySettings = () => {
                     className="hidden"
                     onChange={handleLogoChange}
                   />
-                </div> */}
+                </div>
               </div>
 
               <div className="mb-8 grid grid-cols-2 gap-6">
@@ -372,14 +336,20 @@ const CompanySettings = () => {
 
               <div className="mb-8 grid grid-cols-2 gap-6">
                 <div>
-                  <label className="text-gray-700 block text-base font-semibold">
-                    Country
-                  </label>
-                  <Field
-                    name="country"
-                    placeholder="Ex-India"
-                    className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
-                  />
+                  <div className="relative">
+                    <label className="text-gray-700 block text-base font-semibold">
+                      Country
+                    </label>
+                    <CountryDropdown
+                      name="country"
+                      value={values.country || ''}
+                      onChange={(val) => setFieldValue('country', val)}
+                      className="border-gray-300  w-full appearance-none rounded rounded-lg  border bg-white p-3 focus:outline-blue-500"
+                    />
+                    <span className="pointer-events-none absolute inset-y-0 right-3 mt-6 flex items-center">
+                      ▼
+                    </span>
+                  </div>
                   <ErrorMessage
                     name="country"
                     component="div"
@@ -390,11 +360,18 @@ const CompanySettings = () => {
                   <label className="text-gray-700 block text-base font-semibold">
                     State
                   </label>
-                  <Field
-                    name="state"
-                    placeholder="Ex-Odisha"
-                    className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
-                  />
+                  <div className="relative">
+                    <RegionDropdown
+                      name="state"
+                      country={values.country ?? ''}
+                      value={values.state || ''}
+                      onChange={(val) => setFieldValue('state', val)}
+                      className="border-gray-300  w-full appearance-none rounded rounded-lg  border bg-white p-3 focus:outline-blue-500"
+                    />
+                    <span className="text-gray-500 pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                      ▼
+                    </span>
+                  </div>
                   <ErrorMessage
                     name="state"
                     component="div"
@@ -422,7 +399,7 @@ const CompanySettings = () => {
                     Working Hours
                   </label>
                   <Field
-                    type="text"
+                    type="number"
                     name="working_hours"
                     placeholder="Enter working hours per day"
                     className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
@@ -459,7 +436,7 @@ const CompanySettings = () => {
                               ...base,
                               border: '1px solid ', // Match border-gray-300
                               borderRadius: '0.4rem', // Match rounded-lg
-                              padding: '0.4rem', // Match p-3
+                              padding: '0.3rem', // Match p-3
                               fontSize: '1rem', // Match text size
                               width: '100%', // Ensure full width
                             }),
@@ -501,8 +478,40 @@ const CompanySettings = () => {
                   placeholder="Write something here about your company..."
                   className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
                 />
-                
               </div>
+              <MapContainer
+                center={[20.5937, 78.9629]}
+                zoom={5}
+                className="h-96 w-full"
+              >
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution="&copy; OpenStreetMap contributors"
+                />
+                <GeocoderControl setFieldValue={setFieldValue} />
+
+                <Marker
+                  position={[
+                    values.latitude || 20.5937,
+                    values.longitude || 78.9629,
+                  ]}
+                  draggable={true}
+                  eventHandlers={{
+                    dragend: (e) => {
+                      const latlng = e.target.getLatLng();
+                      setFieldValue('latitude', latlng.lat);
+                      setFieldValue('longitude', latlng.lng);
+                    },
+                    click: (e) => {
+                      const latlng = e.latlng;
+                      setFieldValue('latitude', latlng.lat);
+                      setFieldValue('longitude', latlng.lng);
+                    },
+                  }}
+                >
+                  <Popup>Selected Location</Popup>
+                </Marker>
+              </MapContainer>
 
               <div className="mt-4 flex justify-end gap-4">
                 <button
