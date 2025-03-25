@@ -180,25 +180,26 @@ import EditProfile from "../components/EditProfile";
 import { getUserById, updateUser } from "../api/services/profileService";
 import ProfilePicture from "../components/Images/profilepicture";
 import { RootState } from "../redux/store";
-
+import { showToast } from "../utils/toast";
+ 
 const ProfileSettings = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [details, setDetails] = useState<any>(null);
   const [editData, setEditData] = useState<any>(null);
   // const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+ 
   // ✅ Get logged-in user ID from Redux state
   const userId = useSelector((state: RootState) => state.authSlice.user_id); // Get user ID from Redux
     const [userDetails, setUserDetails] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-
+ 
   // const [userDetails, setUserDetails] = useState<any>(null);
-
+ 
   useEffect(() => {
         const fetchUserDetails = async () => {
           if (!userId) return;
-    
+   
           try {
             const data = await getUserById(userId);
             setUserDetails(data);
@@ -209,44 +210,81 @@ const ProfileSettings = () => {
             setLoading(false);
           }
         };
-    
+   
         fetchUserDetails();
       }, [userId]);
-
+ 
   const handleEditClick = () => {
     setIsEditing(true);
     setEditData(details);
   };
-
+ 
   const handleCancel = () => {
     setIsEditing(false);
   };
+ 
+//   const handleSave = async (updatedData: any) => {
+//   //   try {
+//   //     await updateUser(userId, updatedData);
+//   //     setDetails(updatedData);
+//   //     setIsEditing(false);
+//   //   } catch (error) {
+//   //     console.error("Failed to update user:", error);
+//   //     setError("Error updating profile. Try again.");
+//   //   }
+//   // };
+//   try {
+//     const updatedData = { ...editData };
+//     await updateUser(userId, updatedData);
+//     setDetails(updatedData);
+//     setIsEditing(false);
+//     // showToast("Edit failed!",'error')
+//   } catch (error) {
+//     console.error("Failed to update user:", error);
+//     setError("Error updating profile. Try again.");
+//   }
+// };
+const handleSave = async (updatedData: any) => {
+  try {
+    await updateUser(userId, updatedData); // API call to update user
 
-  const handleSave = async (updatedData: any) => {
-    try {
-      await updateUser(userId, updatedData);
-      setDetails(updatedData);
-      setIsEditing(false);
-    } catch (error) {
-      console.error("Failed to update user:", error);
-      setError("Error updating profile. Try again.");
-    }
-  };
+    // Fetch updated user details again from the API
+    const updatedUserDetails = await getUserById(userId);
+    
+    setDetails(updatedUserDetails);
+    setIsEditing(false);
 
-  const updateProfilePicture = async (base64String: string) => {
+    //  Show success toast
+    showToast("Profile updated successfully!", "success");
+  } catch (error) {
+    console.error("Failed to update user:", error);
+    setError("Error updating profile. Try again.");
+    
+    // Show error toast
+    showToast("Failed to update profile!", "error");
+  }
+};
+ 
+  const updateProfilePicture = async (base64String: string |null ) => {
     try {
       const updatedData = { ...details, profile_pic: base64String };
-      await updateUser(userId, updatedData);
-      setDetails(updatedData);
+      await updateUser(userId, updatedData); // Save in the database
+  
+      // Fetch updated user details again
+      const updatedUserDetails = await getUserById(userId);
+  
+      setDetails(updatedUserDetails); // Update UI
+      showToast("Profile picture updated successfully!", "success");
     } catch (error) {
       console.error("Error updating profile picture:", error);
       setError("Failed to update profile picture.");
+      showToast("Failed to update profile picture!", "error");
     }
   };
-
+ 
   if (loading) return <div className="text-center text-gray-600">Loading...</div>;
   if (error) return <div className="text-center text-red-500">{error}</div>;
-
+ 
   return (
     <div className="w-2xl max-w-4xl mx-auto min-h-screen overflow-y-auto bg-gray-100">
       {/* Profile Card */}
@@ -267,10 +305,14 @@ const ProfileSettings = () => {
             </div>
           )}
         </div>
-
+ 
         {/* 🔹 Profile Info */}
         <div className="flex items-center space-x-6 mb-8">
-          <ProfilePicture profilePic={details.profile_pic} updateProfilePicture={updateProfilePicture} />
+          <ProfilePicture 
+          profilePic={details.profile_pic} 
+          updateProfilePicture={updateProfilePicture} 
+          isEditing={isEditing} 
+          />
           <div>
             <h2 className="text-2xl font-bold text-gray-800">
               {details.first_name || "N/A"} {details.last_name || "N/A"}
@@ -278,7 +320,7 @@ const ProfileSettings = () => {
             <p className="text-gray-500 text-lg">{details.email || "-"}</p>
           </div>
         </div>
-
+ 
         {isEditing ? (
           <EditProfile editData={editData} setEditData={setEditData} handleSave={handleSave} handleCancel={handleCancel} />
         ) : (
@@ -287,7 +329,7 @@ const ProfileSettings = () => {
             <div className="col-span-2 mb-2">
               <h3 className="text-2xl font-bold text-gray-800">Personal Details</h3>
             </div>
-
+ 
             {[
               ["first_name", "First Name"],
               ["last_name", "Last Name"],
@@ -303,7 +345,7 @@ const ProfileSettings = () => {
                 <p className="text-lg text-gray-800 mt-1">{details[key] || "-"}</p>
               </div>
             ))}
-
+ 
             {/* 🔹 Additional Info */}
             <div className="col-span-2 grid grid-cols-2 gap-x-12">
               {[
@@ -316,12 +358,12 @@ const ProfileSettings = () => {
                 </div>
               ))}
             </div>
-
+ 
             {/* 🔹 Company Details */}
             <div className="col-span-2 mt-6 mb-2">
               <h3 className="text-2xl font-bold text-gray-800">Company Details</h3>
             </div>
-
+ 
             {[
               ["employee_id", "Employee ID"],
               ["company_name", "Company Name"],
@@ -342,7 +384,5 @@ const ProfileSettings = () => {
     </div>
   );
 };
-
+ 
 export default ProfileSettings;
-
-
