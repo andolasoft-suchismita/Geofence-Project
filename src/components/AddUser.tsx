@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaTimes } from 'react-icons/fa';
 
 interface UserFormProps {
   onClose: () => void;
@@ -55,8 +55,6 @@ export interface User {
   dob: string;
 }
 
-
-
 const UserForm: React.FC<UserFormProps> = ({
   onClose,
   formType = 'create',
@@ -79,9 +77,9 @@ const UserForm: React.FC<UserFormProps> = ({
             last_name: selectedItem ? selectedItem?.last_name : '',
             // employee_id: '',
             email: selectedItem ? selectedItem?.email : '',
-            roletype: selectedItem ? selectedItem?.roletype : '',
-            doj: selectedItem ? selectedItem.doj.split('T')[0] : '', // Fix
-            dob: selectedItem ? selectedItem.dob.split('T')[0] : '', // Fix
+            roletype: selectedItem ? selectedItem?.roletype : UserRoleType.USER,
+            doj: selectedItem?.doj ? selectedItem.doj.split('T')[0] : '',
+            dob: selectedItem?.dob ? selectedItem.dob.split('T')[0] : '',
             designation: selectedItem ? selectedItem?.designation : '',
             hashed_password: selectedItem ? selectedItem?.hashed_password : '',
             gender: selectedItem ? selectedItem?.gender : '', // Add this
@@ -148,17 +146,25 @@ const UserForm: React.FC<UserFormProps> = ({
         >
           {({}) => (
             <Form className="">
-              <h2 className="mb-6 text-center text-xl font-semibold">
-                {formType === 'edit' ? 'Edit User' : 'Add User'}
-              </h2>
-
+              <div className="mb-6 flex ">
+                <h2 className=" text-center text-xl font-semibold">
+                  {formType === 'edit' ? 'Edit User' : 'Add User'}
+                </h2>
+                <button
+                  onClick={onClose}
+                  className="text-gray-600 hover:text-red-500 absolute right-3"
+                >
+                  <FaTimes size={18} />
+                </button>
+              </div>
               {/* First Name & Last Name */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="mb-2 grid grid-cols-2 gap-4">
                 <div>
                   <label className="block">First Name</label>
                   <Field
+                    placeholder="Enter first name"
                     name="first_name"
-                    className="w-full rounded border p-2"
+                    className="w-full rounded-lg border p-2 focus:outline-blue-500 "
                   />
                   <ErrorMessage
                     name="first_name"
@@ -169,8 +175,9 @@ const UserForm: React.FC<UserFormProps> = ({
                 <div>
                   <label className="block">Last Name</label>
                   <Field
+                    placeholder="Enter last name"
                     name="last_name"
-                    className="w-full rounded border p-2"
+                    className="w-full rounded-lg border p-2 focus:outline-blue-500"
                   />
                   <ErrorMessage
                     name="last_name"
@@ -181,7 +188,7 @@ const UserForm: React.FC<UserFormProps> = ({
               </div>
 
               {/* Employee ID & Email */}
-              <div className="grid  gap-4">
+              <div className="mb-2 grid gap-4">
                 {/* <div>
                   <label className="block">
                     Employee ID
@@ -204,7 +211,8 @@ const UserForm: React.FC<UserFormProps> = ({
                     autoComplete="off"
                     name="email"
                     type="email"
-                    className="w-full rounded border p-2"
+                    placeholder="Enter your email.."
+                    className="w-full rounded-lg border p-2 focus:outline-blue-500"
                   />
                   <ErrorMessage
                     name="email"
@@ -215,13 +223,13 @@ const UserForm: React.FC<UserFormProps> = ({
               </div>
 
               {/* Role Type Dropdown */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="mb-2 grid grid-cols-2 gap-4">
                 <div>
                   <label className="block">Role Type</label>
                   <Field
                     as="select"
                     name="roletype"
-                    className="w-full rounded border p-2"
+                    className="w-full rounded-lg border p-2 focus:outline-blue-500"
                   >
                     <option value="">Select Role</option>
                     {Object.values(UserRoleType).map((role) => (
@@ -243,7 +251,7 @@ const UserForm: React.FC<UserFormProps> = ({
                   <Field
                     as="select"
                     name="designation"
-                    className="w-full rounded border p-2"
+                    className="w-full rounded-lg border p-2 focus:outline-blue-500"
                   >
                     <option value="">-- Select Designation --</option>
                     {Object.values(CompanyDesignation).map((role) => (
@@ -259,14 +267,14 @@ const UserForm: React.FC<UserFormProps> = ({
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="mb-2 grid grid-cols-2 gap-4">
                 {/* Gender Field */}
                 <div>
                   <label className="block">Gender</label>
                   <Field
                     as="select"
                     name="gender"
-                    className="w-full rounded border p-2"
+                    className="w-full rounded-lg border p-2 focus:outline-blue-500"
                   >
                     <option value="">Select Gender</option>
                     <option value="Male">Male</option>
@@ -286,7 +294,7 @@ const UserForm: React.FC<UserFormProps> = ({
                   <Field
                     as="select"
                     name="employee_type"
-                    className="w-full rounded border p-2"
+                    className="w-full rounded-lg border p-2 focus:outline-blue-500"
                   >
                     <option value="">Select Employee Type</option>
                     <option value="Full-time">Full-time</option>
@@ -301,13 +309,13 @@ const UserForm: React.FC<UserFormProps> = ({
                 </div>
               </div>
               {/* Date of Joining & Date of Birth */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="mb-2 grid grid-cols-2 gap-4">
                 <div>
                   <label className="block">Date of Joining</label>
                   <Field
                     name="doj"
                     type="date"
-                    className="w-full rounded border p-2"
+                    className="w-full rounded-lg border p-2 focus:outline-blue-500"
                   />
                   <ErrorMessage
                     name="doj"
@@ -320,7 +328,7 @@ const UserForm: React.FC<UserFormProps> = ({
                   <Field
                     name="dob"
                     type="date"
-                    className="w-full rounded border p-2"
+                    className="w-full rounded-lg border p-2 focus:outline-blue-500"
                   />
                   <ErrorMessage
                     name="dob"
@@ -337,7 +345,8 @@ const UserForm: React.FC<UserFormProps> = ({
                   name="hashed_password"
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="new-password"
-                  className="w-full rounded border p-2"
+                  placeholder="Enter password"
+                  className="w-full rounded-lg border p-2 focus:outline-blue-500"
                 />
                 <ErrorMessage
                   name="hashed_password"
@@ -354,11 +363,11 @@ const UserForm: React.FC<UserFormProps> = ({
               </div>
 
               {/* Buttons */}
-              <div className="mt-4 flex justify-between">
+              <div className="mt-4 flex justify-end gap-4">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="rounded bg-red px-4 py-2 text-white hover:bg-[#FF0000]"
+                  className="text- rounded bg-gray px-4 py-2 hover:bg-[#d1d5db]"
                 >
                   Cancel
                 </button>

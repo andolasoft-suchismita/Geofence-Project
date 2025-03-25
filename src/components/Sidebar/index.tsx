@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useSelector } from "react-redux";
+import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import {
   FiHome,
@@ -8,7 +8,7 @@ import {
   FiFileText,
   FiSettings,
 } from 'react-icons/fi'; // Importing icons from react-icons
-import { RootState } from "../../redux/store";
+import { RootState } from '../../redux/store';
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -21,23 +21,24 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false); // State for toggling Settings menu
   const storedSidebarExpanded = localStorage.getItem('sidebar-expanded');
   const [sidebarExpanded, setSidebarExpanded] = useState(
-    storedSidebarExpanded === "true" ? true : false
-    
+    storedSidebarExpanded === 'true' ? true : false
   );
 
   //  Fetch currentUser role from Redux
-  const currentUser = useSelector((state: RootState) => state.userSlice.userInfo);
-  const isAdmin = currentUser?.roletype === "admin"; // Admin role check
+  const currentUser = useSelector(
+    (state: RootState) => state.userSlice.userInfo
+  );
+  const isAdmin = currentUser?.is_superuser == true || currentUser?.roletype== "admin"; // Admin role check
 
   useEffect(() => {
-    localStorage.setItem("sidebar-expanded", sidebarExpanded.toString());
+    localStorage.setItem('sidebar-expanded', sidebarExpanded.toString());
     if (sidebarExpanded) {
-      document.querySelector("body")?.classList.add("sidebar-expanded");
+      document.querySelector('body')?.classList.add('sidebar-expanded');
     } else {
-      document.querySelector("body")?.classList.remove("sidebar-expanded");
+      document.querySelector('body')?.classList.remove('sidebar-expanded');
     }
   }, [sidebarExpanded]);
- 
+
   // close on click outside
   useEffect(() => {
     const clickHandler = ({ target }: MouseEvent) => {

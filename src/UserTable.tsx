@@ -89,7 +89,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
             </button>
 
             {dropdownIndex === index && (
-              <div className="dropdown-menu absolute  z-10 flex rounded border bg-white shadow-md ml-6">
+              <div className="dropdown-menu absolute  z-10 ml-6 flex rounded border bg-white shadow-md">
                 <button
                   title="View User Details"
                   className="hover:bg-gray-200 block w-full px-4 py-2 text-left"
@@ -134,23 +134,22 @@ const UsersTable: React.FC<UsersTableProps> = ({
     {
       accessorKey: 'designation',
       header: 'Designation',
-      cell: ({ row }) => {
-        return row.original.designation
+      cell: ({ getValue }) => {
+        const designation = getValue<string>();
+        return designation
           .replace(/_/g, ' ') // Replace underscores with spaces
-          .split(' ') // Split into words
-          .map(
-            (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-          ) // Capitalize each word
-          .join(' '); // Join words back
+          .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter of each word
       },
     },
 
     {
       accessorKey: 'roletype',
       header: 'Role Type',
-      cell: ({ row }) => {
-        const role = row.original.roletype;
-        return role.charAt(0).toUpperCase() + role.slice(1); // Capitalize first letter
+      cell: ({ getValue }) => {
+        const designation = getValue<string>();
+        return designation
+          .replace(/_/g, ' ') // Replace underscores with spaces
+          .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter of each word
       },
     },
 
@@ -184,59 +183,62 @@ const UsersTable: React.FC<UsersTableProps> = ({
         User List
       </h2> */}
 
-      <div className="overflow-x-auto w-full">
-      <table className="border-gray-300 w-full table-auto border bg-white min-w-[600px]">
-        <thead className="border-gray-300 top-0 bg-[#4B5563] text-white shadow-md">
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th key={header.id} className="border p-4 text-left">
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-
-        <tbody>
-          {table
-            .getRowModel()
-            .rows.slice((currentPage - 1) * pageSize, currentPage * pageSize) // Apply pagination here
-            .map((row) => (
-              <tr key={row.id} className="border">
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="text-gray-900 border p-2">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
+      <div className="w-full overflow-x-auto">
+        <table className="border-gray-300 w-full min-w-[600px] table-auto border bg-white">
+          <thead className="border-gray-300 top-0 bg-[#4B5563] text-white shadow-md">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th key={header.id} className="border p-4 text-left">
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                  </th>
                 ))}
               </tr>
             ))}
-        </tbody>
-      </table>
-      {/* Pagination Component */}
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+          </thead>
 
-      {/* <EditUserModal
+          <tbody>
+            {table
+              .getRowModel()
+              .rows.slice((currentPage - 1) * pageSize, currentPage * pageSize) // Apply pagination here
+              .map((row) => (
+                <tr key={row.id} className="border">
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className="text-gray-900 border p-2">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+          </tbody>
+        </table>
+        {/* Pagination Component */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+
+        {/* <EditUserModal
         isOpen={isEditModalOpen}
         user={editUser}
         onClose={() => setIsEditModalOpen(false)}
         onSave={handleSaveEdit}
       /> */}
 
-      {/* View User Modal */}
-      <ViewUserDetails
-        isOpen={isViewModalOpen}
-        user={viewUser}
-        onClose={() => setIsViewModalOpen(false)}
-      />
-    </div>
+        {/* View User Modal */}
+        <ViewUserDetails
+          isOpen={isViewModalOpen}
+          user={viewUser}
+          onClose={() => setIsViewModalOpen(false)}
+        />
+      </div>
     </div>
   );
 };

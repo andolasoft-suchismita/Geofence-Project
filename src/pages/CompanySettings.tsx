@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import 'leaflet/dist/leaflet.css';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet-control-geocoder';
+import L from "leaflet";
+import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCompanyData } from '../redux/slices/companySlice';
 import {
@@ -14,6 +17,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import Select from 'react-select';
 import { MdDelete } from 'react-icons/md';
+import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';
 
 // Validation Schema
 const validationSchema = Yup.object({
@@ -30,7 +34,7 @@ const validationSchema = Yup.object({
   website: Yup.string().url('Invalid URL').required('Website is required'),
   working_hours: Yup.number()
     .min(1, 'Working hours must be at least 1 hour')
-    .max(24, 'Working hours cannot exceed 24 hours')
+    .max(12, 'Working hours cannot exceed 12 hours')
     .required('Working hours are required'),
 
   holidays: Yup.array()
@@ -59,6 +63,34 @@ const holidayOptions = [
   { value: 'Saturday', label: 'Saturday' },
 ];
 
+
+const GeocoderControl = ({ setFieldValue }: { setFieldValue: Function }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    const geocoder = L.Control.geocoder({
+      defaultMarkGeocode: false,
+    })
+      .on('markgeocode', function (e: any) {
+        const latlng = e.geocode.center;
+        L.marker(latlng).addTo(map).bindPopup(e.geocode.name).openPopup();
+        map.setView(latlng, 13);
+
+        // Update Formik fields with selected location
+        setFieldValue('latitude', latlng.lat);
+        setFieldValue('longitude', latlng.lng);
+      })
+      .addTo(map);
+
+    return () => {
+      map.removeControl(geocoder);
+    };
+  }, [map, setFieldValue]);
+
+  return null;
+};
+
+
 const CompanySettings = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -82,6 +114,7 @@ const CompanySettings = () => {
     }
   };
 
+  
   useEffect(() => {
     const fetchCompany = async () => {
       if (company_id) {
@@ -113,7 +146,8 @@ const CompanySettings = () => {
 
       const payload = {
         ...values,
-
+        latitude: String(values.latitude), // Convert latitude to string
+        longitude: String(values.longitude), // Convert longitude to string
         week_off: Array.isArray(values.holidays)
           ? values.holidays.join(',')
           : '', // Convert array to comma-separated string
@@ -129,7 +163,7 @@ const CompanySettings = () => {
       setSubmitting(false);
     } catch (error) {
       console.error('Validation/API Error:', error);
-      showToast(error.message || 'Failed to update company details.');
+      showToast(error.message || 'Failed to update company details.', 'error');
       setSubmitting(false);
     }
   };
@@ -158,12 +192,14 @@ const CompanySettings = () => {
               : '',
             holidays: company?.week_off ? company.week_off.split(',') : [],
             logo: company?.logo || '',
+            longitude: company?.longitude || '',
+            latitude: company?.latitude || '',
           }}
           validationSchema={validationSchema}
           onSubmit={handleUpdateCompany}
           enableReinitialize={true} // Ensure data updates correctly
         >
-          {({ isSubmitting }) => (
+          {({ values, isSubmitting, setFieldValue }) => (
             <Form>
               <h2 className="text-gray-800 mb-2 text-2xl font-bold ">
                 Company Settings
@@ -300,14 +336,20 @@ const CompanySettings = () => {
 
               <div className="mb-8 grid grid-cols-2 gap-6">
                 <div>
-                  <label className="text-gray-700 block text-base font-semibold">
-                    Country
-                  </label>
-                  <Field
-                    name="country"
-                    placeholder="Ex-India"
-                    className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
-                  />
+                  <div className="relative">
+                    <label className="text-gray-700 block text-base font-semibold">
+                      Country
+                    </label>
+                    <CountryDropdown
+                      name="country"
+                      value={values.country || ''}
+                      onChange={(val) => setFieldValue('country', val)}
+                      className="border-gray-300  w-full appearance-none rounded rounded-lg  border bg-white p-3 focus:outline-blue-500"
+                    />
+                    <span className="pointer-events-none absolute inset-y-0 right-3 mt-6 flex items-center">
+                      ▼
+                    </span>
+                  </div>
                   <ErrorMessage
                     name="country"
                     component="div"
@@ -318,11 +360,18 @@ const CompanySettings = () => {
                   <label className="text-gray-700 block text-base font-semibold">
                     State
                   </label>
-                  <Field
-                    name="state"
-                    placeholder="Ex-Odisha"
-                    className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
-                  />
+                  <div className="relative">
+                    <RegionDropdown
+                      name="state"
+                      country={values.country ?? ''}
+                      value={values.state || ''}
+                      onChange={(val) => setFieldValue('state', val)}
+                      className="border-gray-300  w-full appearance-none rounded rounded-lg  border bg-white p-3 focus:outline-blue-500"
+                    />
+                    <span className="text-gray-500 pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                      ▼
+                    </span>
+                  </div>
                   <ErrorMessage
                     name="state"
                     component="div"
@@ -350,7 +399,7 @@ const CompanySettings = () => {
                     Working Hours
                   </label>
                   <Field
-                    type="text"
+                    type="number"
                     name="working_hours"
                     placeholder="Enter working hours per day"
                     className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
@@ -387,7 +436,7 @@ const CompanySettings = () => {
                               ...base,
                               border: '1px solid ', // Match border-gray-300
                               borderRadius: '0.4rem', // Match rounded-lg
-                              padding: '0.4rem', // Match p-3
+                              padding: '0.3rem', // Match p-3
                               fontSize: '1rem', // Match text size
                               width: '100%', // Ensure full width
                             }),
@@ -430,6 +479,39 @@ const CompanySettings = () => {
                   className="border-gray-300 w-full rounded-lg border p-3 focus:outline-blue-500"
                 />
               </div>
+              <MapContainer
+                center={[20.5937, 78.9629]}
+                zoom={5}
+                className="h-96 w-full"
+              >
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution="&copy; OpenStreetMap contributors"
+                />
+                <GeocoderControl setFieldValue={setFieldValue} />
+
+                <Marker
+                  position={[
+                    values.latitude || 20.5937,
+                    values.longitude || 78.9629,
+                  ]}
+                  draggable={true}
+                  eventHandlers={{
+                    dragend: (e) => {
+                      const latlng = e.target.getLatLng();
+                      setFieldValue('latitude', latlng.lat);
+                      setFieldValue('longitude', latlng.lng);
+                    },
+                    click: (e) => {
+                      const latlng = e.latlng;
+                      setFieldValue('latitude', latlng.lat);
+                      setFieldValue('longitude', latlng.lng);
+                    },
+                  }}
+                >
+                  <Popup>Selected Location</Popup>
+                </Marker>
+              </MapContainer>
 
               <div className="mt-4 flex justify-end gap-4">
                 <button

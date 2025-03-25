@@ -7,23 +7,14 @@ import PublicRoutes from './routes/PublicRoutes';
 
 const App = () => {
   const authToken = useSelector((state: RootState) => state?.authSlice?.token);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // console.log(authToken);
+  const userId = useSelector((state: RootState) => state?.authSlice?.user_id);
 
-  // useEffect(() => {
-  //   if (authToken) {
-  //     setIsAuthenticated(true);
-  //   } else {
-  //     setIsAuthenticated(false);
-  //   }
-  // }, [authToken]);
-
-  // console.log({ authToken });
+  console.log({ authToken, userId });
 
   return (
     <>
       <Routes>
-        {authToken ? (
+        {authToken && userId ? (
           <Route path="/*" element={<PrivateRoutes />} />
         ) : (
           <Route path="/*" element={<PublicRoutes />} />
