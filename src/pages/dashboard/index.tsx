@@ -29,14 +29,14 @@ const Dashboard = () => {
     useEffect(() => {
       const fetchDashboardData = async () => {
         try {
-          console.log("📡 Fetching Attendance Summary...");
+          console.log("Fetching Attendance Summary...");
           const summaryData = await getattendanceSummary(company_id);
-          console.log("✅ Summary Data:", summaryData); // Check response
+          console.log("Summary Data:", summaryData); // Check response
           dispatch(setAttendanceSummary(summaryData));
   
           console.log("📡 Fetching Attendance Reports...");
           const reportData = await getattendanceReports(company_id, "March", 2025); // Replace with dynamic values
-          console.log("✅ Report Data:", reportData); // Check response
+          console.log("Report Data:", reportData); // Check response
           dispatch(setMonthlyReport(reportData));
   
         } catch (error) {
