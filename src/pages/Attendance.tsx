@@ -20,6 +20,8 @@ import {
   getAttendanceSummary,
 } from '../api/services/attendanceService';
 import Card from '../components/Card';
+import { FaArrowRightFromBracket } from 'react-icons/fa6';
+
 const Attendance: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>(); //  Type dispatch with AppDispatch
   const [showModal, setShowModal] = useState(true);
@@ -34,10 +36,6 @@ const Attendance: React.FC = () => {
   const [attendanceData, setAttendanceData] = useState([]);
 
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    setShowModal(true);
-  }, []);
 
   const company_id = useSelector(
     (state: RootState) => state.authSlice.company_id
@@ -83,19 +81,11 @@ const Attendance: React.FC = () => {
       const { lat, lng } = await getCoordinates();
       const check_in = new Date().toISOString(); // Ensure ISO format
 
-      console.log('Punch In Request:', {
-        check_in,
-        latitude: lat,
-        longitude: lng,
-      }); // Log the request
-
       const response = await dispatch(punchIn({ lat, lng, check_in })).unwrap();
       showToast('Successfully Punched In!');
       showToast('Have a Good day!');
-      console.log('Punch In Success:', response);
       localStorage.setItem('attendance_id', response.id);
     } catch (error) {
-      console.error('Punch In Error:', error);
       alert(`Punch In Failed: ${JSON.stringify(error.detail, null, 2)}`);
     } finally {
       setLoading(false);
@@ -115,7 +105,6 @@ const Attendance: React.FC = () => {
           check_out: new Date().toISOString(),
         })
       ).unwrap();
-      console.log(' Punch Out Success');
       showToast('Successfully Punched Out!');
     } catch (error) {
       console.error(' Punch Out Error:', error);
@@ -129,7 +118,7 @@ const Attendance: React.FC = () => {
     setLoading(true);
     setError(null);
     setAttendanceData([]); // Clear previous data before fetching
-
+    console.log('attendance main');
     const attendance_date = format(selectedDate, 'yyyy-MM-dd');
 
     try {
@@ -137,7 +126,6 @@ const Attendance: React.FC = () => {
         attendance_date,
         company_id.toString()
       );
-      console.log('Fetched Attendance Data:', data);
 
       setAttendanceData(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -153,10 +141,7 @@ const Attendance: React.FC = () => {
   }, [selectedDate]);
 
   const filteredData = useMemo(() => {
-    console.log('Raw Attendance Data:', attendanceData);
-
     if (!Array.isArray(attendanceData)) {
-      console.error('attendanceData is not an array:', attendanceData);
       return [];
     }
 
@@ -169,29 +154,31 @@ const Attendance: React.FC = () => {
         entry.name.toLowerCase().includes(query)
     );
 
-    console.log('Filtered Data:', result);
     return result;
   }, [searchQuery, attendanceData]);
-
-  useEffect(() => {
-    console.log('Fetched Attendance Data:', attendanceData);
-  }, [attendanceData]);
 
   // Get Attendance Summary
   useEffect(() => {
     if (!company_id) return;
 
     const fetchSummary = async () => {
+      setLoading(true);
+      setError(null);
+      setAttendanceData([]); // Clear previous data before fetching
+      const attendance_date = format(selectedDate, 'yyyy-MM-dd');
       try {
-        const data = await getAttendanceSummary(company_id);
+        const data = await getAttendanceSummary(company_id, attendance_date);
         setSummary(data);
       } catch (error) {
+        setAttendanceData([]); // Ensure no data when there's an error
         console.error('Failed to load attendance summary.');
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchSummary();
-  }, [company_id]);
+  }, [company_id, selectedDate]);
 
   return (
     <div className="p-2">
@@ -219,7 +206,7 @@ const Attendance: React.FC = () => {
           />
         </div>
         {/*  Show Punch In/Out Button if modal was canceled */}
-        <div className=" text-center">
+        {/* <div className=" text-center">
           <button
             className={`rounded px-4 py-2 text-white ${
               isPunchedIn ? 'bg-gray-400' : 'bg-black'
@@ -237,6 +224,24 @@ const Attendance: React.FC = () => {
             onClick={handlePunchOut}
           >
             Punch Out
+          </button>
+        </div> */}
+
+        <div className="text-center">
+          <button
+            className={`flex items-center gap-2 rounded px-4 py-2 text-white ${
+              isPunchedIn
+                ? 'bg-[#b91c1c] hover:bg-[#dc2626]'
+                : 'bg-black hover:bg-[#6b7280]'
+            }`}
+            onClick={isPunchedIn ? handlePunchOut : handlePunchIn}
+          >
+            {isPunchedIn ? (
+              <FaArrowRightFromBracket />
+            ) : (
+              <FaArrowRightFromBracket />
+            )}
+            {isPunchedIn ? 'Punch Out' : 'Punch In'}
           </button>
         </div>
       </div>
@@ -279,7 +284,6 @@ const Attendance: React.FC = () => {
               placeholder="Search employee"
               value={searchQuery}
               onChange={(e) => {
-                console.log('Search Query:', e.target.value); // Debugging log
                 setSearchQuery(e.target.value);
               }}
               className="w-full rounded-lg py-2 pl-10 pr-10 focus:outline-none"

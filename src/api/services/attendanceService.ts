@@ -1,7 +1,6 @@
 import API from '../axiosInstance';
 import dayjs from 'dayjs';
 
-
 //Create Attendance(PunchIn)
 export const punchInAPI = async (
   check_in: string,
@@ -23,30 +22,23 @@ export const punchInAPI = async (
 export const punchOutAPI = async (attendance_id: string, check_out: string) => {
   const formattedTime = dayjs(check_out).format('HH:mm:ss'); // Convert to required format
 
-  const response = await API.patch(
-    `/attendance/attendance/${attendance_id}`,
-    {
-      check_out: formattedTime, // Send only time
-    }
-  );
+  const response = await API.patch(`/attendance/attendance/${attendance_id}`, {
+    check_out: formattedTime, // Send only time
+  });
 
   return response.data;
 };
 
-
 //Get attendance By Attendance Id
 export const getAttendanceById = async (attendance_id: string) => {
   try {
-    const response = await API.get(
-      `/attendance/attendance/${attendance_id}`
-    );
+    const response = await API.get(`/attendance/attendance/${attendance_id}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching attendance data:', error);
     throw error;
   }
 };
-
 
 //  Fetch attendance by date and company ID
 export const getAttendanceByDate = async (
@@ -64,7 +56,6 @@ export const getAttendanceByDate = async (
   }
 };
 
-
 //Get attendance By user ID
 export const getAttendanceByUserId = async (user_id: string) => {
   try {
@@ -76,12 +67,14 @@ export const getAttendanceByUserId = async (user_id: string) => {
   }
 };
 
-
 // Fetch Attendance Summary by Company ID
-export const getAttendanceSummary = async (company_id: number) => {
+export const getAttendanceSummary = async (
+  company_id: number,
+  attendance_date: string
+) => {
   try {
     const response = await API.get(
-      `/attendance/attendance/attendance_summary/${company_id}`
+      `/attendance/attendance/attendance_summary/${company_id}/date/${attendance_date}`
     );
 
     return {
