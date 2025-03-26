@@ -21,7 +21,7 @@ const MainReducer = combineReducers({
   attendance: attendanceReducer,
   profile: profileReducer,
   holidays: holidayReducer,
-  dashboard: dashboardReducer,
+  userdashboard: dashboardReducer,
  
 });
  

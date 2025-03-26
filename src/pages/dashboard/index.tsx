@@ -15,7 +15,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
-import PunchModal from '../../components/PunchModal';
+// import PunchModal from '../../components/PunchModal';
 import { ResponsiveContainer } from 'recharts';
 import Card from '../../components/Card';
 
@@ -79,11 +79,16 @@ const Dashboard = () => {
     navigate('/companysettings'); // Redirect after creation
   };
 
-  const { isPunchedIn } = useSelector((state: RootState) => state.attendance);
+  // const { isPunchedIn } = useSelector((state: RootState) => state.attendance);
 
   return (
-    <div className="min-h-screen bg-gray p-6">
-      <PunchModal />
+    <div className="min-h-screen bg-gray ">
+     {/* <div className="mb-4 flex justify-end">  */}
+      {/* <PunchModal
+        isInsideGeofence={true} // Replace with actual geofence logic
+        loading={false} // Set loading when making API calls
+      /> */}
+    {/* </div> */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card
           title="Total Employees"

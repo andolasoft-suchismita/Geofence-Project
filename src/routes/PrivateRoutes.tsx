@@ -27,7 +27,7 @@ const PrivateRoutes = () => {
     }
   }, [location.pathname]);
 
-  const is_superuser = true;
+  const is_superuser = false;
 
   return (
     <DefaultLayout>
