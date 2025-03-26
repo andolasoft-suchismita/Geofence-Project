@@ -93,12 +93,13 @@ async def get_attendance_reports(
 ):
     return await service.get_attendance_reports(company_id, month_name, year)
 
-@MyAttendanceRouter.get("/attendance_summary/{company_id}", response_model=AttendanceSummarySchema)
+@MyAttendanceRouter.get("/attendance_summary/{company_id}/date/{attendance_date}", response_model=AttendanceSummarySchema)
 async def get_attendance_summary(
     company_id: int,
+    attendance_date: date,
     service: AttendanceService = Depends()
 ):
-    return await service.get_attendance_summary(company_id)
+    return await service.get_attendance_summary(company_id, attendance_date)
 
 @MyAttendanceRouter.get("/attendance_summary_by_user/{user_id}", response_model=DashboardSummarySchema)
 async def get_attendance_summary_by_user(
@@ -106,3 +107,11 @@ async def get_attendance_summary_by_user(
     service: AttendanceService = Depends()
 ):
     return await service.get_attendance_summary_by_user(user_id)
+
+@MyAttendanceRouter.get("/user_attendance/{user_id}/date/{attendance_date}")
+async def get_attendance_by_date_user(
+    user_id: UUID,
+    attendance_date: date,
+    service: AttendanceService = Depends()
+):
+    return await service.get_attendance_by_date_user(user_id, attendance_date)

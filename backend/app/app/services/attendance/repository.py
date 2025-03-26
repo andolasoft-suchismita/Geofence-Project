@@ -117,4 +117,9 @@ class AttendanceRepository:
         query = select(Attendance).filter(Attendance.date == attendance_date)
         result = await self.db.execute(query)
         return result.scalars().all()
+    
+    async def get_user_attendance_by_date(self, user_id: UUID, attendacne_date: date):
+        query = select(Attendance).where(Attendance.user_id == user_id , Attendance.date == attendacne_date)
+        result = await self.db.execute(query)
+        return result.scalars().first()
         

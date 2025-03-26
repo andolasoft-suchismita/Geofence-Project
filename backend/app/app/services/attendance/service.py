@@ -54,7 +54,7 @@ class AttendanceService:
 
         attendance_dict["user_id"] = current_user.id  # Assign user ID
 
-        # ✅ Check if the user has already checked in on the same date
+        #  Check if the user has already checked in on the same date
         existing_attendance = await self.attendance_repository.get_attendance_by_date_user(
            user_id=current_user.id, date=attendance_dict["date"]
         )
@@ -161,13 +161,13 @@ class AttendanceService:
             
             if record.check_in:
                     if record.check_out:
-                        # ✅ Calculate working hours normally
+                        #  Calculate working hours normally
                         working_hours = (datetime.combine(date.today(), record.check_out) -
                                                 datetime.combine(date.today(), record.check_in)).seconds / 3600
                         overtime = working_hours - company_working_hours
                         overtime = overtime if overtime > 0 else 0
                     else:
-                        # ✅ If check_out is missing, assume they are still working
+                        #  If check_out is missing, assume they are still working
                         working_hours = (datetime.now() - datetime.combine(date.today(), record.check_in)).seconds / 3600
             else:
                 working_hours = None
@@ -204,18 +204,18 @@ class AttendanceService:
         if not existing_attendance:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Attendance record not found.")
 
-        # ✅ Prevent multiple check-outs
+        #  Prevent multiple check-outs
         # if existing_attendance.check_out is not None:
         #     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User has already been checked out.")
 
-        # ✅ Convert attendance_data to dictionary
+        #  Convert attendance_data to dictionary
         update_dict = attendance_data.model_dump(exclude_unset=True) if hasattr(attendance_data, "model_dump") else attendance_data.dict(exclude_unset=True)
 
-        # ✅ Check if the request is for check-out
+        #  Check if the request is for check-out
         if "check_out" in update_dict:
             # update_dict["check_out"] = datetime.now().time()  # Update check-out time
 
-            # ✅ Calculate work duration & update status
+            #  Calculate work duration & update status
             timezone = pytz.UTC  # Change this if needed
             check_in_time = datetime.combine(existing_attendance.date, existing_attendance.check_in).replace(tzinfo=timezone)
             check_out_time = datetime.combine(existing_attendance.date, update_dict["check_out"]).replace(tzinfo=timezone)
@@ -223,7 +223,7 @@ class AttendanceService:
             work_duration = check_out_time - check_in_time
             update_dict["status"] = "half-day" if work_duration < timedelta(hours=6) else "full-day"
 
-        # ✅ Update the existing attendance record
+        #  Update the existing attendance record
         updated_attendance = await self.attendance_repository.update_attendance(attendance_id, update_dict)
 
         return AttendanceResponseSchema.model_validate(updated_attendance)
@@ -243,7 +243,7 @@ class AttendanceService:
         :param attendance_date: Date of the attendance records.
         :return: A list of AttendanceResponseSchema objects.
         """
-        # ✅ Fetch all users from the database
+        #  Fetch all users from the database
         all_users = await self.company_repository.get_employees_by_company(company_id)
         if not all_users:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found.")
@@ -253,19 +253,19 @@ class AttendanceService:
         if company_working_hours is None:
             company_working_hours = 8  # Default working hours
 
-        # ✅ Get all attendance records for the given date
+        #  Get all attendance records for the given date
         attendance_records = await self.attendance_repository.get_attendance_by_date(attendance_date)
         if not attendance_records:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No attendance records found for the given date.")
+            raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="No attendance records found for the given date.")
         
         filtered_attendance_records = [record for record in attendance_records if record.user_id in all_user_ids]
         
         present_user_ids = {record.user_id for record in filtered_attendance_records}
 
-        # ✅ Identify absent users
+        #  Identify absent users
         absent_user_ids = all_user_ids - present_user_ids  # Users without check-ins
 
-        # ✅ Convert attendance records to response schema
+        #  Convert attendance records to response schema
         attendance_list = []
         for record in filtered_attendance_records:
             user_detail = await self.user_repository.get_user_by_id(record.user_id)
@@ -273,20 +273,20 @@ class AttendanceService:
 
             if record.check_in:
                 if record.check_out:
-                    # ✅ Calculate working hours normally
+                    #  Calculate working hours normally
                     record.working_hours = (datetime.combine(date.today(), record.check_out) -
                                             datetime.combine(date.today(), record.check_in)).seconds / 3600
                     overtime = record.working_hours - company_working_hours
                     record.overtime = overtime if overtime > 0 else 0
                 else:
-                    # ✅ If check_out is missing, assume they are still working
+                    #  If check_out is missing, assume they are still working
                     record.working_hours = (datetime.now() - datetime.combine(date.today(), record.check_in)).seconds / 3600
             else:
                 record.working_hours = None
             
             attendance_list.append(AttendanceResponseSchema.model_validate(record))
  
-        # ✅ Add "Absent" records for users with no check-in
+        #  Add "Absent" records for users with no check-in
         for user_id in absent_user_ids:
             user_detail = await self.user_repository.get_user_by_id(user_id)
             absent_record = AttendanceResponseSchema(
@@ -311,7 +311,7 @@ class AttendanceService:
         :return: A list of AttendanceReportSchema objects.
         """
         month_name = month_name.capitalize()
-        # ✅ Convert month name to month number
+        #  Convert month name to month number
         try:
             month = list(calendar.month_name).index(month_name)
         except ValueError:
@@ -320,34 +320,34 @@ class AttendanceService:
         if month == 0:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Month name cannot be empty.")
         
-        # ✅ Define date range for the selected month
+        #  Define date range for the selected month
         start_date = date(year, month, 1)
         
-        # ✅ Check if the selected month is the current month
+        #  Check if the selected month is the current month
         today = date.today()
         if year == today.year and month == today.month:
             end_date = today  # Use today's date if it's the current month
         else:
             end_date = date(year, month, calendar.monthrange(year, month)[1])  # Last day of the month
     
-        # ✅ Fetch all employees for the company
+        #  Fetch all employees for the company
         all_users = await self.company_repository.get_employees_by_company(company_id)
         if not all_users:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found.")
         
-        # ✅ Fetch company holidays
+        #  Fetch company holidays
         company_holidays = await self.holiday_repository.get_holidays_by_company(23)
         # Fetch company week_off
         company_week_off = await self.company_repository.get_company_week_off(company_id)
-        # ✅ Ensure week_off is a valid list
+        #  Ensure week_off is a valid list
         if not company_week_off:
             company_week_off = []
 
         
-        # ✅ Convert holidays into a set for the selected month
+        #  Convert holidays into a set for the selected month
         holiday_dates = {holiday.holiday_date for holiday in company_holidays if start_date <= holiday.holiday_date <= end_date}
         
-        # ✅ Convert company week_off into actual dates in the full period
+        #  Convert company week_off into actual dates in the full period
         week_off_dates = set()
         days_range = (end_date - start_date).days + 1
         for day_offset in range(days_range):  
@@ -355,12 +355,12 @@ class AttendanceService:
             if current_date.strftime("%A") in company_week_off:
                 week_off_dates.add(current_date)
                 
-        # ✅ Combine company holidays & week_off dates
+        #  Combine company holidays & week_off dates
         non_working_days = holiday_dates.union(week_off_dates)
 
 
 
-        # ✅ Initialize report structure
+        #  Initialize report structure
         report_dict = {
             user.id: {
                 "id": str(user.id),  # Ensure UUID is passed as a string
@@ -373,18 +373,18 @@ class AttendanceService:
             for user in all_users
         }
 
-        # ✅ Iterate over each user and fetch their attendance records
+        #  Iterate over each user and fetch their attendance records
         for user in all_users:
             user_id = user.id
             attendance_records = await self.attendance_repository.get_attendance_by_user(user_id, start_date, end_date)
 
             if not attendance_records:
-                # ✅ If the user has no attendance records, assume they haven't started yet.
+                #  If the user has no attendance records, assume they haven't started yet.
                 continue
 
-            # ✅ Get the first attendance date of the user
+            #  Get the first attendance date of the user
             first_attendance = min(record.date for record in attendance_records)
-            # ✅ Skip users who joined after the selected months
+            #  Skip users who joined after the selected months
             if first_attendance > end_date:
                 continue
 
@@ -392,53 +392,53 @@ class AttendanceService:
             total_half_days = 0
             total_deficit_hours = 0.0
 
-            # ✅ Track attended dates
+            #  Track attended dates
             attended_dates = {record.date for record in attendance_records}
 
-            # ✅ Loop through each working day in the full range
+            #  Loop through each working day in the full range
             for single_date in (start_date + timedelta(days=n) for n in range(days_range)):
                 if single_date in non_working_days:  
-                    continue  # ✅ Skip non-working days
+                    continue  #  Skip non-working days
 
                 if single_date < first_attendance:
-                    # ✅ Skip days before the user's first recorded attendance
+                    #  Skip days before the user's first recorded attendance
                     continue
 
-                # ✅ Check if user attended that day
+                #  Check if user attended that day
                 user_record = next((r for r in attendance_records if r.date == single_date), None)
 
                 if not user_record:
                     total_absent_days += 1
                     continue
 
-                # ✅ Calculate working hours if check-in and check-out exist
+                #  Calculate working hours if check-in and check-out exist
                 working_hours = 0.0
                 if user_record.check_in and user_record.check_out:
                     working_hours = (datetime.combine(date.today(), user_record.check_out) - 
                                      datetime.combine(date.today(), user_record.check_in)).seconds / 3600
 
-                # ✅ Identify half-day and deficit hours
+                #  Identify half-day and deficit hours
                 if 4 <= working_hours < 6:
                     total_half_days += 1
                 elif working_hours < 8:
                     total_deficit_hours += (8 - working_hours)
 
-            # ✅ Update report data
+            #  Update report data
             report_dict[user_id]["days_absent"] = total_absent_days
             report_dict[user_id]["half_days"] = total_half_days
             report_dict[user_id]["deficit_hours"] = round(total_deficit_hours, 2)
 
-        # ✅ Convert report dictionary to list of schemas
+        #  Convert report dictionary to list of schemas
         return [AttendanceReportSchema(**data) for data in report_dict.values()]
     
     
-    async def get_attendance_summary(self, company_id: int) -> AttendanceSummarySchema:
+    async def get_attendance_summary(self, company_id: int, attendance_date: date) -> AttendanceSummarySchema:
         """
         Retrieves attendance summary for a company.
         :param company_id: ID of the company.
         :return: AttendanceSummarySchema object.
         """
-        # ✅ Fetch all employees for the company
+        #  Fetch all employees for the company
         all_users = await self.company_repository.get_employees_by_company(company_id)
         if not all_users:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found.")
@@ -446,28 +446,28 @@ class AttendanceService:
         total_employees = len(all_users)
         all_user_ids = {user.id for user in all_users}
 
-        # ✅ Get attendance records for today
-        today = date.today()
+        #  Get attendance records for today
+        today = attendance_date
         attendance_records = await self.attendance_repository.get_attendance_by_date(today)
 
-        # ✅ Filter records belonging to the company
+        #  Filter records belonging to the company
         filtered_attendance_records = [record for record in attendance_records if record.user_id in all_user_ids]
         present_user_ids = {record.user_id for record in filtered_attendance_records}
         
-        # ✅ Number of employees present today
+        #  Number of employees present today
         present_today = len(present_user_ids)
 
 
-        # ✅ Identify absent users
+        #  Identify absent users
         absent_user_ids = all_user_ids - present_user_ids  # Users without check-ins
         absentees_today = len(absent_user_ids)
 
-        # ✅ Calculate late comers (check-in time available and is late)
+        #  Calculate late comers (check-in time available and is late)
         late_comings_today = sum(
             1 for record in filtered_attendance_records if record.check_in and record.check_in.hour > 10
         )  # Assuming 10 AM as cutoff time
 
-        # ✅ Department-wise attendance
+        #  Department-wise attendance
         department_wise_attendance: Dict[str, Dict[str, int]] = {}
         for user in all_users:
             dept = user.department if user.department else "Unknown"
@@ -479,7 +479,7 @@ class AttendanceService:
             else:
                 department_wise_attendance[dept]["absent"] += 1
 
-        # ✅ Calculate overall attendance percentage
+        #  Calculate overall attendance percentage
         present_count = total_employees - absentees_today
         overall_attendance = {
             "present": round((present_count / total_employees) * 100, 2),
@@ -495,7 +495,7 @@ class AttendanceService:
             overall_attendance=overall_attendance
         )
         
-    async def get_attendance_summary_by_user(self, user_id: int) -> DashboardSummarySchema:
+    async def get_attendance_summary_by_user(self, user_id: UUID) -> DashboardSummarySchema:
         """
         Retrieves attendance summary for a specific user.
         :param user_id: ID of the user.
@@ -504,7 +504,7 @@ class AttendanceService:
         # Fetch upcoming holidays
         upcoming_holidays = await self.holiday_repository.get_upcoming_holidays_for_user(23)
         upcoming_holiday = (
-            HolidaySchema(name=upcoming_holidays[0].holiday_name, date=str(upcoming_holidays[0].holiday_date))
+            HolidaySchema(name=upcoming_holidays.holiday_name, date=str(upcoming_holidays.holiday_date))
             if upcoming_holidays else None
         )
 
@@ -551,6 +551,10 @@ class AttendanceService:
         # Calculate present & absent days
         total_present_days = len(attended_dates)
         total_absent_days = len(all_working_days - attended_dates)
+        
+        total_working_days = total_present_days + total_absent_days
+        present_percentage = (total_present_days / total_working_days) * 100 if total_working_days else 0
+        absent_percentage = (total_absent_days / total_working_days) * 100 if total_working_days else 0
 
         # Group attendance by month
         login_overtime_trends = {}
@@ -590,7 +594,62 @@ class AttendanceService:
             upcoming_holiday=upcoming_holiday,
             total_invested_time=round(total_invested_hours, 2),
             total_overtime=round(total_overtime_hours, 2),
-            total_present_days=total_present_days,
-            total_absent_days=total_absent_days,
+            total_present_days=round(present_percentage, 2),
+            total_absent_days=round(absent_percentage, 2),
             login_overtime_trends=final_trends
         )
+        
+    async def get_attendance_by_date_user(self, user_id: UUID, attendance_date: date) -> AttendanceResponseSchema:
+        """
+        Retrive the attendance data based on the date
+        """
+        user = await self.user_repository.get_user_by_id(user_id)
+        if not user:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        
+        username = user.first_name+ " " +user.last_name
+        
+        attendance_data = await self.attendance_repository.get_user_attendance_by_date(user_id, attendance_date)
+        if not attendance_data:
+            raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="No data found for this date")
+        
+        # Get company working hours (default to 8 if not found)
+        company_data = await getTenantInfo(user_id)
+        company_working_hours = await self.company_repository.get_company_working_hours(company_data.id)
+        if company_working_hours is None:
+            company_working_hours = 8  
+
+        # Calculate working hours and overtime
+        working_hours = None
+        overtime = None
+
+        if attendance_data.check_in:
+            if attendance_data.check_out:
+                # Calculate total working hours
+                working_hours = (datetime.combine(date.today(), attendance_data.check_out) -
+                                 datetime.combine(date.today(), attendance_data.check_in)).seconds / 3600
+            
+                # Calculate overtime
+                overtime = max(0, working_hours - company_working_hours)
+            else:
+                # If check-out is missing, assume the user is still working
+                working_hours = (datetime.now() - datetime.combine(date.today(), attendance_data.check_in)).seconds / 3600
+                overtime = None  # Can't determine overtime yet
+
+        
+        return AttendanceResponseSchema(
+            id = attendance_data.id,
+            user_id=user_id,
+            name=username,
+            date=attendance_date,
+            status=attendance_data.status,
+            check_in=attendance_data.check_in,
+            check_out=attendance_data.check_out,
+            working_hours= working_hours,
+            overtime= overtime
+        )
+        
+        
+        
+        
+        

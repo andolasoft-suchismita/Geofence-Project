@@ -100,6 +100,6 @@ class CompanyHolidayRepository:
         :return: List of upcoming holidays.
         """
         async for session in get_db():
-            query = select(CompanyHoliday).filter(CompanyHoliday.company_id == company_id, CompanyHoliday.start_date >= date.today())
+            query = select(CompanyHoliday).where(CompanyHoliday.company_id == company_id, CompanyHoliday.holiday_date >= date.today()).order_by(CompanyHoliday.holiday_date.asc())
             result = await session.execute(query)
-            return result.scalars().all()
+            return result.scalars().first()
