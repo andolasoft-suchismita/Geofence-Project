@@ -23,6 +23,21 @@ class CompanyDesignation(str, Enum):
     MARKETING_MANAGER = "marketing_manager"
     INTERN = "intern"
     
+from enum import Enum
+
+class CompanyDepartment(str, Enum):
+    HUMAN_RESOURCES = "human_resources"
+    FINANCE = "finance"
+    OPERATIONS = "operations"
+    SALES = "sales"
+    MARKETING = "marketing"
+    CUSTOMER_SUPPORT = "customer_support"
+    IT = "it"
+    SOFTWARE_DEVELOPMENT = "software_development"
+    PRODUCT_MANAGEMENT = "product_management"
+    QUALITY_ASSURANCE = "quality_assurance"
+    RESEARCH_AND_DEVELOPMENT = "research_and_development"
+
     
 class UserRoleType(str, Enum):
     ADMIN = "admin"
@@ -40,6 +55,7 @@ class AddUserSchema(BaseModel):
     dob: date
     gender: str
     employee_type: str
+    department: Optional[str] = CompanyDepartment.SOFTWARE_DEVELOPMENT
 
     @field_validator("doj", "dob", mode="before")
     def validate_date(cls, value):
@@ -67,6 +83,7 @@ class UpdateUserSchema(BaseModel):
     address: Optional[str] = None
     department: Optional[str] = None
     profile_pic: Optional[str] = None
+    department: Optional[str] = None
     
     @field_validator("doj", "dob", mode="before")
     def validate_date(cls, value):

@@ -65,11 +65,12 @@ class AttendanceService:
         #Get company coordinates
         geofence_coordinates = await self.attendance_repository.get_company_coordinates(userId)
         print(f"Fetched geofence coordinates: {geofence_coordinates}")
+        
+        if geofence_coordinates is None:
+           raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company coordinates not found.")
+        
         if geofence_coordinates["latitude"] is None or geofence_coordinates["longitude"] is None:
            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company coordinates not found or company is not created.")
-        
-        if not geofence_coordinates:
-           raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company coordinates not found.")
        
         company_latitude = float(geofence_coordinates["latitude"])
         company_longitude = float(geofence_coordinates["longitude"])
@@ -180,7 +181,7 @@ class AttendanceService:
                 "check_out": record.check_out,
                 "status": record.status,
                 "name": username,
-                "date": record.date,  # Assuming `record` has a `date` field
+                "date": record.date,
                 "working_hours": working_hours,
                 "overtime": overtime,
             })
