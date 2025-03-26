@@ -61,13 +61,14 @@ const ProfileSettings = () => {
       await updateUser(userId, updatedData);
       setDetails(updatedData);
     } catch (error) {
-      console.error("Error updating profile picture:", error);
-      setError("Failed to update profile picture.");
+      console.error('Error updating profile picture:', error);
+      setError('Failed to update profile picture.');
     }
   };
 
-  if (loading) return <div className="text-center text-gray-600">Loading...</div>;
-  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (loading)
+    return <div className="text-gray-600 text-center">Loading...</div>;
+  if (error) return <div className="text-red-500 text-center">{error}</div>;
 
   return (
     <div className="w-2xl max-w-4xl mx-auto min-h-screen overflow-y-auto bg-gray-100">
@@ -130,29 +131,33 @@ const ProfileSettings = () => {
             </div>
 
             {[
-              ["first_name", "First Name"],
-              ["last_name", "Last Name"],
-              ["phone_number", "Phone Number"],
-              ["email", "Email"],
-              ["dob", "Date of Birth"],
-              ["gender", "Gender"],
-              ["blood_group", "Blood Group"],
-              ["marital_status", "Marital Status"],
+              ['first_name', 'First Name'],
+              ['last_name', 'Last Name'],
+              ['phone_number', 'Phone Number'],
+              ['email', 'Email'],
+              ['dob', 'Date of Birth'],
+              ['gender', 'Gender'],
+              ['blood_group', 'Blood Group'],
+              ['marital_status', 'Marital Status'],
             ].map(([key, label]) => (
               <div key={key}>
-                <strong className="text-lg text-gray-600">{label}:</strong>
-                <p className="text-lg text-gray-800 mt-1">{details[key] || "-"}</p>
+                <strong className="text-gray-600 text-lg">{label}:</strong>
+                <p className="text-gray-800 mt-1 text-lg">
+                  {details[key] || '-'}
+                </p>
               </div>
             ))}
 
             <div className="col-span-2 grid grid-cols-2 gap-x-12">
               {[
-                ["address", "Address"],
-                ["emergency_contact", "Emergency Contact"],
+                ['address', 'Address'],
+                ['emergency_contact', 'Emergency Contact'],
               ].map(([key, label]) => (
                 <div key={key}>
-                  <strong className="text-lg text-gray-600">{label}:</strong>
-                  <p className="text-lg text-gray-800 mt-1">{details[key] || "-"}</p>
+                  <strong className="text-gray-600 text-lg">{label}:</strong>
+                  <p className="text-gray-800 mt-1 text-lg">
+                    {details[key] || '-'}
+                  </p>
                 </div>
               ))}
             </div>
@@ -162,17 +167,19 @@ const ProfileSettings = () => {
             </div>
 
             {[
-              ["employee_id", "Employee ID"],
-              ["company_name", "Company Name"],
-              ["designation", "Designation"],
-              ["department", "Department"],
-              ["roletype", "Role Type"],
-              ["employee_type", "Employee Type"],
-              ["doj", "Date of Joining"],
+              ['employee_id', 'Employee ID'],
+              ['company_name', 'Company Name'],
+              ['designation', 'Designation'],
+              ['department', 'Department'],
+              ['roletype', 'Role Type'],
+              ['employee_type', 'Employee Type'],
+              ['doj', 'Date of Joining'],
             ].map(([key, label]) => (
               <div key={key}>
-                <strong className="text-lg text-gray-600">{label}:</strong>
-                <p className="text-lg text-gray-800 mt-1">{details[key] || "-"}</p>
+                <strong className="text-gray-600 text-lg">{label}:</strong>
+                <p className="text-gray-800 mt-1 text-lg">
+                  {details[key] || '-'}
+                </p>
               </div>
             ))}
           </div>

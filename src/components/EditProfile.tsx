@@ -1,5 +1,5 @@
-import { useFormik } from "formik";
-import * as Yup from "yup";
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 interface EditProfileProps {
   editData: any;
@@ -16,23 +16,23 @@ const EditProfile: React.FC<EditProfileProps> = ({
 }) => {
   const formik = useFormik({
     initialValues: {
-      first_name: editData?.first_name || "",
-      last_name: editData?.last_name || "",
-      phone_number: editData?.phone_number || "",
-      email: editData?.email || "",
-      dob: editData?.dob || "",
-      address: editData?.address || "",
-      gender: editData?.gender || "",
-      blood_group: editData?.blood_group || "",
-      marital_status: editData?.marital_status || "",
-      emergency_contact: editData?.emergency_contact || "",
-      employee_id: editData?.employee_id || "",
-      company_name: editData?.company_name || "",
-      designation: editData?.designation || "",
-      department: editData?.department || "",
-      roletype: editData?.roletype || "",
-      employee_type: editData?.employee_type || "",
-      doj: editData?.doj || "",
+      first_name: editData?.first_name || '',
+      last_name: editData?.last_name || '',
+      phone_number: editData?.phone_number || '',
+      email: editData?.email || '',
+      dob: editData?.dob || '',
+      address: editData?.address || '',
+      gender: editData?.gender || '',
+      blood_group: editData?.blood_group || '',
+      marital_status: editData?.marital_status || '',
+      emergency_contact: editData?.emergency_contact || '',
+      employee_id: editData?.employee_id || '',
+      company_name: editData?.company_name || '',
+      designation: editData?.designation || '',
+      department: editData?.department || '',
+      roletype: editData?.roletype || '',
+      employee_type: editData?.employee_type || '',
+      doj: editData?.doj || '',
     },
     validationSchema: Yup.object({
       first_name: Yup.string().trim().required("First Name is required"),
@@ -65,7 +65,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
     <form onSubmit={formik.handleSubmit} className="space-y-6">
       {/* Personal Details Section */}
       <div>
-        <h4 className="text-lg font-bold text-gray-700 mb-4">
+        <h4 className="text-gray-700 mb-4 text-lg font-bold">
           Personal Details
         </h4>
         <div className="grid grid-cols-2 gap-x-10 gap-y-6">
@@ -143,21 +143,21 @@ const EditProfile: React.FC<EditProfileProps> = ({
 
       {/* Job Details Section */}
       <div>
-        <h4 className="text-lg font-bold text-gray-700 mb-4">Job Details</h4>
+        <h4 className="text-gray-700 mb-4 text-lg font-bold">Job Details</h4>
         <div className="grid grid-cols-2 gap-x-10 gap-y-6">
           {[
-            ["employee_id", "Employee ID"],
-            ["company_name", "Company Name"],
-            ["designation", "Designation"],
-            ["department", "Department"],
-            ["roletype", "Role Type"],
-            ["employee_type", "Employee Type"],
-            ["doj", "Date of Joining"],
+            ['employee_id', 'Employee ID'],
+            ['company_name', 'Company Name'],
+            ['designation', 'Designation'],
+            ['department', 'Department'],
+            ['roletype', 'Role Type'],
+            ['employee_type', 'Employee Type'],
+            ['doj', 'Date of Joining'],
           ].map(([name, label]) => (
             <div key={name}>
-              <label className="block text-gray-700">{label}</label>
+              <label className="text-gray-700 block">{label}</label>
               <input
-                type={name === "doj" ? "date" : "text"}
+                type={name === 'doj' ? 'date' : 'text'}
                 name={name}
                 value={formik.values[name as keyof typeof formik.values]}
                 onChange={formik.handleChange}
@@ -178,7 +178,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
         <button
           type="button"
           onClick={handleCancel}
-          className="px-7 py-3 bg-red text-white rounded-lg hover:bg-red-600 transition"
+          className="hover:bg-red-600 rounded-lg bg-red px-7 py-3 text-white transition"
         >
           Cancel
         </button>

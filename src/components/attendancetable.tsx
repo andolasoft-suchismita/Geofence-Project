@@ -239,6 +239,7 @@ const EmployeeDetailsModal = ({ employee, onClose }) => {
   );
 };
 
+
 interface AttendanceTableProps {
   data: any[];
 }
