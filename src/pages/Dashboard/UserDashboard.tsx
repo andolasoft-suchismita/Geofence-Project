@@ -7,7 +7,7 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, LineChart, Line, XAx
 const Dashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
   const user_id = useSelector((state: RootState) => state.authSlice.user_id);
-  const { data, loading, error } = useSelector((state: RootState) => state.dashboard);
+  const { data, loading, error } = useSelector((state: RootState) => state.userdashboard);
 
   useEffect(() => {
     if (user_id) {

@@ -21,6 +21,7 @@ import {
 } from '../api/services/attendanceService';
 import Card from '../components/Card';
 import { FaArrowRightFromBracket } from 'react-icons/fa6';
+import { useLocation } from 'hooks/useLocation';
 
 const Attendance: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>(); //  Type dispatch with AppDispatch
@@ -53,7 +54,7 @@ const Attendance: React.FC = () => {
 
   //Get coordinates Function
   const getCoordinates = async () => {
-    return new Promise<{ lat: number; lng: number }>((resolve, reject) => {
+    return new Promise<{ lat: number ; lng: number }>((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           resolve({
