@@ -85,7 +85,7 @@ const ProfileSettings = () => {
 
         {/* 🔹 Header */}
         <div className="flex items-center justify-between mb-8">
-          <h3 className="text-2xl font-bold text-gray-800">Profile Details</h3>
+          <h3 className="text-2xl font-bold text-gray-800">Profile </h3>
         </div>
 
         {/* 🔹 Profile Info */}
