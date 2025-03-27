@@ -9,10 +9,15 @@ interface PunchData {
 }
 
 interface AttendanceState {
-  [user_id: string]: PunchData[];
+  // [user_id: string]: PunchData[];
+  users: { [user_id: string]: PunchData[] };
+  isPunchedIn: boolean
 }
 
-const initialState: AttendanceState = {};
+const initialState: AttendanceState = {
+  users: {},
+  isPunchedIn: false
+};
 
 // Async Thunks for API Calls
 
@@ -50,7 +55,11 @@ export const punchOut = createAsyncThunk(
 const attendanceSlice = createSlice({
   name: 'attendance',
   initialState,
-  reducers: {},
+  reducers: {
+    setPunchStatus: (state, action) => {
+      state.isPunchedIn = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(punchIn.fulfilled, (state, action) => {
@@ -62,6 +71,7 @@ const attendanceSlice = createSlice({
           coordinates: '',
           punchOut: null,
         });
+        state.isPunchedIn = true;
       })
       .addCase(punchOut.fulfilled, (state, action) => {
         const { user_id, check_out, id } = action.payload; //  Get updated attendance_id
@@ -71,8 +81,10 @@ const attendanceSlice = createSlice({
         if (attendance) {
           attendance.punchOut = check_out;
         }
+        state.isPunchedIn = false;
       });
   },
 });
 
+export const { setPunchStatus } = attendanceSlice.actions;
 export default attendanceSlice.reducer;

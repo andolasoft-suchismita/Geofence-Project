@@ -8,8 +8,9 @@ import DefaultLayout from '../layout/DefaultLayout';
 import Users from '../pages/Users';
 
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import DashboardHome from '../pages/Dashboard';
-import Dashboard from '../pages/Dashboard/UserDashboard';
+import DashboardHome from '../pages/dashboard';
+import Dashboard from '../pages/dashboard/UserDashboard';
+
 import NotFoundPage from '../pages/NotFoundPage';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -52,6 +53,8 @@ const PrivateRoutes = () => {
   );
   const isAdmin =
     currentUser?.is_superuser == true || currentUser?.roletype == 'admin'; // Admin role check
+
+  const is_superuser = false;
 
   return (
     <DefaultLayout>
