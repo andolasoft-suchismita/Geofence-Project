@@ -1,12 +1,15 @@
+
 import { useRef, useState } from 'react';
 import { FaCamera, FaTrash, FaUser } from 'react-icons/fa'; // Added FaUser for placeholder icon
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 interface ProfilePictureProps {
   profilePic: string | null;
   updateProfilePicture: (image: string | null) => void;
   isEditing: boolean;
+
   isDetailsView: boolean;
 }
 
@@ -17,6 +20,7 @@ const ProfilePicture = ({
   isDetailsView,
 }: ProfilePictureProps) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const [isHovered, setIsHovered] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,12 +37,15 @@ const ProfilePicture = ({
   };
 
   const handleRemovePicture = () => {
+
     updateProfilePicture(null);
     toast.info('Profile picture removed.');
+
   };
 
   return (
     <div
+
       className="group relative h-24 w-24"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -55,6 +62,7 @@ const ProfilePicture = ({
         </div>
       )}
 
+
       <input
         type="file"
         accept="image/png, image/jpeg"
@@ -62,6 +70,7 @@ const ProfilePicture = ({
         className="hidden"
         onChange={handleFileChange}
       />
+
 
       {isEditing && (
         <button
@@ -80,6 +89,7 @@ const ProfilePicture = ({
           <FaTrash size={18} />
         </button>
       )}
+
     </div>
   );
 };

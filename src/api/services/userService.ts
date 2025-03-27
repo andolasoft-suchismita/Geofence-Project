@@ -54,6 +54,7 @@ export const fetchUserDetailsAPI = async (id: string) => {
   }
 };
 
+ 
 
 export const fetchCurrentUserAPI = async (user_id: string) => {
   try {

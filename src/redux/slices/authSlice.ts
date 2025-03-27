@@ -1,13 +1,14 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { fetchCurrentUserAPI } from '../../api/services/userService'; //  Import function
-import { RootState } from '../../redux/store'; //  Import RootState for selectors
+import { createSlice, PayloadAction} from "@reduxjs/toolkit";
+import { fetchCurrentUserAPI } from "../../api/services/userService"; // Import function
+import { RootState } from "../../redux/store"; // Import RootState for selectors
 
 interface AuthState {
   isAuthenticated: boolean;
   token: string | null;
   user_id: string | null;
   company_id: number | null;
-  roletype: string | null; //Added role field
+  roletype: string | null; // Added role field
+  // roletype: string | null; //Added role field
   user: {
     id: any;
     name: string;

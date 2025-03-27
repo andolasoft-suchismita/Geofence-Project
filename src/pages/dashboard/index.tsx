@@ -165,6 +165,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CompanyPopup from '../CompanyPopup';
+
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/rootReducers';
 import PunchModal from '../../components/PunchModal';
@@ -206,10 +207,12 @@ const Dashboard = () => {
   const company_id = useSelector(
     (state: RootState) => state.authSlice.company_id
   );
+
   const { isPunchedIn } = useSelector((state: RootState) => state.attendance);
 
   const [showPopup, setShowPopup] = useState(false);
   const [chartKey, setChartKey] = useState(0);
+
 
   // Fetch API Data When Component Loads
   useEffect(() => {
@@ -253,11 +256,14 @@ const Dashboard = () => {
 
   // Ensure chart re-renders on data update
   useEffect(() => {
+
     setChartKey((prev) => prev + 1);
+
   }, [attendanceSummary]);
 
   // Data preparation for charts
   const totalEmployees = attendanceSummary?.total_employees || 0;
+
   const presentToday = attendanceSummary?.present_today || 0;
   const absenteesToday = attendanceSummary?.absentees_today || 0;
   const lateComingsToday = attendanceSummary?.late_comings_today || 0;
@@ -304,6 +310,7 @@ const Dashboard = () => {
           <h3 className="mb-4 text-lg font-semibold">
             Department-wise Attendance
           </h3>
+
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={departmentData} width={600} height={300}>
               <XAxis dataKey="department" />
@@ -316,7 +323,7 @@ const Dashboard = () => {
           </ResponsiveContainer>
         </div>
 
-        <div className="w-full rounded-md bg-white p-5 shadow">
+        <div className="rounded-md bg-white p-5 shadow w-full">
           <h3 className="mb-4 text-lg font-semibold">Overall Attendance</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart key={chartKey}>
@@ -325,9 +332,7 @@ const Dashboard = () => {
                 cx="50%"
                 cy="50%"
                 outerRadius={120}
-                label={({ name, percent }) =>
-                  `${name} (${(percent * 100).toFixed(0)}%)`
-                }
+                label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
                 dataKey="value"
               >
                 {pieData.map((entry, index) => (
@@ -340,15 +345,14 @@ const Dashboard = () => {
       </div>
 
       <div className="mt-6 rounded-md bg-white p-5 shadow">
-        <h3 className="mb-4 text-lg font-semibold">
-          Monthly Attendance Summary
-        </h3>
+        <h3 className="mb-4 text-lg font-semibold">Monthly Attendance Summary</h3>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={monthlyReport}>
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
             <Legend />
+
             <Bar
               dataKey="days_absent"
               fill={colorMapping.days_absent}
@@ -359,6 +363,7 @@ const Dashboard = () => {
               fill={colorMapping.half_days}
               name="Half Days"
             />
+
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -367,5 +372,6 @@ const Dashboard = () => {
     </div>
   );
 };
+
 
 export default Dashboard;

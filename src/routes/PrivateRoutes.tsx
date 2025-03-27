@@ -6,18 +6,38 @@ import WeeklyReport from '../pages/WeeklyReport';
 import CompanySettings from '../pages/CompanySettings';
 import DefaultLayout from '../layout/DefaultLayout';
 import Users from '../pages/Users';
+
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import DashboardHome from '../pages/Dashboard';
 import Dashboard from '../pages/Dashboard/UserDashboard';
 import NotFoundPage from '../pages/NotFoundPage';
+
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/rootReducers';
+
+const AdminRoute = ({ children }: { children: JSX.Element }) => { 
+const userRole = useSelector((state: RootState) => state.userSlice.userInfo.roletype);
+ 
+
+
+
+  if (userRole !== 'admin') {
+    return <Navigate to="/dashboard" replace />;
+    
+  }
+  
+  return children;
+};
+
 
 const PrivateRoutes = () => {
   const location = useLocation();
 
   const navigate = useNavigate();
+  // const userRole = useSelector((state: RootState) => state.userSlice.userInfo.roletype);
+  // const isAdmin = currentUser?.roletype === "admin"; // Admin role check
+
 
   useEffect(() => {
     if (location.pathname === '/') {
@@ -34,6 +54,7 @@ const PrivateRoutes = () => {
   return (
     <DefaultLayout>
       <Routes>
+
         {/* <Route path="/dashboard" element={<DashboardHome />} />
         <Route path="/dashboard" element={<Dashboard />} /> */}
         {isAdmin ? (
@@ -48,9 +69,12 @@ const PrivateRoutes = () => {
         )}
         <Route path="/weeklyreport" element={<WeeklyReport />} />
         <Route path="/companysettings" element={<CompanySettings />} />
+
         <Route path="/calendar" element={<MyCalendar />} />
-        <Route path="/users" element={<Users />} />
+        {/* <Route path="/users" element={<Users />} /> */}
         <Route path="/profile" element={<Profile />} />
+
+
 
         {/* <Route path="*" element={<NotFoundPage />} /> */}
       </Routes>

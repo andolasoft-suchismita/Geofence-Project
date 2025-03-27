@@ -1,5 +1,7 @@
+
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+
 
 interface EditProfileProps {
   editData: any;
@@ -16,6 +18,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
 }) => {
   const formik = useFormik({
     initialValues: {
+
       first_name: editData?.first_name || '',
       last_name: editData?.last_name || '',
       phone_number: editData?.phone_number || '',
@@ -33,11 +36,13 @@ const EditProfile: React.FC<EditProfileProps> = ({
       roletype: editData?.roletype || '',
       employee_type: editData?.employee_type || '',
       doj: editData?.doj || '',
+
     },
     validationSchema: Yup.object({
       first_name: Yup.string().trim().required('First Name is required'),
       last_name: Yup.string().trim().required('Last Name is required'),
       phone_number: Yup.string()
+
         .trim()
         .matches(/^\d{10}$/, 'Phone number must be exactly 10 digits')
         .required('Phone number is required'),
@@ -53,6 +58,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
         .matches(/^\d{10}$/, 'Emergency contact must be exactly 10 digits')
         .required('Emergency Contact is required'),
       department: Yup.string().trim().required('Department is required'),
+
     }),
     onSubmit: (values) => {
       console.log('Submitted Values:', values);
@@ -117,6 +123,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
                     formik.values[name as keyof typeof formik.values] || ''
                   }
                   onChange={formik.handleChange}
+
                   onKeyPress={(e) => {
                     if (
                       (name === 'phone_number' ||
@@ -146,6 +153,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
                   ]?.toString()}
                 </p>
               )}
+
             </div>
           ))}
         </div>
@@ -171,6 +179,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
                 name={name}
                 value={formik.values[name as keyof typeof formik.values]}
                 onChange={formik.handleChange}
+
                 className={`w-full rounded-md border p-3 ${
                   [
                     'employee_id',
@@ -189,6 +198,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
                   'employee_type',
                   'doj',
                 ].includes(name)}
+
               />
             </div>
           ))}
@@ -206,9 +216,11 @@ const EditProfile: React.FC<EditProfileProps> = ({
         </button>
         <button
           type="submit"
+
           className="rounded-lg bg-blue-600 px-7 py-3 text-white transition hover:bg-blue-700"
         >
           Save
+
         </button>
       </div>
     </form>
