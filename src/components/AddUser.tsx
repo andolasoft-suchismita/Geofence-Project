@@ -33,6 +33,20 @@ export enum CompanyDesignation {
   MARKETING_MANAGER = 'marketing_manager',
   INTERN = 'intern',
 }
+// Enum for Department
+export enum CompanyDepartment {
+  HUMAN_RESOURCES = "human_resources",
+    FINANCE = "finance",
+    OPERATIONS = "operations",
+    SALES = "sales",
+    MARKETING = "marketing",
+    CUSTOMER_SUPPORT = "customer_support",
+    IT = "it",
+    SOFTWARE_DEVELOPMENT = "software_development",
+    PRODUCT_MANAGEMENT = "product_management",
+    QUALITY_ASSURANCE = "quality_assurance",
+    RESEARCH_AND_DEVELOPMENT = "research_and_development"
+}
 
 export interface User {
   id: string;
@@ -81,6 +95,7 @@ const UserForm: React.FC<UserFormProps> = ({
             doj: selectedItem?.doj ? selectedItem.doj.split('T')[0] : '',
             dob: selectedItem?.dob ? selectedItem.dob.split('T')[0] : '',
             designation: selectedItem ? selectedItem?.designation : '',
+            department: selectedItem ? selectedItem?.department : '',
             hashed_password: selectedItem ? selectedItem?.hashed_password : '',
             gender: selectedItem ? selectedItem?.gender : '', // Add this
             employee_type: selectedItem ? selectedItem?.employee_type : '', // Add this
@@ -113,6 +128,9 @@ const UserForm: React.FC<UserFormProps> = ({
             dob: Yup.date().required('Date of Birth is required'),
             designation: Yup.string()
               .oneOf(Object.values(CompanyDesignation), 'Invalid designation')
+              .required('Designation is required'),
+            department: Yup.string()
+              .oneOf(Object.values(CompanyDepartment), 'Invalid department')
               .required('Designation is required'),
             hashed_password: Yup.string()
               .min(8, 'Password must be at least 8 characters')
@@ -188,23 +206,7 @@ const UserForm: React.FC<UserFormProps> = ({
               </div>
 
               {/* Employee ID & Email */}
-              <div className="mb-2 grid gap-4">
-                {/* <div>
-                  <label className="block">
-                    Employee ID
-                    <span className="text-2xl text-orange-900">*</span>
-                  </label>
-                  <Field
-                    name="employee_id"
-                    autoComplete="off"
-                    className="w-full rounded border p-2"
-                  />
-                  <ErrorMessage
-                    name="employee_id"
-                    className="text-sm text-orange-900"
-                    component="div"
-                  />
-                </div> */}
+              <div className="mb-2 grid grid-cols-2 gap-4">
                 <div>
                   <label className="block">Email</label>
                   <Field
@@ -216,6 +218,26 @@ const UserForm: React.FC<UserFormProps> = ({
                   />
                   <ErrorMessage
                     name="email"
+                    className="text-sm text-red"
+                    component="div"
+                  />
+                </div>
+                <div>
+                  <label className="block">Department</label>
+                  <Field
+                    as="select"
+                    name="department"
+                    className="w-full rounded-lg border p-2 focus:outline-blue-500"
+                  >
+                    <option value="">Select Departmemt</option>
+                    {Object.values(CompanyDepartment).map((role) => (
+                      <option key={role} value={role}>
+                        {role.toUpperCase()}
+                      </option>
+                    ))}
+                  </Field>
+                  <ErrorMessage
+                    name="roletype"
                     className="text-sm text-red"
                     component="div"
                   />

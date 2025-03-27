@@ -89,6 +89,24 @@ const GeocoderControl = ({ setFieldValue }: { setFieldValue: Function }) => {
 
   return null;
 };
+const getCoordinates = async () => {
+  return new Promise<{ lat: number; lng: number }>((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          lat: parseFloat(position.coords.latitude.toFixed(6)), // Round to 6 decimals
+          lng: parseFloat(position.coords.longitude.toFixed(6)),
+        });
+      },
+      () => {
+        alert('⚠️ Failed to get location. Please enable GPS and try again.');
+        reject({ lat: 0, lng: 0 });
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 } // High accuracy mode
+    );
+  });
+};
+
 
 
 const CompanySettings = () => {
@@ -143,11 +161,13 @@ const CompanySettings = () => {
 
     try {
       await validationSchema.validate(values);
-
+      const coordinates = await getCoordinates();
       const payload = {
         ...values,
-        latitude: String(values.latitude), // Convert latitude to string
-        longitude: String(values.longitude), // Convert longitude to string
+        latitude: String(coordinates.lat),
+        longitude: String(coordinates.lng),
+        // latitude: String(values.latitude), // Convert latitude to string
+        // longitude: String(values.longitude), // Convert longitude to string
         week_off: Array.isArray(values.holidays)
           ? values.holidays.join(',')
           : '', // Convert array to comma-separated string

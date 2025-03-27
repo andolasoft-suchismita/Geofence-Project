@@ -1,44 +1,43 @@
 import Profile from '../pages/Profile';
 import MyCalendar from '../pages/Calendar';
 import Attendance from '../pages/Attendance';
+import UserAttendance from '../pages/userAttendance';
 import WeeklyReport from '../pages/WeeklyReport';
 import CompanySettings from '../pages/CompanySettings';
 import DefaultLayout from '../layout/DefaultLayout';
 import Users from '../pages/Users';
-import { useSelector } from 'react-redux';
-import { Route, Routes, useLocation, useNavigate, Navigate } from 'react-router-dom';
+
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import DashboardHome from '../pages/Dashboard';
+import Dashboard from '../pages/Dashboard/UserDashboard';
 import NotFoundPage from '../pages/NotFoundPage';
-import Userdashboard from '../pages/Dashboard/UserDashboard';
-import { RootState } from '../redux/rootReducers';
 import { useEffect } from 'react';
-// import Users from '../pages/dashboard/Users';
-// import Attendance from '../pages/dashboard/Attendance';
-// import WeeklyReport from '../pages/dashboard/WeeklyReport';
+import { useSelector } from 'react-redux';
+import { RootState } from 'redux/rootReducers';
 
-const AdminRoute = ({ children }: { children: JSX.Element }) => {
-  const currentUser = useSelector(
-      (state: RootState) => state.userSlice.userInfo
-    );
-    console.log("Fetched User Info:", currentUser); // Debugging user data
+// const AdminRoute = ({ children }: { children: JSX.Element }) => {
+//   const currentUser = useSelector(
+//       (state: RootState) => state.userSlice.userInfo
+//     );
+//     console.log("Fetched User Info:", currentUser); // Debugging user data
 
-  const isAdmin = currentUser?.is_superuser == true || currentUser?.roletype === "admin";
-  console.log("Is Admin?", isAdmin);
+//   const isAdmin = currentUser?.is_superuser == true || currentUser?.roletype === "admin";
+//   console.log("Is Admin?", isAdmin);
 
 
-  if (!isAdmin) {
-    return <Navigate to="/user-dashboard" replace />;
+//   if (!isAdmin) {
+//     return <Navigate to="/user-dashboard" replace />;
 
-  }
+//   }
 
-  return children;
-};
+//   return children;
+// };
 
 
 const PrivateRoutes = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const currentUser = useSelector((state: RootState) => state.userSlice.userInfo);
+  
 
 
   useEffect(() => {
@@ -47,35 +46,39 @@ const PrivateRoutes = () => {
       navigate('/user-dashboard');
     }
   }, [location.pathname]);
+  //  Fetch currentUser role from Redux
+  const currentUser = useSelector(
+    (state: RootState) => state.userSlice.userInfo
+  );
+  const isAdmin =
+    currentUser?.is_superuser == true || currentUser?.roletype == 'admin'; // Admin role check
 
   return (
     <DefaultLayout>
       <Routes>
-         {/* User Dashboard */}
-        <Route path="/user-dashboard" element={<Userdashboard />} />
 
-         {/* Common Pages */}
-         <Route path="/attendance" element={<Attendance />} />
-         <Route path="/calendar" element={<MyCalendar />} />
-         <Route path="/profile" element={<Profile />} />
+        {/* <Route path="/dashboard" element={<DashboardHome />} />
+        <Route path="/dashboard" element={<Dashboard />} /> */}
+        {isAdmin ? (
+          <Route path="/dashboard" element={<DashboardHome />} />
+        ) : (
+          <Route path="/dashboard" element={<Dashboard />} />
+        )}
+        {isAdmin ? (
+          <Route path="/attendance" element={<Attendance />} />
+        ) : (
+          <Route path="/attendance" element={<UserAttendance />} />
+        )}
+        <Route path="/weeklyreport" element={<WeeklyReport />} />
+        <Route path="/companysettings" element={<CompanySettings />} />
+
+        <Route path="/calendar" element={<MyCalendar />} />
+        {/* <Route path="/users" element={<Users />} /> */}
+        <Route path="/profile" element={<Profile />} />
 
 
-        {/* Admin-Only Routes (Wrapped in AdminRoute) */} {/* Admin Dashboard */}
-        <Route path="/dashboard" element={<AdminRoute><DashboardHome /></AdminRoute>} />
-        <Route path="/users" element={<AdminRoute><Users /></AdminRoute>} />
-        <Route path="/companysettings" element={<AdminRoute><CompanySettings /></AdminRoute>} />
-        <Route path="/weeklyreport" element={<AdminRoute><WeeklyReport /></AdminRoute>} />
-
-
-
-
-        <Route path="*" element={<NotFoundPage />} />
-        {/* <Route path="/profile/:userId" element={<Profile />} /> */}
 
         {/* <Route path="*" element={<NotFoundPage />} /> */}
-        {/* <Route path="/dashboard/attendance" element={<Attendance />} />
-                <Route path="/dashboard/weeklyreport" element={<WeeklyReport />} /> */}
-        {/* <Route path="*" element={<Navigate to="/calendar" replace />} /> */}
       </Routes>
     </DefaultLayout>
   );

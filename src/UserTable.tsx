@@ -135,7 +135,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
       accessorKey: 'designation',
       header: 'Designation',
       cell: ({ getValue }) => {
-        const designation = getValue<string>();
+        const designation = String(getValue() || '');
         return designation
           .replace(/_/g, ' ') // Replace underscores with spaces
           .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter of each word
@@ -146,8 +146,8 @@ const UsersTable: React.FC<UsersTableProps> = ({
       accessorKey: 'roletype',
       header: 'Role Type',
       cell: ({ getValue }) => {
-        const designation = getValue<string>();
-        return designation
+        const roletype = String(getValue() || '');
+        return roletype
           .replace(/_/g, ' ') // Replace underscores with spaces
           .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter of each word
       },
