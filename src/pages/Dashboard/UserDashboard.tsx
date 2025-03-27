@@ -4,7 +4,7 @@ import { fetchDashboardData } from "../../redux/slices/userdashboardSlice";
 import { RootState, AppDispatch } from "../../redux/store";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
 
-const Dashboard = () => {
+const Userdashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
   const user_id = useSelector((state: RootState) => state.authSlice.user_id);
   const { data, loading, error } = useSelector((state: RootState) => state.userdashboard);
@@ -106,4 +106,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Userdashboard;

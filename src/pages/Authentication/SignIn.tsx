@@ -29,12 +29,12 @@ const SignIn: React.FC = () => {
     password: Yup.string().required('Password is required'),
   });
 
-  const fetchUserInfo = async(user_id: string) => {
+ const fetchUserInfo = async(user_id: string) => {
     try {
-      const userInfo = await fetchCurrentUserAPI(user_id); // ✅ Fetch user info
+      const userInfo = await fetchCurrentUserAPI(user_id); //  Fetch user info
       console.log('kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk', userInfo)
       if (userInfo) {
-        dispatch(setUserInfo(userInfo)); // ✅ Dispatch only when data exists
+        dispatch(setUserInfo(userInfo)); //  Dispatch only when data exists
       } else {
         console.warn("No user info found.");
       }

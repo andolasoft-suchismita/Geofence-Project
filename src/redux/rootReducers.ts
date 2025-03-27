@@ -10,7 +10,7 @@ import attendanceReducer from './slices/attendanceSlice';
 import profileReducer from "./slices/profileSlice";
 import holidayReducer from './slices/holidaySlice';
 import dashboardReducer from "./slices/userdashboardSlice";
-import dashboardSlice from "./slices/dashboardSlice";
+
 
 
 
@@ -24,9 +24,6 @@ const MainReducer = combineReducers({
   dashboard:dashboardSlice,
   profile: profileReducer,
   holidays: holidayReducer,
-
-  dashboard:dashboardSlice,
-
   userdashboard: dashboardReducer,
  
 });
