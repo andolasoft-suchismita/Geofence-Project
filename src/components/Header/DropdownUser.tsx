@@ -218,10 +218,24 @@ const DropdownUser = () => {
   
       try {
         const data = await getUserById(userId); // Fetch user data
+        const formattedName = `${data?.first_name || 'User'} ${
+          data?.last_name || 'Name'
+        }`
+          .replace(/_/g, ' ')
+          .split(' ')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+
+        const formattedDesignation = (data?.designation || 'User Designation')
+          .replace(/_/g, ' ')
+          .split(' ')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
         setProfile({
-          name: `${data?.first_name || "User"} ${data?.last_name || "Name"}`, // Combine first and last name
-          designation: data?.designation || "User Designation",
-          image: data?.profile_pic || "/default-user.png", // Map `profile_pic` to `image`
+          name: formattedName,
+          designation: formattedDesignation,
+          image:
+            data?.profile_pic || '/deafault user.avif',
         });
       } catch (error) {
         console.error("Error fetching profile:", error);

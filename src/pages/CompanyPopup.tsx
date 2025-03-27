@@ -55,7 +55,7 @@ const CompanyPopup = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <div className="fixed inset-0 mt-15 flex items-center justify-center bg-black bg-opacity-50 ">
+    <div className="fixed inset-0  flex items-center justify-center bg-black bg-opacity-50 z-9999">
       <div className="relative w-96 rounded-lg bg-white p-6 shadow-lg">
         <h2 className="mb-4 text-center text-2xl font-bold text-blue-600">
           Create Your Company
