@@ -17,7 +17,7 @@ import {
 } from 'recharts';
 import PunchModal from '../../components/PunchModal';
 
-const Dashboard = () => {
+const Userdashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
   const user_id = useSelector((state: RootState) => state.authSlice.user_id);
   const { data, loading, error } = useSelector(
@@ -178,4 +178,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Userdashboard;

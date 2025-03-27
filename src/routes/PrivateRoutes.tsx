@@ -12,37 +12,39 @@ import DashboardHome from '../pages/dashboard';
 import Dashboard from '../pages/dashboard/UserDashboard';
 
 import NotFoundPage from '../pages/NotFoundPage';
-
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/rootReducers';
 
-const AdminRoute = ({ children }: { children: JSX.Element }) => { 
-const userRole = useSelector((state: RootState) => state.userSlice.userInfo.roletype);
- 
+// const AdminRoute = ({ children }: { children: JSX.Element }) => {
+//   const currentUser = useSelector(
+//       (state: RootState) => state.userSlice.userInfo
+//     );
+//     console.log("Fetched User Info:", currentUser); // Debugging user data
+
+//   const isAdmin = currentUser?.is_superuser == true || currentUser?.roletype === "admin";
+//   console.log("Is Admin?", isAdmin);
 
 
+//   if (!isAdmin) {
+//     return <Navigate to="/user-dashboard" replace />;
 
-  if (userRole !== 'admin') {
-    return <Navigate to="/dashboard" replace />;
-    
-  }
-  
-  return children;
-};
+//   }
+
+//   return children;
+// };
 
 
 const PrivateRoutes = () => {
   const location = useLocation();
-
   const navigate = useNavigate();
-  // const userRole = useSelector((state: RootState) => state.userSlice.userInfo.roletype);
-  // const isAdmin = currentUser?.roletype === "admin"; // Admin role check
+  
 
 
   useEffect(() => {
+    console.log("Current User Role in PrivateRoutes:", currentUser?.roletype);
     if (location.pathname === '/') {
-      navigate('/dashboard');
+      navigate('/user-dashboard');
     }
   }, [location.pathname]);
   //  Fetch currentUser role from Redux
