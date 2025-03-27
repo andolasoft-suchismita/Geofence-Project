@@ -1,19 +1,16 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { getUserById, updateUser } from "../../api/services/profileService";
-
 interface ProfileState {
   user: any; // Adjust this type according to your actual user structure
   loading: boolean;
   error: string | null;
 }
-
 // Initial state
 const initialState: ProfileState = {
   user: null,
   loading: false,
   error: null,
 };
-
 // ✅ Async Thunk to Fetch User Profile
 export const fetchUserProfile = createAsyncThunk(
   "profile/fetchUserProfile",
@@ -26,7 +23,6 @@ export const fetchUserProfile = createAsyncThunk(
     }
   }
 );
-
 // ✅ Async Thunk to Update Profile
 export const updateUserProfile = createAsyncThunk(
   "profile/updateUserProfile",
@@ -39,7 +35,6 @@ export const updateUserProfile = createAsyncThunk(
     }
   }
 );
-
 // ✅ Create Profile Slice
 const profileSlice = createSlice({
   name: "profile",

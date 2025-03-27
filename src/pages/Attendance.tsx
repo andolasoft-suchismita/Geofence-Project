@@ -33,7 +33,7 @@ const Attendance: React.FC = () => {
     null,
     null,
   ]);
-  // const [startDate, endDate] = dateRange;
+  const [startDate, endDate] = dateRange;
   const [attendanceData, setAttendanceData] = useState([]);
 
   const [error, setError] = useState<string | null>(null);
@@ -52,7 +52,6 @@ const Attendance: React.FC = () => {
     late: 0,
   });
 
-  //Get coordinates Function
   const getCoordinates = async () => {
     return new Promise<{ lat: number ; lng: number }>((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(
@@ -71,7 +70,6 @@ const Attendance: React.FC = () => {
     });
   };
 
-  ///////////////////
   const isPunchedIn =
     userAttendance.length > 0 &&
     !userAttendance[userAttendance.length - 1].punchOut;
@@ -93,7 +91,6 @@ const Attendance: React.FC = () => {
     }
   };
 
-  ////////////////////
   const handlePunchOut = async () => {
     const attendance_id = localStorage.getItem('attendance_id');
     if (!attendance_id) return alert('⚠️ No active attendance record found!');
@@ -247,8 +244,8 @@ const Attendance: React.FC = () => {
         </div>
       </div>
 
-      {/* Attendance Summary */}
-      <div className="mb-6 ml-4 flex grid grid-cols-1 gap-4 gap-6 md:grid-cols-2 lg:grid-cols-3">
+       {/* Attendance Summary */}
+       <div className="mb-6 ml-4 flex grid grid-cols-1 gap-4 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Total Employees */}
         <div>
           <Card title="Total Employee" count={summary.total} type="total" />
@@ -267,19 +264,16 @@ const Attendance: React.FC = () => {
           count={summary.absentees}
           type="absentees"
         />
-
+ 
         {/* Late Employees */}
         <Card title="Late Comings" count={summary.late} type="late" />
       </div>
-
+ 
       {/* Filters Section */}
       <div className="mb-6 ml-4 flex  space-x-4">
         {/* Search Bar */}
         <div className="relative flex w-72 items-center rounded-lg shadow-md">
           <div className="relative flex w-72 items-center rounded-lg shadow-md">
-            <span className="text-gray-400 absolute pl-4">
-              <FaSearch />
-            </span>
             <input
               type="text"
               placeholder="Search employee"
@@ -287,16 +281,11 @@ const Attendance: React.FC = () => {
               onChange={(e) => {
                 setSearchQuery(e.target.value);
               }}
-              className="w-full rounded-lg py-2 pl-10 pr-10 focus:outline-none"
+              className="w-full rounded-lg py-2 pl-3 pr-10 focus:outline-none"
             />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="text-gray-400 hover:text-gray-600 absolute right-3"
-              >
-                ✕
-              </button>
-            )}
+            <span className="text-gray-400 absolute right-3">
+              <FaSearch />
+            </span>
           </div>
         </div>
 

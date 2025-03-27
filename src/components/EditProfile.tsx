@@ -1,5 +1,7 @@
+
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+
 
 interface EditProfileProps {
   editData: any;
@@ -16,6 +18,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
 }) => {
   const formik = useFormik({
     initialValues: {
+
       first_name: editData?.first_name || '',
       last_name: editData?.last_name || '',
       phone_number: editData?.phone_number || '',
@@ -33,11 +36,13 @@ const EditProfile: React.FC<EditProfileProps> = ({
       roletype: editData?.roletype || '',
       employee_type: editData?.employee_type || '',
       doj: editData?.doj || '',
+
     },
     validationSchema: Yup.object({
       first_name: Yup.string().trim().required("First Name is required"),
       last_name: Yup.string().trim().required("Last Name is required"),
       phone_number: Yup.string()
+
         .trim()
         .matches(/^\d{10}$/, "Phone number must be exactly 10 digits")
         .required("Phone number is required"),
@@ -187,6 +192,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
           className="px-7 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
         >
           Save
+
         </button>
       </div>
     </form>

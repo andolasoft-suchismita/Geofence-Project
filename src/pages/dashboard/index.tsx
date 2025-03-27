@@ -42,7 +42,7 @@ const Dashboard = () => {
   const company_id = useSelector(
     (state: RootState) => state.authSlice.company_id
   );
-  const { isPunchedIn } = useSelector((state: RootState) => state.attendance);
+  // const { isPunchedIn } = useSelector((state: RootState) => state.attendance);
  
   const [showPopup, setShowPopup] = useState(false);
   const [chartKey, setChartKey] = useState(0);

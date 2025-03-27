@@ -29,6 +29,20 @@ const SignIn: React.FC = () => {
     password: Yup.string().required('Password is required'),
   });
 
+  const fetchUserInfo = async(user_id: string) => {
+    try {
+      const userInfo = await fetchCurrentUserAPI(user_id); // ✅ Fetch user info
+      console.log('kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk', userInfo)
+      if (userInfo) {
+        dispatch(setUserInfo(userInfo)); // ✅ Dispatch only when data exists
+      } else {
+        console.warn("No user info found.");
+      }
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+    }
+  };
+
   const handleSignin = async (values: { email: string; password: string }) => {
     try {
       const userData = await loginUser(values.email, values.password);
@@ -49,16 +63,17 @@ const SignIn: React.FC = () => {
 
       dispatch(login(authData));
       localStorage.setItem('authToken', JSON.stringify(authData));
-
-      const userInfo = await fetchCurrentUserAPI(user_id);
-      dispatch(setUserInfo(userInfo));
-
+      // const userInfo = await fetchCurrentUserAPI(user_id);
+      // dispatch(setUserInfo(userInfo));
+      fetchUserInfo(user_id)
       showToast('Login Successful!', 'success');
       navigate('/dashboard');
     } catch (error) {
       showToast('Invalid credentials', 'error');
     }
   };
+
+  
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-white">
       <div className="w-full max-w-md">
