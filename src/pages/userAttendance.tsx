@@ -257,17 +257,20 @@ const Attendance: React.FC = () => {
     });
   };
 
+  const [refreshData, setRefreshData] = useState(false);
 
-const [refreshData, setRefreshData] = useState(false);
-
-const triggerRefresh = () => {
-  setRefreshData((prev) => !prev); // Toggle state to re-trigger effect in EmployeeDetail
-};
+  const triggerRefresh = () => {
+    setRefreshData((prev) => !prev); // Toggle state to re-trigger effect in EmployeeDetail
+  };
 
   ///////////////////
-  const isPunchedIn =
-    userAttendance.length > 0 &&
-    !userAttendance[userAttendance.length - 1].punchOut;
+  // const isPunchedIn =
+  //   userAttendance.length > 0 &&
+  //   !userAttendance[userAttendance.length - 1].punchOut;
+
+  const isPunchedIn = useSelector(
+    (state: RootState) => state.attendance.isPunchedIn
+  );
 
   const handlePunchIn = async () => {
     setLoading(true);

@@ -8,7 +8,7 @@ import {
 
 interface CardProps {
   title: string;
-  count: number;
+  count:string| number;
   type: "total" | "absentees" | "late" | "present"; // To dynamically set colors & icons
 }
 

@@ -193,7 +193,7 @@ const CompanySettings = () => {
       showToast('Company updated successfully!', 'success');
       setSubmitting(false);
     } catch (error) {
-      console.error('Validation/API Error:', error);
+      // console.error('Validation/API Error:', error);
       showToast(error.message || 'Failed to update company details.', 'error');
       setSubmitting(false);
     }

@@ -1,4 +1,6 @@
+
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
 
 // Define the state interface
 interface DashboardState {
@@ -28,6 +30,7 @@ const initialState: DashboardState = {
 
 // Create the slice
 const dashboardSlice = createSlice({
+
   name: 'dashboardSlice',
   initialState,
   reducers: {
@@ -37,21 +40,26 @@ const dashboardSlice = createSlice({
       action: PayloadAction<DashboardState['attendanceSummary']>
     ) => {
       console.log('📊 Updating attendanceSummary in Redux:', action.payload);
+
       state.attendanceSummary = action.payload;
     },
 
     // Action to set monthly attendance report
+
     setMonthlyReport: (
       state,
       action: PayloadAction<DashboardState['monthlyReport']>
     ) => {
       console.log('📊 Updating monthlyReport in Redux:', action.payload);
+
       state.monthlyReport = action.payload;
     },
   },
 });
 
 // Export actions and reducer
+
 export const { setAttendanceSummary, setMonthlyReport } =
   dashboardSlice.actions;
 export default dashboardSlice.reducer;
+
