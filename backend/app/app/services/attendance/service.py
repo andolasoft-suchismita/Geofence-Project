@@ -5,6 +5,7 @@ from datetime import date, datetime, timedelta
 from geopy.distance import geodesic
 from pyparsing import Dict
 import pytz
+from services.addusers.repository import AddUserRepository
 from utility.tenant_info import getTenantInfo
 from services.companyuser.repository import CompanyUserRepository
 from services.companyholiday.repository import CompanyHolidayRepository
@@ -31,6 +32,7 @@ class AttendanceService:
         self.company_repository = CompanyRepository()
         self.holiday_repository = CompanyHolidayRepository()
         self.companyuser_repository = CompanyUserRepository()
+        self.adduser_repository = AddUserRepository()
 
     async def create_attendance(self, request: Request, attendance_data: AttendanceSchema, current_user: User) -> AttendanceResponseSchema:
         """
@@ -149,6 +151,8 @@ class AttendanceService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
         
         username = user.first_name+ " " +user.last_name
+        if username is None:
+            username = ""
         # Fetch attendance records with filters applied
         attendance_records = await self.attendance_repository.get_attendance_by_user(user_id, start_date, end_date)
         
@@ -419,7 +423,7 @@ class AttendanceService:
                                      datetime.combine(date.today(), user_record.check_in)).seconds / 3600
 
                 #  Identify half-day and deficit hours
-                if 4 <= working_hours < 6:
+                if working_hours < 6:
                     total_half_days += 1
                 elif working_hours < 8:
                     total_deficit_hours += (8 - working_hours)
@@ -649,8 +653,96 @@ class AttendanceService:
             working_hours= working_hours,
             overtime= overtime
         )
-        
-        
-        
-        
-        
+
+    async def get_attendance_by_month(self, user_id: UUID, month_name: str, year: int) -> List[dict]:
+        """
+        Retrieve attendance for each day of the given month
+        """
+        month_name = month_name.capitalize()
+    
+        # Convert month name to month number
+        try:
+            month = list(calendar.month_name).index(month_name)
+        except ValueError:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid month name. Use full month name like 'February'.")
+    
+        if month == 0:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Month name cannot be empty.")
+
+        # Define date range for the selected month
+        start_date = date(year, month, 1)
+    
+        today = date.today()
+        end_date = today if (year == today.year and month == today.month) else date(year, month, calendar.monthrange(year, month)[1])
+    
+        # Fetch user details
+        user = await self.adduser_repository.get_user(user_id)
+        username = f"{user.first_name} {user.last_name}" if user else "Unknown"
+    
+        # Get company info
+        company = await getTenantInfo(user_id)
+    
+        # Fetch company holidays
+        company_holidays = await self.holiday_repository.get_holidays_by_company(23)
+        holiday_dates = {holiday.holiday_date for holiday in company_holidays if start_date <= holiday.holiday_date <= end_date}
+    
+        # Fetch company week-offs
+        company_week_off = await self.company_repository.get_company_week_off(company.id) or []
+    
+        # Generate list of company week-off dates
+        week_off_dates = set()
+        days_range = (end_date - start_date).days + 1
+        for day_offset in range(days_range):
+            current_date = start_date + timedelta(days=day_offset)
+            if current_date.strftime("%A") in company_week_off:
+                week_off_dates.add(current_date)
+    
+        # Combine holidays and week-offs
+        non_working_days = holiday_dates.union(week_off_dates)
+
+        # Fetch attendance records for the user
+        attendance_records = await self.attendance_repository.get_attendance_by_user(user_id, start_date, end_date)
+    
+        # Convert attendance records to a dictionary by date for fast lookup
+        attendance_dict = {record.date: record for record in attendance_records 
+                    if record.date.month == month and record.date.year == year}
+
+        # List to store attendance data for each day
+        attendance_list = []
+
+        # Loop through each day in the month
+        for single_date in (start_date + timedelta(days=n) for n in range(days_range)):
+            if single_date in non_working_days:
+                continue  # Skip non-working days
+
+            # Find attendance record for the date
+            user_record = attendance_dict.get(single_date)
+
+            # Default values
+            working_hours = 0.0
+            absent = True
+            half_day = False
+            deficit_hours = 0.0
+
+            if user_record:
+                absent = False
+                if user_record.check_in and user_record.check_out:
+                    working_hours = (datetime.combine(date.today(), user_record.check_out) - 
+                                 datetime.combine(date.today(), user_record.check_in)).seconds / 3600
+
+                if 4 <= working_hours < 6:
+                    half_day = True
+                elif working_hours < 8:
+                    deficit_hours = round(8 - working_hours, 2)
+
+            # Append daily attendance record
+            attendance_list.append({
+                "date": single_date.isoformat(),
+                "employee_id": user.employee_id,
+                "name": username,
+                "absent": absent,
+                "half_day": half_day,
+                "deficit_hours": deficit_hours
+            })
+
+        return attendance_list

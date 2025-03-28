@@ -51,8 +51,8 @@ class AddUserSchema(BaseModel):
     hashed_password: str
     roletype: UserRoleType = UserRoleType.USER
     designation: CompanyDesignation = CompanyDesignation.JUNIOR_ENGINEER
-    doj: date
-    dob: date
+    doj: Optional[date]
+    dob: Optional[date]
     gender: str
     employee_type: str
     department: Optional[str] = CompanyDepartment.SOFTWARE_DEVELOPMENT

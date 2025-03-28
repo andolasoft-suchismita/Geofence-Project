@@ -115,3 +115,12 @@ async def get_attendance_by_date_user(
     service: AttendanceService = Depends()
 ):
     return await service.get_attendance_by_date_user(user_id, attendance_date)
+
+@MyAttendanceRouter.get("/user_attendance_by_month/{user_id}/month/{month_name}/year/{year}")
+async def get_attendance_by_month(
+    user_id: UUID,
+    month_name: str,
+    year: int,
+    service: AttendanceService = Depends()
+):
+    return await service.get_attendance_by_month(user_id, month_name, year)

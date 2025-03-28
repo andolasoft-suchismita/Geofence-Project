@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import Depends, UploadFile
+from fastapi import Depends, HTTPException, UploadFile, status
 from services.company.repository import CompanyRepository
 from utility.get_tenant_name import getTenantInfo
 from services.companyuser.repository import CompanyUserRepository
@@ -32,6 +32,10 @@ class AddUserService:
         :param adduser_data: Data required to create a user.
         :return: The created User object.
         """
+        email = adduser_data.email
+        existing_user = await self.adduser_repository.get_user_by_email(email)
+        if existing_user:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User already exist with the same email id")
         super_user_company = await getTenantInfo(current_super_user.id)
         # super_user_company = await self.company_user_repository.get_tenant_user_detail(str(current_super_user.id))
         db_hashed_password = self.pwd_context.hash(adduser_data.hashed_password)
