@@ -59,9 +59,9 @@ def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
     openapi_schema = get_openapi(
-        title="Baseleaf Construction API",
+        title="OGeo API",
         version="0.1.0",
-        description="Baseleaf module for Construction Industry",
+        description="OGeo module",
         routes=app.routes,
     )
   
