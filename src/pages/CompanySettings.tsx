@@ -433,7 +433,7 @@ const CompanySettings = () => {
 
                 <div>
                   <label className=" block text-base font-semibold">
-                    Select Holidays
+                    Week Off
                   </label>
                   <Field name="holidays">
                     {({ field, form }: any) => (
@@ -488,7 +488,7 @@ const CompanySettings = () => {
                   />
                 </div>
               </div>
-              <div>
+              <div className='mb-2'>
                 <label className="text-gray-700 block text-base text-base font-semibold">
                   Description
                 </label>
