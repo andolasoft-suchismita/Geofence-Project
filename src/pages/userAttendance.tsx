@@ -341,7 +341,7 @@ const triggerRefresh = () => {
   );
   const firstname = currentUser?.first_name;
   const lastname = currentUser?.last_name;
-
+  const profilepic = currentUser?.last_name;
   return (
     <div className="p-2">
       {/* Date Selector & Buttons */}
