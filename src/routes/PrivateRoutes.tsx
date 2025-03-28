@@ -15,23 +15,7 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/rootReducers';
 
-// const AdminRoute = ({ children }: { children: JSX.Element }) => {
-//   const currentUser = useSelector(
-//       (state: RootState) => state.userSlice.userInfo
-//     );
-//     console.log("Fetched User Info:", currentUser); // Debugging user data
 
-//   const isAdmin = currentUser?.is_superuser == true || currentUser?.roletype === "admin";
-//   console.log("Is Admin?", isAdmin);
-
-
-//   if (!isAdmin) {
-//     return <Navigate to="/user-dashboard" replace />;
-
-//   }
-
-//   return children;
-// };
 
 
 const PrivateRoutes = () => {
@@ -69,6 +53,7 @@ const PrivateRoutes = () => {
         ) : (
           <Route path="/attendance" element={<UserAttendance />} />
         )}
+        <Route path="/users" element={<Users/>} />
         <Route path="/weeklyreport" element={<WeeklyReport />} />
         <Route path="/companysettings" element={<CompanySettings />} />
 

@@ -8,7 +8,7 @@ import ProfilePicture from '../components/Images/profilepicture';
 import { RootState } from '../redux/store';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { showToast } from '../utils/toast';
 
 const ProfileSettings = () => {
   const [isEditing, setIsEditing] = useState(false);
