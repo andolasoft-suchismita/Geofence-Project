@@ -15,6 +15,7 @@ const userSlice = createSlice({
     // Action to set user information in the Redux store
     setUserInfo: (state, action: PayloadAction<Record<string, any>>) => {
       state.userInfo = action.payload;
+      
     },
 
     // Action to update user role after profile update

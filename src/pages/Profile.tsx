@@ -1,13 +1,15 @@
-import { useState, useEffect } from "react";
-import { FaTimes } from "react-icons/fa"; // Importing cross icon
-import { useSelector } from "react-redux";
-import EditProfile from "../components/EditProfile";
-import { getUserById, updateUser } from "../api/services/profileService";
-import ProfilePicture from "../components/Images/profilepicture";
-import { RootState } from "../redux/store";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
- 
+
+import { useState, useEffect } from 'react';
+import { FaTimes } from 'react-icons/fa'; // Importing cross icon
+import { useSelector } from 'react-redux';
+import EditProfile from '../components/EditProfile';
+import { getUserById, updateUser } from '../api/services/profileService';
+import ProfilePicture from '../components/Images/profilepicture';
+import { RootState } from '../redux/store';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { showToast } from '../utils/toast';
+
 const ProfileSettings = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [details, setDetails] = useState<any>(null);

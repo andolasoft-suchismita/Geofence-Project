@@ -21,59 +21,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false); // State for toggling Settings menu
   const storedSidebarExpanded = localStorage.getItem('sidebar-expanded');
   const [sidebarExpanded, setSidebarExpanded] = useState(
-    storedSidebarExpanded === 'true' ? true : false
+    localStorage.getItem('sidebar-expanded') === 'true'
   );
-
-  const menuItems = [
-    { name: 'Dashboard', path: '/dashboard', allowedRoles: ['admin', 'user'] },
-    { name: 'Users', path: '/users', allowedRoles: ['admin'] }, // Only admin
-    { name: 'Reports', path: '/reports', allowedRoles: ['admin'] }, // Only admin
-    { name: 'Calender', path: '/', allowedRoles: ['admin', 'user'] },
-  ];
-
-  // //  Fetch currentUser role from Redux
-  // const currentUser = useSelector((state: RootState) => state.userSlice.userInfo);
-  // const isAdmin = currentUser?.roletype === "admin";
-  // // .is_superuser == true ; // Admin role check
+ 
   const currentUser = useSelector(
     (state: RootState) => state.userSlice.userInfo
   );
-  const isAdmin = currentUser?.is_superuser == true; // Admin role check
-  console.log({ currentUser });
-  useEffect(() => {
-    localStorage.setItem('sidebar-expanded', sidebarExpanded.toString());
-    if (sidebarExpanded) {
-      document.querySelector('body')?.classList.add('sidebar-expanded');
-    } else {
-      document.querySelector('body')?.classList.remove('sidebar-expanded');
-    }
-  }, [sidebarExpanded]);
-
-  // close on click outside
-  useEffect(() => {
-    const clickHandler = ({ target }: MouseEvent) => {
-      if (!sidebar.current || !trigger.current) return;
-      if (
-        !sidebarOpen ||
-        sidebar.current.contains(target) ||
-        trigger.current.contains(target)
-      )
-        return;
-      setSidebarOpen(false);
-    };
-    document.addEventListener('click', clickHandler);
-    return () => document.removeEventListener('click', clickHandler);
-  });
-
-  // close if the esc key is pressed
-  useEffect(() => {
-    const keyHandler = ({ keyCode }: KeyboardEvent) => {
-      if (!sidebarOpen || keyCode !== 27) return;
-      setSidebarOpen(false);
-    };
-    document.addEventListener('keydown', keyHandler);
-    return () => document.removeEventListener('keydown', keyHandler);
-  });
+  const isAdmin =currentUser?.is_superuser === true || currentUser?.roletype === "admin"; // Admin role check
+  console.log({isAdmin})
 
   useEffect(() => {
     localStorage.setItem('sidebar-expanded', sidebarExpanded.toString());
@@ -83,12 +38,48 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
       document.querySelector('body')?.classList.remove('sidebar-expanded');
     }
   }, [sidebarExpanded]);
+
+  const menuItems = [
+    { name: "Dashboard", path: "/dashboard", allowedRoles: ["admin", "user"] },
+    { name: "Users", path: "/users", allowedRoles: ["admin"] }, // Only admin
+    { name: "Reports", path: "/reports", allowedRoles: ["admin"] }, // Only admin
+    { name: "Calender", path: "/", allowedRoles: ["admin", "user"] }
+    // { name: "Setting", path: "/companysetting", allowedRoles: ["admin"] }
+    
+  ];
+
+ // Close sidebar on outside click
+ useEffect(() => {
+  const clickHandler = ({ target }: MouseEvent) => {
+    if (!sidebar.current || !trigger.current) return;
+    if (
+      !sidebarOpen ||
+      sidebar.current.contains(target) ||
+      trigger.current.contains(target)
+    )
+      return;
+    setSidebarOpen(false);
+  };
+  document.addEventListener('click', clickHandler);
+  return () => document.removeEventListener('click', clickHandler);
+}, [sidebarOpen]);
+
+// Close sidebar when "Escape" key is pressed
+useEffect(() => {
+  const keyHandler = ({ keyCode }: KeyboardEvent) => {
+    if (!sidebarOpen || keyCode !== 27) return;
+    setSidebarOpen(false);
+  };
+  document.addEventListener('keydown', keyHandler);
+  return () => document.removeEventListener('keydown', keyHandler);
+}, [sidebarOpen]);
+
 
   return (
     <aside
-      ref={sidebar}
-      className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-black duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+    ref={sidebar}
+      className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-black duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0
+         ${ sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}
     >
       {/* <!-- SIDEBAR HEADER --> */}
@@ -103,7 +94,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           onClick={() => setSidebarOpen(!sidebarOpen)}
           aria-controls="sidebar"
           aria-expanded={sidebarOpen}
-          className="block lg:hidden"
+          className="lg:hidden"
         >
           <svg
             className="fill-current"
@@ -136,7 +127,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <NavLink
                   to="/dashboard"
                   className={({ isActive }) =>
-                    `group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out
+                    `group flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out
                      ${isActive ? 'bg-graydark text-white' : 'text-bodydark1'} 
                     hover:bg-graydark dark:hover:bg-meta-4`
                   }
@@ -151,7 +142,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   <NavLink
                     to="/users"
                     className={({ isActive }) =>
-                      `group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out
+                      `group flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out
                     ${isActive ? 'bg-graydark text-white' : 'text-bodydark1'}
                     hover:bg-graydark dark:hover:bg-meta-4`
                     }
@@ -166,7 +157,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <NavLink
                   to="/attendance"
                   className={({ isActive }) =>
-                    `group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out
+                    `group flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out
                     ${isActive ? 'bg-graydark text-white' : 'text-bodydark1'}
                     hover:bg-graydark dark:hover:bg-meta-4`
                   }
@@ -181,7 +172,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   <NavLink
                     to="/weeklyreport"
                     className={({ isActive }) =>
-                      `group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out
+                      `group flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out
                     ${isActive ? 'bg-graydark text-white' : 'text-bodydark1'}
                     hover:bg-graydark dark:hover:bg-meta-4`
                     }
@@ -196,7 +187,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <NavLink
                   to="/calendar"
                   className={({ isActive }) =>
-                    `group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out
+                    `group flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out
                     ${isActive ? 'bg-graydark text-white' : 'text-bodydark1'}
                     hover:bg-graydark dark:hover:bg-meta-4`
                   }
@@ -205,12 +196,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   Calendar
                 </NavLink>
               </li>
+
               {isAdmin && (
                 <li>
                   <NavLink
                     to="/companysettings"
                     className={({ isActive }) =>
-                      `group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out
+                      `group flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out
                     ${isActive ? 'bg-graydark text-white' : 'text-bodydark1'}
                     hover:bg-graydark dark:hover:bg-meta-4`
                     }
@@ -221,33 +213,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </li>
               )}
 
-              {/* <li>
-                <button
-                  className="flex w-full items-center justify-between rounded-sm py-2 px-4 font-medium text-bodydark1 hover:bg-graydark dark:hover:bg-meta-4"
-                  onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-                >
-                  <span className="flex items-center gap-2">
-                    <FiSettings size={18} /> Settings
-                  </span>
-                  {isSettingsOpen ? <FiChevronDown size={18} /> : <FiChevronRight size={18} />}
-                </button>
-
-                {/* Submenu */}
-              {/* {isSettingsOpen && (
-                  <ul className="ml-8 mt-2 space-y-2">
-                    <li>
-                      <NavLink to="/profilesetting" className="sidebar-sub-link">
-                       Profile Setting
-                      </NavLink>
-                    </li>
-                    <li>
-                      <NavLink to="/companysetting" className="sidebar-sub-link">
-                         Company Setting
-                      </NavLink>
-                    </li>
-                  </ul>
-                )}
-              </li> */}
+              
             </ul>
           </div>
         </nav>

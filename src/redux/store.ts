@@ -71,18 +71,18 @@ const store = configureStore({
 let saveTimeout: ReturnType<typeof setTimeout>;
 
 store.subscribe(() => {
-  clearTimeout(saveTimeout);
-  saveTimeout = setTimeout(() => {
-    try {
-      localStorage.setItem("reduxState", JSON.stringify(store.getState()));
-      console.log("🔵 Updated Redux Store:", store.getState());
-    } catch (err) {
-      console.error("❌ Failed to save state:", err);
-    }
-  }, 300); // Debounce time
-});
+    const state = store.getState();
+    const stateToPersist = {
+        authSlice: state.authSlice, // Persist only necessary parts
+        userSlice: state.userSlice,
+    };
+    localStorage.setItem("reduxState", JSON.stringify(stateToPersist));
+    console.log(" Updated Redux Store:", store.getState());
+  });
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
+
 
 export default store;
