@@ -234,7 +234,6 @@ const EditProfile: React.FC<EditProfileProps> = ({
     (state: RootState) => state.userSlice.userInfo
   );
   const isAdmin = currentUser?.is_superuser == true; // Admin role check
- 
   const formik = useFormik({
     initialValues: {
       first_name: editData?.first_name || '',
@@ -288,7 +287,6 @@ const EditProfile: React.FC<EditProfileProps> = ({
         .trim()
         .matches(/^\d{10}$/, 'Emergency contact must be exactly 10 digits')
         .required('Emergency Contact is required'),
- 
       department: Yup.string().trim().required('Department is required'),
       designation: Yup.string().trim().required('Department is required'),
       company_name: Yup.string()
@@ -302,7 +300,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
       roletype: Yup.string().required('Role is required'),
       employee_type: Yup.string().required('Role is required'),
        employee_id: Yup.string()
-       
+        
         .required('Employee Id number is required'),
     }),
     onSubmit: (values) => {
@@ -417,7 +415,6 @@ const EditProfile: React.FC<EditProfileProps> = ({
             ['company_name', 'Company Name'],
             ['designation', 'Designation'],
             ['department', 'Department'],
- 
             ['doj', 'Date of Joining'],
           ].map(([name, label]) => (
             <div key={name}>
@@ -432,7 +429,6 @@ const EditProfile: React.FC<EditProfileProps> = ({
                   [
                     'employee_id',
                     'company_name',
- 
                     'doj',
                     'designation',
                     'department',
@@ -445,7 +441,6 @@ const EditProfile: React.FC<EditProfileProps> = ({
                   [
                     'employee_id',
                     'company_name',
- 
                     'doj',
                     'designation',
                     'department',
@@ -482,7 +477,6 @@ const EditProfile: React.FC<EditProfileProps> = ({
               </p>
             )}
           </div>
- 
           {/* Employee Type Field */}
           <div>
             <label className="text-gray-700 block">Employee Type</label>

@@ -84,7 +84,7 @@ const UserForm: React.FC<UserFormProps> = ({
 
   return (
     <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="relative h-auto max-h-[90vh] w-11/12 max-w-5xl overflow-y-auto rounded-lg bg-white p-6 shadow-lg">
+      <div className="relative h-auto max-h-[90vh] w-11/12 max-w-5xl overflow-y-auto rounded-lg bg-gray p-6 shadow-lg">
         <Formik
           initialValues={{
             first_name: selectedItem ? selectedItem?.first_name : '',
@@ -165,7 +165,7 @@ const UserForm: React.FC<UserFormProps> = ({
           {({}) => (
             <Form className="">
               <div className="mb-6 flex ">
-                <h2 className=" text-center text-xl font-semibold">
+                <h2 className=" text-center text-xl font-semibold text-black">
                   {formType === 'edit' ? 'Edit User' : 'Add User'}
                 </h2>
                 <button
@@ -176,7 +176,7 @@ const UserForm: React.FC<UserFormProps> = ({
                 </button>
               </div>
               {/* First Name & Last Name */}
-              <div className="mb-2 grid grid-cols-2 gap-4">
+              <div className="mb-2 grid grid-cols-2 gap-4 text-black">
                 <div>
                   <label className="block">First Name</label>
                   <Field
@@ -389,7 +389,7 @@ const UserForm: React.FC<UserFormProps> = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="text- rounded bg-gray px-4 py-2 hover:bg-[#d1d5db]"
+                  className="text- rounded bg-[#D3D3D3] px-7 py-2 hover:bg-red hover:text-black"
                 >
                   Cancel
                 </button>
