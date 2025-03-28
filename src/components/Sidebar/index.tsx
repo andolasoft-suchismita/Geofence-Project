@@ -25,21 +25,21 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   );
 
   const menuItems = [
-    { name: "Dashboard", path: "/dashboard", allowedRoles: ["admin", "user"] },
-    { name: "Users", path: "/users", allowedRoles: ["admin"] }, // Only admin
-    { name: "Reports", path: "/reports", allowedRoles: ["admin"] }, // Only admin
-    { name: "Calender", path: "/", allowedRoles: ["admin", "user"] }
+    { name: 'Dashboard', path: '/dashboard', allowedRoles: ['admin', 'user'] },
+    { name: 'Users', path: '/users', allowedRoles: ['admin'] }, // Only admin
+    { name: 'Reports', path: '/reports', allowedRoles: ['admin'] }, // Only admin
+    { name: 'Calender', path: '/', allowedRoles: ['admin', 'user'] },
   ];
 
   // //  Fetch currentUser role from Redux
   // const currentUser = useSelector((state: RootState) => state.userSlice.userInfo);
-  // const isAdmin = currentUser?.roletype === "admin"; 
+  // const isAdmin = currentUser?.roletype === "admin";
   // // .is_superuser == true ; // Admin role check
   const currentUser = useSelector(
     (state: RootState) => state.userSlice.userInfo
   );
-  const isAdmin = currentUser?.is_superuser == true || currentUser?.roletype === "admin"; // Admin role check
-console.log({isAdmin})
+  const isAdmin = currentUser?.is_superuser == true; // Admin role check
+  console.log({ currentUser });
   useEffect(() => {
     localStorage.setItem('sidebar-expanded', sidebarExpanded.toString());
     if (sidebarExpanded) {
@@ -257,5 +257,5 @@ console.log({isAdmin})
 };
 
 export default Sidebar;
- 
+
 // isAdmin ? <AdminDashboard/> : <UserDashboard/>

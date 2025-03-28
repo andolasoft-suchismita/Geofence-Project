@@ -9,7 +9,7 @@ import Users from '../pages/Users';
 
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import DashboardHome from '../pages/dashboard';
-import Dashboard from '../pages/dashboard/UserDashboard';
+import UserDashboard from '../pages/dashboard/UserDashboard';
 
 import NotFoundPage from '../pages/NotFoundPage';
 
@@ -17,20 +17,18 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/rootReducers';
 
-const AdminRoute = ({ children }: { children: JSX.Element }) => { 
-const userRole = useSelector((state: RootState) => state.userSlice.userInfo.roletype);
- 
+const AdminRoute = ({ children }: { children: JSX.Element }) => {
+  const userRole = useSelector(
+    (state: RootState) => state.userSlice.userInfo.roletype
+  );
 
+  // if (userRole !== 'admin') {
+  //   return <Navigate to="/dashboard" replace />;
 
+  // }
 
-  if (userRole !== 'admin') {
-    return <Navigate to="/dashboard" replace />;
-    
-  }
-  
   return children;
 };
-
 
 const PrivateRoutes = () => {
   const location = useLocation();
@@ -38,7 +36,6 @@ const PrivateRoutes = () => {
   const navigate = useNavigate();
   // const userRole = useSelector((state: RootState) => state.userSlice.userInfo.roletype);
   // const isAdmin = currentUser?.roletype === "admin"; // Admin role check
-
 
   useEffect(() => {
     if (location.pathname === '/') {
@@ -49,35 +46,30 @@ const PrivateRoutes = () => {
   const currentUser = useSelector(
     (state: RootState) => state.userSlice.userInfo
   );
-  const isAdmin =
-    currentUser?.is_superuser == true || currentUser?.roletype == 'admin'; // Admin role check
-
-  const is_superuser = false;
+  const isAdmin = currentUser?.is_superuser == true; // Admin role check
 
   return (
     <DefaultLayout>
       <Routes>
-
         {/* <Route path="/dashboard" element={<DashboardHome />} />
         <Route path="/dashboard" element={<Dashboard />} /> */}
         {isAdmin ? (
           <Route path="/dashboard" element={<DashboardHome />} />
         ) : (
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<UserDashboard />} />
         )}
         {isAdmin ? (
           <Route path="/attendance" element={<Attendance />} />
         ) : (
           <Route path="/attendance" element={<UserAttendance />} />
         )}
+        <Route path="/users" element={<Users />} />
         <Route path="/weeklyreport" element={<WeeklyReport />} />
         <Route path="/companysettings" element={<CompanySettings />} />
 
         <Route path="/calendar" element={<MyCalendar />} />
         {/* <Route path="/users" element={<Users />} /> */}
         <Route path="/profile" element={<Profile />} />
-
-
 
         {/* <Route path="*" element={<NotFoundPage />} /> */}
       </Routes>

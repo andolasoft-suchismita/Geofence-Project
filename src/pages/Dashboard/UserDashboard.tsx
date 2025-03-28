@@ -16,6 +16,8 @@ import {
   Legend,
 } from 'recharts';
 import PunchModal from '../../components/PunchModal';
+import dayjs from 'dayjs';
+
 
 const Dashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -82,7 +84,7 @@ const Dashboard = () => {
                     {data.upcoming_holiday.name}
                   </p>
                   <p className="text-gray-600 font-semibold">
-                    {data.upcoming_holiday.date}
+                  {dayjs(data.upcoming_holiday.date).format('DD-MM-YYYY')}
                   </p>
                 </>
               ) : (
