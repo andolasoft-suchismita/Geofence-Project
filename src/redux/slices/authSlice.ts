@@ -73,7 +73,7 @@ const authSlice = createSlice({
       state.user_id = null;
       state.company_id = null;
       state.roletype = 'null'; //Clear role on logout
-      localStorage.removeItem('authToken');
+      localStorage.removeItem('persist:root');
     },
   },
 });

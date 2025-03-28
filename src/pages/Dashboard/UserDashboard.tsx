@@ -16,9 +16,21 @@ import {
   Legend,
 } from 'recharts';
 import PunchModal from '../../components/PunchModal';
+import {resetDashboardData} from "../../redux/slices/userdashboardSlice"
+import { logout } from "../../redux/slices/authSlice"; 
+
 
 const Userdashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
+
+  const handleLogout = () => {
+    dispatch(logout()); // Clears authentication
+    dispatch(resetDashboardData()); // Clears dashboard data
+    localStorage.removeItem("reduxState"); // Clear persisted state
+    window.location.reload(); // Force a fresh state on next load
+    console.log("Dashboard data reset after logout!");
+  };
+
   const user_id = useSelector((state: RootState) => state.authSlice.user_id);
   const { data, loading, error } = useSelector(
     (state: RootState) => state.userdashboard
@@ -30,10 +42,17 @@ const Userdashboard = () => {
   );
 
   useEffect(() => {
+    dispatch(resetDashboardData()); // Clear dashboard data first
     if (user_id) {
       dispatch(fetchDashboardData(user_id));
     }
   }, [dispatch, user_id]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetDashboardData()); // Clears dashboard data when component unmounts
+    };
+  }, [dispatch]);
 
   // Extract attendance data
   const attendanceData = [

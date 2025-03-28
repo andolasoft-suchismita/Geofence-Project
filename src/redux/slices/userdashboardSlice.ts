@@ -20,7 +20,11 @@ const dashboardSlice = createSlice({
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    resetDashboardData: (state) => {
+      return { data: null, loading: false, error: null }; // Reset state
+    }, 
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchDashboardData.pending, (state) => {
@@ -38,6 +42,9 @@ const dashboardSlice = createSlice({
   },
 });
 
+
+
+export const { resetDashboardData } = dashboardSlice.actions; 
 export default dashboardSlice.reducer;
 
 
