@@ -79,7 +79,7 @@ const SignUp = () => {
       // Store token, user_id, and company_id in Redux
       dispatch(login({ token, user_id, company_id }));
 
-      showToast('SignUp Successfully!');
+      showToast('SignUp Successfully!', 'success');
       navigate('/dashboard'); // Redirect to dashboard
     } catch (error) {
       console.error('Error:', error.response?.data || error.message);
