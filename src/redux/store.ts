@@ -27,17 +27,19 @@ const store = configureStore({
 
 // Save state to localStorage
 store.subscribe(() => {
-    localStorage.setItem("reduxState", JSON.stringify(store.getState()));
-    console.log("🔵 Updated Redux Store:", store.getState());
+    const state = store.getState();
+    const stateToPersist = {
+        authSlice: state.authSlice, // Persist only necessary parts
+        userSlice: state.userSlice,
+    };
+    localStorage.setItem("reduxState", JSON.stringify(stateToPersist));
+    console.log(" Updated Redux Store:", store.getState());
   });
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
-// Save state to localStorage
-store.subscribe(() => {
-    localStorage.setItem('reduxState', JSON.stringify(store.getState()));
-});
+
 
 export default store;
 
