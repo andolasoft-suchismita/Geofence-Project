@@ -14,18 +14,27 @@ interface PunchModalProps {
   loading: boolean;
 }
 
-const PunchModal: React.FC<PunchModalProps> = ({ isInsideGeofence, loading }) => {
+const PunchModal: React.FC<PunchModalProps> = ({
+  isInsideGeofence,
+  loading,
+}) => {
   const dispatch = useDispatch<AppDispatch>();
-  const isPunchedIn = useSelector((state: RootState) => state.attendance.isPunchedIn);
-  const user_id = useSelector((state: RootState) => state.authSlice.user_id);
-  const attendanceRecords = useSelector((state: RootState) => state.attendance?.[user_id] || []);
+  const isPunchedIn = useSelector(
+    (state: RootState) => state.attendance.isPunchedIn
+  );
+  console.log('isPunchedIn dashboard', isPunchedIn);
 
-  // console.log('Redux State ->', { isPunchedIn, attendanceRecords });
+  const user_id = useSelector((state: RootState) => state.authSlice.user_id);
+  const attendanceRecords = useSelector(
+    (state: RootState) => state.attendance?.[user_id] || []
+  );
 
   const getCoordinates = async () => {
+    console.log('called');
     return new Promise<{ lat: number; lng: number }>((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          console.log({ position });
           resolve({
             lat: parseFloat(position.coords.latitude.toFixed(6)),
             lng: parseFloat(position.coords.longitude.toFixed(6)),
@@ -33,7 +42,8 @@ const PunchModal: React.FC<PunchModalProps> = ({ isInsideGeofence, loading }) =>
         },
         (error) => {
           console.error('Geolocation Error:', error);
-          alert('⚠️ Failed to get location. Please enable GPS and try again.');
+          // alert('Failed to get location. Please enable GPS and try again.');
+          showToast('Failed to get location. Please enable GPS and try again.', 'error');
           reject({ lat: 0, lng: 0 });
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
@@ -44,17 +54,14 @@ const PunchModal: React.FC<PunchModalProps> = ({ isInsideGeofence, loading }) =>
   const handlePunchIn = async () => {
     try {
       const { lat, lng } = await getCoordinates();
+      console.log('Punching In ->', { lat, lng });
       const check_in = new Date().toISOString();
 
-      console.log('Punching In ->', { lat, lng, check_in });
-
       const response = await dispatch(punchIn({ lat, lng, check_in })).unwrap();
-      console.log('Punch In Response:', response);
 
       dispatch(setPunchStatus(true));
-      showToast('Successfully Punched In!');
+      showToast('Successfully Punched In!', 'success');
     } catch (error) {
-      console.error('Punch In Error:', error);
       alert(`Punch In Failed: ${JSON.stringify(error, null, 2)}`);
     }
   };
@@ -62,26 +69,33 @@ const PunchModal: React.FC<PunchModalProps> = ({ isInsideGeofence, loading }) =>
   const handlePunchOut = async () => {
     try {
       if (!attendanceRecords || attendanceRecords.length === 0) {
-        alert('⚠️ No attendance record found. Please try again.');
+        // alert('No attendance record found. Please try again.');
+        showToast('No attendance record found. Please try again.', 'error');
         return;
       }
 
       // Ensure latest record is fetched correctly
-      const latestAttendance = [...attendanceRecords].sort((a, b) => 
-        new Date(b.check_in).getTime() - new Date(a.check_in).getTime()
+      const latestAttendance = [...attendanceRecords].sort(
+        (a, b) =>
+          new Date(b.check_in).getTime() - new Date(a.check_in).getTime()
       )[0];
 
       if (!latestAttendance) {
-        alert('⚠️ No valid attendance record found.');
+        alert('No valid attendance record found.');
         return;
       }
 
       console.log('Punching Out ->', latestAttendance);
 
-      await dispatch(punchOut({ attendance_id: latestAttendance.attendance_id, check_out: new Date().toISOString() })).unwrap();
+      await dispatch(
+        punchOut({
+          attendance_id: latestAttendance.attendance_id,
+          check_out: new Date().toISOString(),
+        })
+      ).unwrap();
 
       dispatch(setPunchStatus(false));
-      showToast('Successfully Punched Out!');
+      showToast('Successfully Punched Out!', 'success');
     } catch (error) {
       console.error('Punch Out Error:', error);
       alert(`Punch Out Failed: ${JSON.stringify(error, null, 2)}`);
@@ -89,15 +103,16 @@ const PunchModal: React.FC<PunchModalProps> = ({ isInsideGeofence, loading }) =>
   };
 
   return (
-   
-   
     <div className="relative mt-[-50px]">
-     
       <button
         onClick={isPunchedIn ? handlePunchOut : handlePunchIn}
         disabled={!isInsideGeofence || loading}
         className={`flex h-14 w-40 items-center rounded-full px-2 shadow-lg transition-all duration-300
-          ${isInsideGeofence ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}
+          ${
+            isInsideGeofence
+              ? 'cursor-pointer'
+              : 'cursor-not-allowed opacity-50'
+          }
           ${isPunchedIn ? 'bg-[#f7832b]' : 'bg-green-600'}
         `}
       >
@@ -111,9 +126,7 @@ const PunchModal: React.FC<PunchModalProps> = ({ isInsideGeofence, loading }) =>
         </span>
       </button>
     </div>
-  
   );
 };
 
 export default PunchModal;
-

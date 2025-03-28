@@ -16,8 +16,10 @@ import {
   Legend,
 } from 'recharts';
 import PunchModal from '../../components/PunchModal';
-import {resetDashboardData} from "../../redux/slices/userdashboardSlice"
-import { logout } from "../../redux/slices/authSlice"; 
+import dayjs from 'dayjs';
+import { resetDashboardData } from '../../redux/slices/userdashboardSlice';
+import { logout } from '../../redux/slices/authSlice';
+
 
 
 const Userdashboard = () => {
@@ -101,7 +103,7 @@ const Userdashboard = () => {
                     {data.upcoming_holiday.name}
                   </p>
                   <p className="text-gray-600 font-semibold">
-                    {data.upcoming_holiday.date}
+                  {dayjs(data.upcoming_holiday.date).format('DD-MM-YYYY')}
                   </p>
                 </>
               ) : (

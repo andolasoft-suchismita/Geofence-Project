@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AttendanceTable from '../components/attendancetable';
-import {
-  FaChevronLeft,
-  FaChevronRight,
-  FaSearch,
-  FaCalendarAlt,
-} from 'react-icons/fa';
+import { FaChevronLeft,FaChevronRight,FaSearch,FaCalendarAlt } from 'react-icons/fa';
 import { format } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -15,13 +10,10 @@ import { punchIn, punchOut } from '../redux/slices/attendanceSlice';
 import { AppDispatch } from '../redux/store';
 import { showToast } from '../utils/toast';
 import { useMemo } from 'react';
-import {
-  getAttendanceByDate,
-  getAttendanceSummary,
-} from '../api/services/attendanceService';
+import { getAttendanceByDate, getAttendanceSummary } from '../api/services/attendanceService';
 import Card from '../components/Card';
 import { FaArrowRightFromBracket } from 'react-icons/fa6';
-import { useLocation } from 'hooks/useLocation';
+
 
 const Attendance: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>(); //  Type dispatch with AppDispatch
@@ -35,7 +27,6 @@ const Attendance: React.FC = () => {
   ]);
   const [startDate, endDate] = dateRange;
   const [attendanceData, setAttendanceData] = useState([]);
-
   const [error, setError] = useState<string | null>(null);
 
   const company_id = useSelector(
@@ -53,7 +44,7 @@ const Attendance: React.FC = () => {
   });
 
   const getCoordinates = async () => {
-    return new Promise<{ lat: number ; lng: number }>((resolve, reject) => {
+    return new Promise<{ lat: number; lng: number }>((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           resolve({
@@ -62,7 +53,8 @@ const Attendance: React.FC = () => {
           });
         },
         () => {
-          alert('⚠️ Failed to get location. Please enable GPS and try again.');
+          // alert('⚠️ Failed to get location. Please enable GPS and try again.');
+          showToast('Failed to get location. Please enable GPS and try again.', 'error');
           reject({ lat: 0, lng: 0 });
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 } // High accuracy mode
@@ -70,9 +62,11 @@ const Attendance: React.FC = () => {
     });
   };
 
-  const isPunchedIn =
-    userAttendance.length > 0 &&
-    !userAttendance[userAttendance.length - 1].punchOut;
+   const isPunchedIn = useSelector(
+    (state: RootState) => state.attendance.isPunchedIn
+  );
+
+  console.log('isPunchedIn', isPunchedIn);
 
   const handlePunchIn = async () => {
     setLoading(true);
@@ -81,8 +75,10 @@ const Attendance: React.FC = () => {
       const check_in = new Date().toISOString(); // Ensure ISO format
 
       const response = await dispatch(punchIn({ lat, lng, check_in })).unwrap();
-      showToast('Successfully Punched In!');
-      showToast('Have a Good day!');
+
+      showToast( 'Successfully Punched In!', 'success');
+      showToast( 'Have a Good Day!','success');
+
       localStorage.setItem('attendance_id', response.id);
     } catch (error) {
       alert(`Punch In Failed: ${JSON.stringify(error.detail, null, 2)}`);
@@ -103,9 +99,9 @@ const Attendance: React.FC = () => {
           check_out: new Date().toISOString(),
         })
       ).unwrap();
-      showToast('Successfully Punched Out!');
+      showToast('Successfully Punched Out!','success');
     } catch (error) {
-      console.error(' Punch Out Error:', error);
+      showToast( 'Punch Out Failed!', 'error');
     } finally {
       setLoading(false);
     }
@@ -244,8 +240,8 @@ const Attendance: React.FC = () => {
         </div>
       </div>
 
-       {/* Attendance Summary */}
-       <div className="mb-6 ml-4 flex grid grid-cols-1 gap-4 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {/* Attendance Summary */}
+      <div className="mb-6 ml-4 flex grid grid-cols-1 gap-4 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Total Employees */}
         <div>
           <Card title="Total Employee" count={summary.total} type="total" />
@@ -264,11 +260,11 @@ const Attendance: React.FC = () => {
           count={summary.absentees}
           type="absentees"
         />
- 
+
         {/* Late Employees */}
         <Card title="Late Comings" count={summary.late} type="late" />
       </div>
- 
+
       {/* Filters Section */}
       <div className="mb-6 ml-4 flex  space-x-4">
         {/* Search Bar */}
