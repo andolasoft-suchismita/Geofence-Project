@@ -249,20 +249,16 @@ const Attendance: React.FC = () => {
         {/* Present */}
         <div>
           <Card
-            title="Present Summary"
+            title="Present Today"
             count={summary.present}
             type="present"
           />
         </div>
-        {/* Absentees */}
-        <Card
-          title="Absent Summary"
-          count={summary.absentees}
-          type="absentees"
-        />
-
+       
         {/* Late Employees */}
-        <Card title="Late Comings" count={summary.late} type="late" />
+        <Card title="Absent Today"
+         count={summary.absentees}
+         type="late" />
       </div>
 
       {/* Filters Section */}
