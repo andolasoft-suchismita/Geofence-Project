@@ -39,8 +39,8 @@ const ProfilePicture = ({ profilePic, updateProfilePicture, isEditing, isDetails
   return (
     <div
       className="relative w-24 h-24 group"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => isEditing && setIsHovered(true)}
+      onMouseLeave={() => isEditing && setIsHovered(false)}
     >
       {profilePic ? (
         <img
@@ -50,7 +50,7 @@ const ProfilePicture = ({ profilePic, updateProfilePicture, isEditing, isDetails
         />
       ) : (
         <div className="w-24 h-24 flex items-center justify-center rounded-full bg-gray-200 border-2 border-gray-300">
-          <FaUser className="text-gray-500" size={60} /> 
+          <FaUser className="text-gray-500" size={60} />
         </div>
       )}
 
@@ -73,7 +73,7 @@ const ProfilePicture = ({ profilePic, updateProfilePicture, isEditing, isDetails
         </button>
       )}
 
-      {isDetailsView && isHovered && profilePic && (
+      {isEditing && isHovered && profilePic && (
         <button
           className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full text-white transition-opacity duration-200"
           onClick={handleRemovePicture}

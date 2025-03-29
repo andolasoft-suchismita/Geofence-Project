@@ -14,10 +14,23 @@ interface AttendanceState {
   isPunchedIn: boolean
 }
 
-const initialState: AttendanceState = {
-  users: {},
-  isPunchedIn: false
+// Get initial state from localStorage if available
+const getInitialState = (): AttendanceState => {
+  const savedState = localStorage.getItem('attendanceState');
+  if (savedState) {
+    const parsedState = JSON.parse(savedState);
+    return {
+      users: parsedState.users || {},
+      isPunchedIn: parsedState.isPunchedIn || false
+    };
+  }
+  return {
+    users: {},
+    isPunchedIn: false
+  };
 };
+
+const initialState = getInitialState();
 
 // Async Thunks for API Calls
 
@@ -58,33 +71,45 @@ const attendanceSlice = createSlice({
   reducers: {
     setPunchStatus: (state, action) => {
       state.isPunchedIn = action.payload;
+      localStorage.setItem('attendanceState', JSON.stringify(state));
     },
+    initializeAttendanceState: (state) => {
+      const savedState = localStorage.getItem('attendanceState');
+      if (savedState) {
+        const parsedState = JSON.parse(savedState);
+        state.users = parsedState.users || {};
+        state.isPunchedIn = parsedState.isPunchedIn || false;
+      }
+    }
   },
   extraReducers: (builder) => {
     builder
       .addCase(punchIn.fulfilled, (state, action) => {
-        const { user_id, id, check_in } = action.payload; //  Get attendance_id
-        if (!state[user_id]) state[user_id] = [];
-        state[user_id].push({
-          attendance_id: id, //  Store attendance_id
+        const { user_id, id, check_in } = action.payload;
+        if (!state.users[user_id]) state.users[user_id] = [];
+        state.users[user_id].push({
+          attendance_id: id,
           punchIn: check_in,
           coordinates: '',
           punchOut: null,
         });
         state.isPunchedIn = true;
+        localStorage.setItem('attendanceState', JSON.stringify(state));
       })
       .addCase(punchOut.fulfilled, (state, action) => {
-        const { user_id, check_out, id } = action.payload; //  Get updated attendance_id
-        const attendance = state[user_id]?.find(
+        const { user_id, check_out, id } = action.payload;
+        const attendance = state.users[user_id]?.find(
           (entry) => entry.attendance_id === id
         );
         if (attendance) {
           attendance.punchOut = check_out;
         }
         state.isPunchedIn = false;
+        localStorage.setItem('attendanceState', JSON.stringify(state));
+        localStorage.removeItem('attendance_id');
       });
   },
 });
 
-export const { setPunchStatus } = attendanceSlice.actions;
+export const { setPunchStatus, initializeAttendanceState } = attendanceSlice.actions;
 export default attendanceSlice.reducer;
