@@ -84,6 +84,7 @@ class UpdateUserSchema(BaseModel):
     department: Optional[str] = None
     profile_pic: Optional[str] = None
     department: Optional[str] = None
+    employee_type: Optional[str] = None
     
     @field_validator("doj", "dob", mode="before")
     def validate_date(cls, value):
