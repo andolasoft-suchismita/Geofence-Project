@@ -47,6 +47,16 @@ const Dashboard = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [chartKey, setChartKey] = useState(0);
  
+  // Get current month name
+  const getCurrentMonth = () => {
+    return new Date().toLocaleString('default', { month: 'long' });
+  };
+ 
+  // Get current year
+  const getCurrentYear = () => {
+    return new Date().getFullYear();
+  };
+ 
   // Fetch API Data When Component Loads
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -59,9 +69,9 @@ const Dashboard = () => {
         console.log('📡 Fetching Attendance Reports...');
         const reportData = await getattendanceReports(
           company_id,
-          'March',
-          2025
-        ); // Replace with dynamic values
+          getCurrentMonth(),
+          getCurrentYear()
+        );
         console.log('Report Data:', reportData); // Check response
         dispatch(setMonthlyReport(reportData));
       } catch (error) {
@@ -107,6 +117,17 @@ const Dashboard = () => {
       }))
     : [];
  
+  // Format department name to handle underscores and hyphens
+  const formatDepartmentName = (name: string) => {
+    // First replace underscores and hyphens with spaces
+    const withSpaces = name.replace(/[_-]/g, ' ');
+    // Then capitalize first letter of each word
+    return withSpaces
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
+ 
   const pieData = [
     { name: 'Present', value: presentToday, color: '#578FCA' },
     { name: 'Absent', value: absenteesToday, color: '#BFBBA9' },
@@ -128,8 +149,8 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card title="Total Employees" count={totalEmployees} type="total" />
         <Card
-          title="Absentees/Present Today"
-          count={`${absenteesToday}/${presentToday}`}
+          title="Present/Absent Today"
+          count={`${presentToday}/${absenteesToday}`}
           type="absentees"
         />
         <Card title="Late Comings" count={lateComingsToday} type="late" />
@@ -142,7 +163,10 @@ const Dashboard = () => {
           </h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={departmentData} width={600} height={300}>
-              <XAxis dataKey="department" />
+              <XAxis 
+                dataKey="department" 
+                tickFormatter={formatDepartmentName}
+              />
               <YAxis />
               <Tooltip />
               <Legend />
@@ -177,7 +201,7 @@ const Dashboard = () => {
  
       <div className="mt-6 rounded-md bg-white p-5 shadow">
         <h3 className="mb-4 text-lg font-semibold">
-          Monthly Attendance Summary
+          Monthly Attendance Summary ({getCurrentMonth()} {getCurrentYear()})
         </h3>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={monthlyReport}>

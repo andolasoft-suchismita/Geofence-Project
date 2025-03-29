@@ -15,10 +15,10 @@ interface CardProps {
 const Card: React.FC<CardProps> = ({ title, count, type }) => {
   // Define styles and icons based on the card type
   const cardStyles = {
-    total: 'bg-white text-[#4F4F4F]',
-    absentees: 'bg-white text-[#4F4F4F]',
-    late: 'bg-white text-[#4F4F4F]',
-    present: 'bg-white text-[#4F4F4F]',
+    total: 'bg-white text-gray-700',
+    absentees: 'bg-white text-gray-700',
+    late: 'bg-white text-gray-700',
+    present: 'bg-white text-gray-700',
   };
 
   const icons = {
@@ -34,7 +34,7 @@ const Card: React.FC<CardProps> = ({ title, count, type }) => {
         <h3 className="text-lg font-semibold">{title}</h3>
         {icons[type]}
       </div>
-      <p className="mt-2 text-2xl font-bold">{count}</p>
+      <p className="mt-2 text-2xl font-bold text-gray-600">{count}</p>
     </div>
   );
 };

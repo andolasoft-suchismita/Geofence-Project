@@ -3,16 +3,16 @@ import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginUser } from '../../api/services/authService';
 import { login } from '../../redux/slices/authSlice';
-import { showToast } from '../../utils/toast';
 import { MdEmail } from 'react-icons/md';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import API from '../../api/axiosInstance';
-import { AppDispatch } from '../../redux/store'; //  Import AppDispatch
-import {setUserInfo } from '../../redux/slices/userSlice';
-
-import { Formik, Form, Field, ErrorMessage } from 'formik'; //Use Formik for form handling
-import * as Yup from 'yup'; //Use Yup for validation schema
+import { AppDispatch } from '../../redux/store';
+import { setUserInfo } from '../../redux/slices/userSlice';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 import { fetchCurrentUserAPI } from '../../api/services/userService';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SignIn: React.FC = () => {
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ const SignIn: React.FC = () => {
       const { access_token: token } = userData;
 
       if (!token) {
-        showToast('Login failed: No token received!', 'error');
+        toast.error('Login failed: No token received!');
         return;
       }
 
@@ -63,13 +63,11 @@ const SignIn: React.FC = () => {
 
       dispatch(login(authData));
       localStorage.setItem('authToken', JSON.stringify(authData));
-      // const userInfo = await fetchCurrentUserAPI(user_id);
-      // dispatch(setUserInfo(userInfo));
       fetchUserInfo(user_id)
-      showToast('Login Successful!', 'success');
+      toast.success('Login Successful!');
       navigate('/dashboard');
     } catch (error) {
-      showToast('Invalid credentials', 'error');
+      toast.error('Invalid credentials');
     }
   };
 
@@ -163,7 +161,7 @@ const SignIn: React.FC = () => {
 
               <div className="text-gray-700 text-center">
                 <p>
-                  Don’t have an account?{' '}
+                  Don't have an account?{' '}
                   <Link
                     to="/signup"
                     title="Click here to Sign Up!"

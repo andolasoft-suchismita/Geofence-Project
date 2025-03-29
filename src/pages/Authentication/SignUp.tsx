@@ -4,7 +4,8 @@ import * as Yup from 'yup';
 import { MdEmail } from 'react-icons/md';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 // import CompanyInfo from './companyinfo';
-import { showToast } from '../../utils/toast';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import API, { FormAPI } from '../../api/axiosInstance';
 import { useNavigate, Link } from 'react-router-dom';
 // import API from '../../api/axiosInstance';
@@ -58,7 +59,7 @@ const SignUp = () => {
       const token = userResponse.data?.access_token;
       if (!token) {
         console.error('Login failed: No token received!');
-        showToast('Login failed. Please try again!', 'error');
+        toast.error('Login failed. Please try again!');
         return;
       }
 
@@ -72,21 +73,18 @@ const SignUp = () => {
 
       if (!user_id) {
         console.warn('No user_id found!');
-        showToast('Failed to fetch user details!', 'error');
+        toast.error('Failed to fetch user details!');
         return;
       }
 
       // Store token, user_id, and company_id in Redux
       dispatch(login({ token, user_id, company_id }));
 
-      showToast('SignUp Successfully!', 'success');
+      toast.success('SignUp Successfully!');
       navigate('/dashboard'); // Redirect to dashboard
     } catch (error) {
       console.error('Error:', error.response?.data || error.message);
-      showToast(
-        error.response?.data?.detail || 'Something went wrong!',
-        'error'
-      );
+      toast.error(error.response?.data?.detail || 'Something went wrong!');
     }
   };
   return (

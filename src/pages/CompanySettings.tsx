@@ -18,6 +18,8 @@ import * as Yup from 'yup';
 import Select from 'react-select';
 import { MdDelete } from 'react-icons/md';
 import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Validation Schema
 const validationSchema = Yup.object({
@@ -166,7 +168,7 @@ const CompanySettings = () => {
 
   const handleUpdateCompany = async (values: any, { setSubmitting }: any) => {
     if (!company_id) {
-      showToast('No company selected!');
+      toast.error('No company selected!');
       return;
     }
 
@@ -177,24 +179,22 @@ const CompanySettings = () => {
         ...values,
         latitude: String(coordinates.lat),
         longitude: String(coordinates.lng),
-        // latitude: String(values.latitude), // Convert latitude to string
-        // longitude: String(values.longitude), // Convert longitude to string
         week_off: Array.isArray(values.holidays)
           ? values.holidays.join(',')
-          : '', // Convert array to comma-separated string
-        logo: logo || company.logo, // Keep existing logo if not updated
+          : '',
+        logo: logo || company.logo,
       };
 
-      console.log('Sending Data:', payload); // Debugging
+      console.log('Sending Data:', payload);
 
       const updatedCompany = await updateCompany(company_id, payload);
 
       dispatch(setCompanyData(updatedCompany));
-      showToast('Company updated successfully!', 'success');
+      toast.success('Company updated successfully!');
       setSubmitting(false);
     } catch (error) {
-      // console.error('Validation/API Error:', error);
-      showToast(error.message || 'Failed to update company details.', 'error');
+      console.error('Validation/API Error:', error);
+      toast.error(error.message || 'Failed to update company details.');
       setSubmitting(false);
     }
   };
@@ -265,36 +265,33 @@ const CompanySettings = () => {
                 {/* Company logo */}
                 <div className="relative flex w-1/3 justify-end">
                   <label htmlFor="logo-upload" className="cursor-pointer">
-                    {/* Move `group` class here */}
-                    <div className="border-gray-300 bg-gray-100 group relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border">
+                    <div className="group relative flex h-24 w-24 items-center justify-center">
                       {logo ? (
-                        <img
-                          src={logo}
-                          alt="Company Logo"
-                          title="Click here to Upload Logo"
-                          className="h-full w-full rounded-full object-cover"
-                        />
+                        <>
+                          <img
+                            src={logo}
+                            alt="Company Logo"
+                            title="Click here to Upload Logo"
+                            className="h-full w-full object-contain"
+                          />
+                          <div 
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setLogo(null);
+                            }}
+                            className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100 cursor-pointer"
+                          >
+                            <span className="text-white font-medium">Remove</span>
+                          </div>
+                        </>
                       ) : (
                         <img
                           src="https://www.shutterstock.com/image-vector/image-icon-trendy-flat-style-600nw-643080895.jpg"
                           title="Upload Company Logo Here"
                           alt="Company Logo"
-                          className="h-full w-full"
+                          className="h-full w-full object-contain"
                         />
-                      )}
-
-                      {/* Delete Button (Now inside the correct `group` div) */}
-                      {logo && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation(); // Prevent triggering file upload
-                            setLogo(null); // Clear the logo
-                          }}
-                          className="absolute  rounded-full p-2 text-xl text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover:!opacity-100"
-                          title="Click here to Delete Logo"
-                        >
-                          <MdDelete />
-                        </button>
                       )}
                     </div>
                   </label>
@@ -375,14 +372,16 @@ const CompanySettings = () => {
                   Address
                 </label>
                 <Field
+                  as="textarea"
                   name="address"
                   placeholder="Enter your Company Address...."
                   className="border-gray-300 w-full rounded-lg border bg-gray p-3 focus:outline-blue-500"
                   onChange={(e) => {
                     setFieldValue('address', e.target.value);
-                    setFieldTouched('address', true, false); // Forces validation on change
+                    setFieldTouched('address', true, false);
                   }}
                 />
+                
                 <ErrorMessage
                   name="address"
                   component="div"
@@ -480,7 +479,7 @@ const CompanySettings = () => {
 
                 <div>
                   <label className=" block text-base font-semibold">
-                    Select Holidays
+                    Week Off
                   </label>
                   <Field name="holidays">
                     {({ field, form }: any) => (
@@ -532,11 +531,21 @@ const CompanySettings = () => {
                   </label>
                   <Field
                     name="zip_code"
+                    type="text"
                     placeholder="Ex-751010"
+                    maxLength={6}
                     className="border-gray-300 w-full rounded-lg border bg-gray p-3 focus:outline-blue-500"
+                    onKeyPress={(e) => {
+                      // Allow only numbers
+                      if (!/[0-9]/.test(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
                     onChange={(e) => {
-                      setFieldValue('zip_code', e.target.value);
-                      setFieldTouched('zip_code', true, false); // Forces validation on change
+                      // Remove any non-numeric characters
+                      const value = e.target.value.replace(/\D/g, '');
+                      setFieldValue('zip_code', value);
+                      setFieldTouched('zip_code', true, false);
                     }}
                   />
                   <ErrorMessage
@@ -546,7 +555,7 @@ const CompanySettings = () => {
                   />
                 </div>
               </div>
-              <div>
+              <div className='mb-2'>
                 <label className="text-gray-700 block text-base text-base font-semibold">
                   Description
                 </label>
@@ -594,14 +603,14 @@ const CompanySettings = () => {
               <div className="mt-4 flex justify-end gap-4">
                 <button
                   type="button"
-                  className="rounded-lg bg-red px-6 py-3 text-white hover:bg-[#FF0000]"
-                  onClick={() => navigate(-1)} // Navigate back to the previous page
+                  className="rounded-lg bg-[#D3D3D3] px-7 py-3 transition hover:bg-red hover:text-white"
+                  onClick={() => navigate(-1)}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-lg bg-blue-500 px-6 py-3 text-white hover:bg-blue-700"
+                  className="rounded-lg bg-blue-500 px-8 py-3 text-white hover:bg-blue-700"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? 'Saving...' : 'Save'}
