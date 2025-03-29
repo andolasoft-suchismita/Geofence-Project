@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AttendanceTable from '../components/attendancetable';
-import { FaChevronLeft,FaChevronRight,FaSearch,FaCalendarAlt } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaSearch, FaCalendarAlt } from 'react-icons/fa';
 import { format } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -8,16 +8,16 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/rootReducers';
 import { punchIn, punchOut } from '../redux/slices/attendanceSlice';
 import { AppDispatch } from '../redux/store';
-import { showToast } from '../utils/toast';
 import { useMemo } from 'react';
 import { getAttendanceByDate, getAttendanceSummary } from '../api/services/attendanceService';
 import Card from '../components/Card';
 import { FaArrowRightFromBracket } from 'react-icons/fa6';
+import { toast } from 'react-toastify';
 
 
 const Attendance: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>(); //  Type dispatch with AppDispatch
-  const [showModal, setShowModal] = useState(true);
+  const [] = useState(true);
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [searchQuery, setSearchQuery] = useState('');
@@ -25,7 +25,7 @@ const Attendance: React.FC = () => {
     null,
     null,
   ]);
-  const [startDate, endDate] = dateRange;
+  const [] = dateRange;
   const [attendanceData, setAttendanceData] = useState([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -54,7 +54,7 @@ const Attendance: React.FC = () => {
         },
         () => {
           // alert('⚠️ Failed to get location. Please enable GPS and try again.');
-          showToast('Failed to get location. Please enable GPS and try again.', 'error');
+          toast.error('Failed to get location. Please enable GPS and try again.');
           reject({ lat: 0, lng: 0 });
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 } // High accuracy mode
@@ -62,7 +62,7 @@ const Attendance: React.FC = () => {
     });
   };
 
-   const isPunchedIn = useSelector(
+  const isPunchedIn = useSelector(
     (state: RootState) => state.attendance.isPunchedIn
   );
 
@@ -76,12 +76,12 @@ const Attendance: React.FC = () => {
 
       const response = await dispatch(punchIn({ lat, lng, check_in })).unwrap();
 
-      showToast( 'Successfully Punched In!', 'success');
-      showToast( 'Have a Good Day!','success');
+      toast.success('Successfully Punched In!');
+
 
       localStorage.setItem('attendance_id', response.id);
     } catch (error) {
-      alert(`Punch In Failed: ${JSON.stringify(error.detail, null, 2)}`);
+      toast.error(`Punch In Failed: ${JSON.stringify(error.detail, null, 2)}`);
     } finally {
       setLoading(false);
     }
@@ -99,9 +99,9 @@ const Attendance: React.FC = () => {
           check_out: new Date().toISOString(),
         })
       ).unwrap();
-      showToast('Successfully Punched Out!','success');
+      toast.success('Successfully Punched Out!');
     } catch (error) {
-      showToast( 'Punch Out Failed!', 'error');
+      toast.error('Punch Out Failed!');
     } finally {
       setLoading(false);
     }
@@ -199,35 +199,13 @@ const Attendance: React.FC = () => {
             className="text-gray-600 cursor-pointer text-3xl hover:text-black "
           />
         </div>
-        {/*  Show Punch In/Out Button if modal was canceled */}
-        {/* <div className=" text-center">
-          <button
-            className={`rounded px-4 py-2 text-white ${
-              isPunchedIn ? 'bg-gray-400' : 'bg-black'
-            }`}
-            disabled={isPunchedIn}
-            onClick={handlePunchIn}
-          >
-            Punch In
-          </button>
-          <button
-            className={`ml-4 rounded px-4 py-2 text-white ${
-              !isPunchedIn ? 'bg-gray-400' : 'bg-black'
-            }`}
-            disabled={!isPunchedIn}
-            onClick={handlePunchOut}
-          >
-            Punch Out
-          </button>
-        </div> */}
 
         <div className="text-center">
           <button
-            className={`flex items-center gap-2 rounded px-4 py-2 text-white ${
-              isPunchedIn
+            className={`flex items-center gap-2 rounded px-4 py-2 text-white ${isPunchedIn
                 ? 'bg-[#b91c1c] hover:bg-[#dc2626]'
                 : 'bg-black hover:bg-[#6b7280]'
-            }`}
+              }`}
             onClick={isPunchedIn ? handlePunchOut : handlePunchIn}
           >
             {isPunchedIn ? (

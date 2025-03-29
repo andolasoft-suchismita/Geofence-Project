@@ -23,12 +23,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const [sidebarExpanded, setSidebarExpanded] = useState(
     localStorage.getItem('sidebar-expanded') === 'true'
   );
- 
+
   const currentUser = useSelector(
     (state: RootState) => state.userSlice.userInfo
   );
-  const isAdmin =currentUser?.is_superuser === true || currentUser?.roletype === "admin"; // Admin role check
-  console.log({isAdmin})
+  const isAdmin = currentUser?.is_superuser === true || currentUser?.roletype === "admin"; // Admin role check
+  console.log({ isAdmin })
 
   useEffect(() => {
     localStorage.setItem('sidebar-expanded', sidebarExpanded.toString());
@@ -45,46 +45,46 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     { name: "Reports", path: "/reports", allowedRoles: ["admin"] }, // Only admin
     { name: "Calender", path: "/", allowedRoles: ["admin", "user"] }
     // { name: "Setting", path: "/companysetting", allowedRoles: ["admin"] }
-    
+
   ];
 
- // Close sidebar on outside click
- useEffect(() => {
-  const clickHandler = ({ target }: MouseEvent) => {
-    if (!sidebar.current || !trigger.current) return;
-    if (
-      !sidebarOpen ||
-      sidebar.current.contains(target) ||
-      trigger.current.contains(target)
-    )
-      return;
-    setSidebarOpen(false);
-  };
-  document.addEventListener('click', clickHandler);
-  return () => document.removeEventListener('click', clickHandler);
-}, [sidebarOpen]);
+  // Close sidebar on outside click
+  useEffect(() => {
+    const clickHandler = ({ target }: MouseEvent) => {
+      if (!sidebar.current || !trigger.current) return;
+      if (
+        !sidebarOpen ||
+        sidebar.current.contains(target) ||
+        trigger.current.contains(target)
+      )
+        return;
+      setSidebarOpen(false);
+    };
+    document.addEventListener('click', clickHandler);
+    return () => document.removeEventListener('click', clickHandler);
+  }, [sidebarOpen]);
 
-// Close sidebar when "Escape" key is pressed
-useEffect(() => {
-  const keyHandler = ({ keyCode }: KeyboardEvent) => {
-    if (!sidebarOpen || keyCode !== 27) return;
-    setSidebarOpen(false);
-  };
-  document.addEventListener('keydown', keyHandler);
-  return () => document.removeEventListener('keydown', keyHandler);
-}, [sidebarOpen]);
+  // Close sidebar when "Escape" key is pressed
+  useEffect(() => {
+    const keyHandler = ({ keyCode }: KeyboardEvent) => {
+      if (!sidebarOpen || keyCode !== 27) return;
+      setSidebarOpen(false);
+    };
+    document.addEventListener('keydown', keyHandler);
+    return () => document.removeEventListener('keydown', keyHandler);
+  }, [sidebarOpen]);
 
 
   return (
     <aside
-    ref={sidebar}
+      ref={sidebar}
       className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-black duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0
-         ${ sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}
+         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
     >
       {/* <!-- SIDEBAR HEADER --> */}
       <div className="flex items-center justify-between gap-2 px-6 py-5.5 text-4xl text-white lg:py-6.5 ">
-        <NavLink to="/">
+        <NavLink to="/dashboard">
           {/* <img src={Logo} alt="Logo" /> */}
           OGeo
         </NavLink>
@@ -213,7 +213,7 @@ useEffect(() => {
                 </li>
               )}
 
-              
+
             </ul>
           </div>
         </nav>

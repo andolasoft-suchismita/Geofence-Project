@@ -9,10 +9,11 @@ import {
   fetchUsersAPI,
   updateUserAPI,
 } from '../api/services/userService';
-import { showToast } from '../utils/toast';
+
 import DeleteConfirmationModal from '../components/Modal/DeleteConfirmationModal';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../redux/rootReducers';
+import { toast } from 'react-toastify';
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -37,7 +38,7 @@ const Users: React.FC = () => {
       const res = await fetchUsersAPI(company_id);
       setUsers(res);
     } catch (error) {
-      showToast('Something went wrong', 'error');
+      toast.error('Something went wrong');
     } finally {
       setLoading(false); // Stop loading
     }
@@ -60,13 +61,13 @@ const Users: React.FC = () => {
   ///////////////////////////////////////////
   const addUser = async (values: any) => {
     try {
-      const response = await createUserAPI(values); // ✅ Call API to add user
+      const response = await createUserAPI(values); //  Call API to add user
       const updatedData = await fetchUsersAPI(company_id);
       if (updatedData) setUsers(updatedData);
       afterSubmit();
-      showToast('User created successfully', 'success');
+      toast.success('User created successfully');
     } catch (error) {
-      showToast('Failed to create user', 'error');
+      toast.error('Failed to create user');
     }
   };
   ///////////////////////////////////////////
@@ -76,9 +77,9 @@ const Users: React.FC = () => {
       const updatedData = await fetchUsersAPI(company_id);
       if (updatedData) setUsers(updatedData);
       afterSubmit();
-      showToast('User updated successfully', 'success');
+      toast.success('User updated successfully');
     } catch (error) {
-      showToast('Failed to update user', 'error');
+      toast.error('Failed to update user');
     }
   };
   ///////////////////////////////////////////
@@ -86,10 +87,10 @@ const Users: React.FC = () => {
     try {
       await deleteUserAPI(id);
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id)); // Remove deleted user without refetching
-      showToast('User deleted successfully', 'success');
+      toast.success('User deleted successfully');
       afterSubmit();
     } catch (error) {
-      showToast('Failed to delete user', 'error');
+      toast.error('Failed to delete user');
     }
   };
 

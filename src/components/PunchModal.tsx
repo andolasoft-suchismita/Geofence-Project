@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/rootReducers';
 import {
@@ -7,7 +7,8 @@ import {
   setPunchStatus,
 } from '../redux/slices/attendanceSlice';
 import { AppDispatch } from '../redux/store';
-import { showToast } from '../utils/toast';
+
+import { toast } from 'react-toastify';
 
 interface PunchModalProps {
   isInsideGeofence: boolean;
@@ -42,8 +43,7 @@ const PunchModal: React.FC<PunchModalProps> = ({
         },
         (error) => {
           console.error('Geolocation Error:', error);
-          // alert('Failed to get location. Please enable GPS and try again.');
-          showToast('Failed to get location. Please enable GPS and try again.', 'error');
+          toast.error('Failed to get location. Please enable GPS and try again.');
           reject({ lat: 0, lng: 0 });
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
@@ -60,45 +60,37 @@ const PunchModal: React.FC<PunchModalProps> = ({
       const response = await dispatch(punchIn({ lat, lng, check_in })).unwrap();
 
       dispatch(setPunchStatus(true));
-      showToast('Successfully Punched In!', 'success');
+      localStorage.setItem('attendance_id', response.id);
+      toast.success('Successfully Punched In!');
     } catch (error) {
-      alert(`Punch In Failed: ${JSON.stringify(error, null, 2)}`);
+      toast.error(`Punch In Failed: ${JSON.stringify(error, null, 2)}`);
+      // alert(`Punch In Failed: ${JSON.stringify(error, null, 2)}`);
     }
   };
 
   const handlePunchOut = async () => {
     try {
-      if (!attendanceRecords || attendanceRecords.length === 0) {
-        // alert('No attendance record found. Please try again.');
-        showToast('No attendance record found. Please try again.', 'error');
+      const attendance_id = localStorage.getItem('attendance_id');
+      if (!attendance_id) {
+        toast.error('No active attendance record found. Please try again.');
         return;
       }
 
-      // Ensure latest record is fetched correctly
-      const latestAttendance = [...attendanceRecords].sort(
-        (a, b) =>
-          new Date(b.check_in).getTime() - new Date(a.check_in).getTime()
-      )[0];
-
-      if (!latestAttendance) {
-        alert('No valid attendance record found.');
-        return;
-      }
-
-      console.log('Punching Out ->', latestAttendance);
-
-      await dispatch(
+      const response = await dispatch(
         punchOut({
-          attendance_id: latestAttendance.attendance_id,
+          attendance_id,
           check_out: new Date().toISOString(),
         })
       ).unwrap();
 
       dispatch(setPunchStatus(false));
-      showToast('Successfully Punched Out!', 'success');
+      localStorage.removeItem('attendance_id'); // Clear the attendance_id from localStorage
+      toast.success('Successfully Punched Out!');
+      
+      
     } catch (error) {
       console.error('Punch Out Error:', error);
-      alert(`Punch Out Failed: ${JSON.stringify(error, null, 2)}`);
+      toast.error(`Punch Out Failed: ${JSON.stringify(error, null, 2)}`);
     }
   };
 
