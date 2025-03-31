@@ -4,20 +4,14 @@ import { FaChevronLeft, FaChevronRight, FaSearch, FaCalendarAlt } from 'react-ic
 import { format } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../redux/rootReducers';
-import { punchIn, punchOut } from '../redux/slices/attendanceSlice';
-import { AppDispatch } from '../redux/store';
 import { useMemo } from 'react';
 import { getAttendanceByDate, getAttendanceSummary } from '../api/services/attendanceService';
 import Card from '../components/Card';
-import { FaArrowRightFromBracket } from 'react-icons/fa6';
-import { toast } from 'react-toastify';
-
+import PunchModal from '../components/PunchModal';
 
 const Attendance: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>(); //  Type dispatch with AppDispatch
-  const [] = useState(true);
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [searchQuery, setSearchQuery] = useState('');
@@ -28,6 +22,16 @@ const Attendance: React.FC = () => {
   const [] = dateRange;
   const [attendanceData, setAttendanceData] = useState([]);
   const [error, setError] = useState<string | null>(null);
+
+  // Add function to check if selected date is today
+  const isToday = (date: Date) => {
+    const today = new Date();
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    );
+  };
 
   const company_id = useSelector(
     (state: RootState) => state.authSlice.company_id
@@ -43,76 +47,12 @@ const Attendance: React.FC = () => {
     late: 0,
   });
 
-  const getCoordinates = async () => {
-    return new Promise<{ lat: number; lng: number }>((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          resolve({
-            lat: parseFloat(position.coords.latitude.toFixed(6)), // Round to 6 decimals
-            lng: parseFloat(position.coords.longitude.toFixed(6)),
-          });
-        },
-        () => {
-          // alert('⚠️ Failed to get location. Please enable GPS and try again.');
-          toast.error('Failed to get location. Please enable GPS and try again.');
-          reject({ lat: 0, lng: 0 });
-        },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 } // High accuracy mode
-      );
-    });
-  };
-
-  const isPunchedIn = useSelector(
-    (state: RootState) => state.attendance.isPunchedIn
-  );
-
-  console.log('isPunchedIn', isPunchedIn);
-
-  const handlePunchIn = async () => {
-    setLoading(true);
-    try {
-      const { lat, lng } = await getCoordinates();
-      const check_in = new Date().toISOString(); // Ensure ISO format
-
-      const response = await dispatch(punchIn({ lat, lng, check_in })).unwrap();
-
-      toast.success('Successfully Punched In!');
-
-
-      localStorage.setItem('attendance_id', response.id);
-    } catch (error) {
-      toast.error(`Punch In Failed: ${JSON.stringify(error.detail, null, 2)}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handlePunchOut = async () => {
-    const attendance_id = localStorage.getItem('attendance_id');
-    if (!attendance_id) return alert('⚠️ No active attendance record found!');
-
-    setLoading(true);
-    try {
-      await dispatch(
-        punchOut({
-          attendance_id,
-          check_out: new Date().toISOString(),
-        })
-      ).unwrap();
-      toast.success('Successfully Punched Out!');
-    } catch (error) {
-      toast.error('Punch Out Failed!');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // Function to fetch attendance data
   const fetchAttendance = async () => {
     setLoading(true);
     setError(null);
     setAttendanceData([]); // Clear previous data before fetching
-    console.log('attendance main');
+    // console.log('attendance main');
     const attendance_date = format(selectedDate, 'yyyy-MM-dd');
 
     try {
@@ -200,21 +140,8 @@ const Attendance: React.FC = () => {
           />
         </div>
 
-        <div className="text-center">
-          <button
-            className={`flex items-center gap-2 rounded px-4 py-2 text-white ${isPunchedIn
-                ? 'bg-[#b91c1c] hover:bg-[#dc2626]'
-                : 'bg-black hover:bg-[#6b7280]'
-              }`}
-            onClick={isPunchedIn ? handlePunchOut : handlePunchIn}
-          >
-            {isPunchedIn ? (
-              <FaArrowRightFromBracket />
-            ) : (
-              <FaArrowRightFromBracket />
-            )}
-            {isPunchedIn ? 'Punch Out' : 'Punch In'}
-          </button>
+        <div className="text-center mt-8">
+          <PunchModal isInsideGeofence={true} loading={loading} isEnabled={isToday(selectedDate)} />
         </div>
       </div>
 

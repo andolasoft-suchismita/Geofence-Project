@@ -13,11 +13,13 @@ import { toast } from 'react-toastify';
 interface PunchModalProps {
   isInsideGeofence: boolean;
   loading: boolean;
+  isEnabled?: boolean;
 }
 
 const PunchModal: React.FC<PunchModalProps> = ({
   isInsideGeofence,
   loading,
+  isEnabled = true,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const isPunchedIn = useSelector(
@@ -31,11 +33,11 @@ const PunchModal: React.FC<PunchModalProps> = ({
   );
 
   const getCoordinates = async () => {
-    console.log('called');
+    // console.log('called');
     return new Promise<{ lat: number; lng: number }>((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          console.log({ position });
+          // console.log({ position });
           resolve({
             lat: parseFloat(position.coords.latitude.toFixed(6)),
             lng: parseFloat(position.coords.longitude.toFixed(6)),
@@ -54,7 +56,7 @@ const PunchModal: React.FC<PunchModalProps> = ({
   const handlePunchIn = async () => {
     try {
       const { lat, lng } = await getCoordinates();
-      console.log('Punching In ->', { lat, lng });
+      // console.log('Punching In ->', { lat, lng });
       const check_in = new Date().toISOString();
 
       const response = await dispatch(punchIn({ lat, lng, check_in })).unwrap();
@@ -98,10 +100,10 @@ const PunchModal: React.FC<PunchModalProps> = ({
     <div className="relative mt-[-50px]">
       <button
         onClick={isPunchedIn ? handlePunchOut : handlePunchIn}
-        disabled={!isInsideGeofence || loading}
+        disabled={!isInsideGeofence || loading || !isEnabled}
         className={`flex h-14 w-40 items-center rounded-full px-2 shadow-lg transition-all duration-300
           ${
-            isInsideGeofence
+            isInsideGeofence && isEnabled
               ? 'cursor-pointer'
               : 'cursor-not-allowed opacity-50'
           }

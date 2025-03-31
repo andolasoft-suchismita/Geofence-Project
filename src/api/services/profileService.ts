@@ -1,5 +1,5 @@
 import API from '../axiosInstance';
-import { showToast } from 'utils/toast';
+
 // Fetch user profile by ID
 export const getUserById = async (id: string) => {
   try {
