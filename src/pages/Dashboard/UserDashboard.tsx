@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDashboardData } from '../../redux/slices/userdashboardSlice';
 import { RootState, AppDispatch } from '../../redux/store';
+import { initializeAttendanceState } from '../../redux/slices/attendanceSlice';
 import {
   PieChart,
   Pie,
@@ -44,6 +45,7 @@ const Userdashboard = () => {
   );
 
   useEffect(() => {
+    dispatch(initializeAttendanceState()); // Initialize attendance state
     dispatch(resetDashboardData()); // Clear dashboard data first
     if (user_id) {
       dispatch(fetchDashboardData(user_id));
@@ -65,11 +67,11 @@ const Userdashboard = () => {
   // Prepare line chart data from API response
   const loginOvertimeData = data?.login_overtime_trends
     ? Object.keys(data.login_overtime_trends).map((month) => ({
-        month,
-        loginHours: data.login_overtime_trends[month].login_hours,
-        overtime: data.login_overtime_trends[month].overtime,
-        companyHours: data.login_overtime_trends[month].company_hours,
-      }))
+      month,
+      loginHours: data.login_overtime_trends[month].login_hours,
+      overtime: data.login_overtime_trends[month].overtime,
+      companyHours: data.login_overtime_trends[month].company_hours,
+    }))
     : [];
 
   console.log('User data', user);
@@ -77,7 +79,9 @@ const Userdashboard = () => {
   return (
     <div className="bg-gray-100 flex min-h-screen flex-col p-2">
       {loading ? (
-        <p className="text-gray-500 mt-2">Loading...</p>
+        <div className="flex h-screen items-center justify-center">
+          <div className="border-gray-500 h-12 w-12 animate-spin rounded-full border-t-4 border-solid"></div>
+        </div>
       ) : error ? (
         <p className="text-red-500 mt-2">{error}</p>
       ) : (
@@ -103,7 +107,7 @@ const Userdashboard = () => {
                     {data.upcoming_holiday.name}
                   </p>
                   <p className="text-gray-600 font-semibold">
-                  {dayjs(data.upcoming_holiday.date).format('DD-MM-YYYY')}
+                    {dayjs(data.upcoming_holiday.date).format('DD-MM-YYYY')}
                   </p>
                 </>
               ) : (

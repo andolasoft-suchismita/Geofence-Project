@@ -3,19 +3,18 @@ import { format } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/rootReducers';
-import { punchIn, punchOut } from '../redux/slices/attendanceSlice';
 import { AppDispatch } from '../redux/store';
-import { showToast } from '../utils/toast';
+
 import {
   getAttendanceByDate,
   getAttendanceByUserId,
 } from '../api/services/attendanceService';
-import { FaArrowRightFromBracket } from 'react-icons/fa6';
 import {
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import PunchModal from '../components/PunchModal';
 const getMonthOptions = () => {
   const months = [
     'January',
@@ -149,20 +148,20 @@ const EmployeeDetail = ({ refresh }: { refresh: boolean }) => {
   });
 
   return (
-    <div className="realative  p-4">
-      <div className="rounded-lg bg-white  shadow-lg">
+    <div className="relative">
+      <div className="rounded-lg bg-white shadow-lg">
         {/* Modal Header */}
-        <div className="flex justify-between bg-gray p-4">
+        <div className="flex justify-between items-center bg-gray-50 p-6 border-b">
           <div className="flex items-center gap-3">
             <div>
-              <h2 className="text-xl font-semibold text-black">Attendance</h2>
+              <h2 className="text-2xl font-semibold text-gray-800">Monthly Attendance</h2>
             </div>
           </div>
           <div>
             <select
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="text-gray-700 rounded border bg-white p-2"
+              className="text-gray-700 rounded-lg border border-gray-300 bg-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {getMonthOptions().map((option) => (
                 <option key={option.value} value={option.value}>
@@ -174,24 +173,28 @@ const EmployeeDetail = ({ refresh }: { refresh: boolean }) => {
         </div>
 
         {/* Attendance Table */}
-        <div className="max-h-[400px] overflow-auto p-4">
+        <div className="max-h-[600px] overflow-auto p-6">
           {loading ? (
-            <p className="text-gray-500 text-center">Loading...</p>
+            <div className="flex justify-center items-center h-40">
+              <p className="text-gray-500 text-lg">Loading...</p>
+            </div>
           ) : error ? (
-            <p className="text-red-500 text-center">{error}</p>
+            <div className="flex justify-center items-center h-40">
+              <p className="text-red-500 text-lg">{error}</p>
+            </div>
           ) : attendanceData.length === 0 ? (
-            <p className="text-gray-500 text-center">
-              No data available for this month.
-            </p>
+            <div className="flex justify-center items-center h-40">
+              <p className="text-gray-500 text-lg">No data available for this month.</p>
+            </div>
           ) : (
             <table className="w-full rounded-md">
-              <thead className="bg-gray-200 text-black">
+              <thead className="bg-gray-50 text-gray-700">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
                       <th
                         key={header.id}
-                        className="p-4 text-center font-semibold"
+                        className="p-4 text-center font-semibold border-b"
                       >
                         {flexRender(
                           header.column.columnDef.header,
@@ -204,9 +207,9 @@ const EmployeeDetail = ({ refresh }: { refresh: boolean }) => {
               </thead>
               <tbody>
                 {table.getRowModel().rows.map((row) => (
-                  <tr key={row.id}>
+                  <tr key={row.id} className="hover:bg-gray-50">
                     {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="p-4 text-center">
+                      <td key={cell.id} className="p-4 text-center border-b">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
@@ -225,7 +228,6 @@ const EmployeeDetail = ({ refresh }: { refresh: boolean }) => {
 };
 
 const Attendance: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [attendanceData, setAttendanceData] = useState([]);
@@ -238,77 +240,10 @@ const Attendance: React.FC = () => {
     (state: RootState) => state.attendance[user_id] || []
   );
 
-  //Get coordinates Function
-  const getCoordinates = async () => {
-    return new Promise<{ lat: number; lng: number }>((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          resolve({
-            lat: parseFloat(position.coords.latitude.toFixed(6)), // Round to 6 decimals
-            lng: parseFloat(position.coords.longitude.toFixed(6)),
-          });
-        },
-        () => {
-          alert('⚠️ Failed to get location. Please enable GPS and try again.');
-          reject({ lat: 0, lng: 0 });
-        },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-      );
-    });
-  };
-
   const [refreshData, setRefreshData] = useState(false);
 
   const triggerRefresh = () => {
     setRefreshData((prev) => !prev); // Toggle state to re-trigger effect in EmployeeDetail
-  };
-
-  ///////////////////
-  // const isPunchedIn =
-  //   userAttendance.length > 0 &&
-  //   !userAttendance[userAttendance.length - 1].punchOut;
-
-  const isPunchedIn = useSelector(
-    (state: RootState) => state.attendance.isPunchedIn
-  );
-
-  const handlePunchIn = async () => {
-    setLoading(true);
-    try {
-      const { lat, lng } = await getCoordinates();
-      const check_in = new Date().toISOString(); // Ensure ISO format
-
-      const response = await dispatch(punchIn({ lat, lng, check_in })).unwrap();
-      showToast('Successfully Punched In!');
-      localStorage.setItem('attendance_id', response.id);
-      triggerRefresh();
-    } catch (error) {
-      alert(`Punch In Failed: ${JSON.stringify(error.detail, null, 2)}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  ////////////////////
-  const handlePunchOut = async () => {
-    const attendance_id = localStorage.getItem('attendance_id');
-    if (!attendance_id) return alert('⚠️ No active attendance record found!');
-
-    setLoading(true);
-    try {
-      await dispatch(
-        punchOut({
-          attendance_id,
-          check_out: new Date().toISOString(),
-        })
-      ).unwrap();
-      showToast('Successfully Punched Out!');
-      triggerRefresh();
-    } catch (error) {
-      console.error(' Punch Out Error:', error);
-    } finally {
-      setLoading(false);
-    }
   };
 
   // Function to fetch attendance data
@@ -344,42 +279,33 @@ const Attendance: React.FC = () => {
   );
   const firstname = currentUser?.first_name;
   const lastname = currentUser?.last_name;
-
+  const profilepic = currentUser?.last_name;
   return (
-    <div className="p-2">
+    <div className="p-4">
       {/* Date Selector & Buttons */}
-      <div className="mb-6 flex items-center justify-between rounded-lg bg-white p-5">
-        <div className="ml-2 flex items-center space-x-2 text-xl font-semibold text-black">
+      <div className="mb-6 flex items-center justify-between rounded-lg bg-white p-6 shadow-md">
+        <div className="flex items-center space-x-4">
           <img
             src={currentUser?.profile_pic || 'deafault user.avif'}
             alt="Profile"
-            className="h-10 w-10 rounded-full"
+            className="h-14 w-14 rounded-full object-cover border-2 border-gray-200"
           />
-          <span>
-            {firstname} {lastname}
-          </span>
-        </div>
 
-        <div className="text-center">
-          <button
-            className={`flex items-center gap-2 rounded px-4 py-2 text-white ${
-              isPunchedIn
-                ? 'bg-[#b91c1c] hover:bg-[#dc2626]'
-                : 'bg-black hover:bg-[#6b7280]'
-            }`}
-            onClick={isPunchedIn ? handlePunchOut : handlePunchIn}
-          >
-            {isPunchedIn ? (
-              <FaArrowRightFromBracket />
-            ) : (
-              <FaArrowRightFromBracket />
-            )}
-            {isPunchedIn ? 'Punch Out' : 'Punch In'}
-          </button>
+          <div>
+            <h2 className="text-2xl font-semibold text-gray-800">
+              {firstname} {lastname}
+            </h2>
+            <p className="text-gray-600">Employee Attendance</p>
+          </div>
+        </div>
+        <div className="flex items-center space-x-4 mt-14">
+          <PunchModal isInsideGeofence={true} loading={loading} />
         </div>
       </div>
 
-      <div>{user_id && <EmployeeDetail refresh={refreshData} />}</div>
+      <div className="mt-6">
+        {user_id && <EmployeeDetail refresh={refreshData} />}
+      </div>
     </div>
   );
 };
