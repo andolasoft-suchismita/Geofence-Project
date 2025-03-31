@@ -39,7 +39,7 @@ const dashboardSlice = createSlice({
       state,
       action: PayloadAction<DashboardState['attendanceSummary']>
     ) => {
-      console.log('📊 Updating attendanceSummary in Redux:', action.payload);
+      // console.log('📊 Updating attendanceSummary in Redux:', action.payload);
 
       state.attendanceSummary = action.payload;
     },
@@ -50,7 +50,7 @@ const dashboardSlice = createSlice({
       state,
       action: PayloadAction<DashboardState['monthlyReport']>
     ) => {
-      console.log('📊 Updating monthlyReport in Redux:', action.payload);
+      // console.log('📊 Updating monthlyReport in Redux:', action.payload);
 
       state.monthlyReport = action.payload;
     },

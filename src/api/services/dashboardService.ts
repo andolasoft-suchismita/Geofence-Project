@@ -7,7 +7,7 @@ export const getattendanceSummary = async (company_id: number) => {
     const response = await API.get(
       `/attendance/attendance/attendance_summary/${company_id}/date/${attendance_date}`
     );
-    console.log('API Response:', response.data);
+    // console.log('API Response:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching attendance summary:', error);
@@ -26,7 +26,7 @@ export const getattendanceReports = async (
     const response = await API.get(
       `/attendance/attendance/attendance_reports/${company_id}/${formattedMonth}/${formattedYear}`
     );
-    console.log('API Response:', response.data);
+    // console.log('API Response:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching attendance reports:', error);

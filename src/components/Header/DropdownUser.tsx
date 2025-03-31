@@ -21,37 +21,50 @@ const DropdownUser = () => {
   const userId = useSelector((state: any) => state.authSlice.user_id);
 
   // Fetch profile data
+  const getProfileData = async () => {
+    if (!userId) return;
+
+    try {
+      const data = await getUserById(userId);
+      const formattedName = `${data?.first_name || 'User'} ${data?.last_name || 'Name'}`
+        .replace(/_/g, ' ')
+        .split(' ')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+
+      const formattedDesignation = (data?.designation || 'User Designation')
+        .replace(/_/g, ' ')
+        .split(' ')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+
+      setProfile({
+        name: formattedName,
+        designation: formattedDesignation,
+        image: data?.profile_pic || '/default_picture-2.webp',
+      });
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      setProfile(prev => ({
+        ...prev,
+        image: '/default_picture-2.webp'
+      }));
+    }
+  };
+
   useEffect(() => {
-    const getProfileData = async () => {
-      if (!userId) return; // Prevent unnecessary API calls if userId is missing
-
-      try {
-        const data = await getUserById(userId);
-        const formattedName = `${data?.first_name || 'User'} ${data?.last_name || 'Name'
-          }`
-          .replace(/_/g, ' ')
-          .split(' ')
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' ');
-
-        const formattedDesignation = (data?.designation || 'User Designation')
-          .replace(/_/g, ' ')
-          .split(' ')
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' ');
-
-        setProfile({
-          name: formattedName,
-          designation: formattedDesignation,
-          image: data?.profile_pic || '/default-user.avif',
-        });
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-      }
-    };
-
     getProfileData();
   }, [userId]);
+
+  // Listen for profile updates
+  useEffect(() => {
+    const handleProfileUpdate = () => {
+      getProfileData();
+    };
+
+    window.addEventListener('profileUpdated', handleProfileUpdate);
+    return () => window.removeEventListener('profileUpdated', handleProfileUpdate);
+  }, []);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -102,7 +115,7 @@ const DropdownUser = () => {
           <span className="block text-sm">{profile.designation}</span>
         </span>
 
-        <span className="h-12 w-12 rounded-full">
+        <span className="h-12 w-12 rounded-full border-2 border-gray-300">
           <img
             src={profile.image}
             alt="User"

@@ -98,7 +98,7 @@ const UserForm: React.FC<UserFormProps> = ({
               .required('Designation is required'),
             department: Yup.string()
               .oneOf(Object.values(CompanyDepartment), 'Invalid department')
-              .required('Designation is required'),
+              .required('Department is required'),
             hashed_password: Yup.string()
               .min(8, 'Password must be at least 8 characters')
               .matches(
@@ -204,7 +204,7 @@ const UserForm: React.FC<UserFormProps> = ({
                     ))}
                   </Field>
                   <ErrorMessage
-                    name="roletype"
+                    name="department"
                     className="text-sm text-red"
                     component="div"
                   />

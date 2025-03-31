@@ -4,7 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/rootReducers';
 import { AppDispatch } from '../redux/store';
-
+import { getUserById } from '../api/services/profileService';
 import {
   getAttendanceByDate,
   getAttendanceByUserId,
@@ -15,6 +15,8 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import PunchModal from '../components/PunchModal';
+import { setUserInfo } from '../redux/slices/userSlice';
+
 const getMonthOptions = () => {
   const months = [
     'January',
@@ -228,6 +230,7 @@ const EmployeeDetail = ({ refresh }: { refresh: boolean }) => {
 };
 
 const Attendance: React.FC = () => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [attendanceData, setAttendanceData] = useState([]);
@@ -251,7 +254,7 @@ const Attendance: React.FC = () => {
     setLoading(true);
     setError(null);
     setAttendanceData([]); // Clear previous data before fetching
-    console.log('attendance main');
+    // console.log('attendance main');
     const attendance_date = format(selectedDate, 'yyyy-MM-dd');
 
     try {
@@ -279,14 +282,35 @@ const Attendance: React.FC = () => {
   );
   const firstname = currentUser?.first_name;
   const lastname = currentUser?.last_name;
-  const profilepic = currentUser?.last_name;
+  const [profilePic, setProfilePic] = useState(currentUser?.profile_pic || '/default_picture-2.webp');
+
+  // Add event listener for profile updates
+  useEffect(() => {
+    const handleProfileUpdate = async () => {
+      if (user_id) {
+        try {
+          const updatedUserData = await getUserById(user_id);
+          // Update local state
+          setProfilePic(updatedUserData?.profile_pic || '/default_picture-2.webp');
+          // Update Redux state
+          dispatch(setUserInfo(updatedUserData));
+        } catch (error) {
+          console.error('Error fetching updated user data:', error);
+        }
+      }
+    };
+
+    window.addEventListener('profileUpdated', handleProfileUpdate);
+    return () => window.removeEventListener('profileUpdated', handleProfileUpdate);
+  }, [user_id, dispatch]);
+
   return (
     <div className="p-4">
       {/* Date Selector & Buttons */}
       <div className="mb-6 flex items-center justify-between rounded-lg bg-white p-6 shadow-md">
         <div className="flex items-center space-x-4">
           <img
-            src={currentUser?.profile_pic || 'deafault user.avif'}
+            src={profilePic}
             alt="Profile"
             className="h-14 w-14 rounded-full object-cover border-2 border-gray-200"
           />

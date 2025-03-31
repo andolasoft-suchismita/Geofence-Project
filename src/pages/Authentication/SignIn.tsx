@@ -32,7 +32,7 @@ const SignIn: React.FC = () => {
  const fetchUserInfo = async(user_id: string) => {
     try {
       const userInfo = await fetchCurrentUserAPI(user_id); //  Fetch user info
-      console.log('kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk', userInfo)
+      // console.log('kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk', userInfo)
       if (userInfo) {
         dispatch(setUserInfo(userInfo)); //  Dispatch only when data exists
       } else {

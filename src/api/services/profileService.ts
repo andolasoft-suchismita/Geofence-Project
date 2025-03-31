@@ -1,10 +1,10 @@
 import API from '../axiosInstance';
-import { showToast } from 'utils/toast';
+
 // Fetch user profile by ID
 export const getUserById = async (id: string) => {
   try {
     const response = await API.get(`/users/users/${id}`);
-    console.log('Fetched User Data:', response.data);
+    // console.log('Fetched User Data:', response.data);
     return response.data;
   } catch (error) {
     console.error(
@@ -18,7 +18,7 @@ export const getUserById = async (id: string) => {
 export const updateUser = async (id: string, updatedData: any) => {
   try {
     const response = await API.put(`/users/users/${id}`, updatedData);
-    console.log('Updated User Data:', response.data);
+    // console.log('Updated User Data:', response.data);
    
     return response.data;
    
