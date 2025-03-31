@@ -74,9 +74,7 @@ const handleAddEvent = (newEvent) => {
           )}
         </div>
       </div>
-
       
-     
       {/* Calendar UI */}
       <Calendar
         localizer={localizer}
