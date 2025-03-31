@@ -43,17 +43,30 @@ const ProfilePicture = ({ profilePic, updateProfilePicture, isEditing, isDetails
       onMouseLeave={() => isEditing && setIsHovered(false)}
     >
       {profilePic ? (
-        <img
-          src={profilePic}
-          alt="Profile"
-          className="w-24 h-24 rounded-full object-cover border-2 border-gray-300"
-        />
+        <div className="relative group">
+          <img
+            src={profilePic}
+            alt="Profile"
+            className="w-24 h-24 rounded-full object-cover border-2 border-gray-300"
+          />
+          {isEditing && !isDetailsView && (
+            <div 
+              onClick={handleRemovePicture}
+              className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100 cursor-pointer rounded-full"
+            >
+              <span className="text-white font-medium">Remove</span>
+            </div>
+          )}
+        </div>
       ) : (
-        <div className="w-24 h-24 flex items-center justify-center rounded-full bg-gray-200 border-2 border-gray-300">
-          <FaUser className="text-gray-500" size={60} />
+        <div className="w-24 h-24 rounded-full border-2 border-gray-300">
+          <img
+            src="/default_picture-2.webp"
+            alt="Default Profile"
+            className="w-full h-full rounded-full object-cover"
+          />
         </div>
       )}
-
 
       <input
         type="file"
@@ -63,22 +76,12 @@ const ProfilePicture = ({ profilePic, updateProfilePicture, isEditing, isDetails
         onChange={handleFileChange}
       />
 
-
-      {isEditing && (
+      {isEditing && !isDetailsView && (
         <button
           className="absolute bottom-0 right-2 rounded-full bg-blue-500 p-2 text-white shadow-md hover:bg-blue-600"
           onClick={() => fileInputRef.current?.click()}
         >
           <FaCamera size={14} />
-        </button>
-      )}
-
-      {isEditing && isHovered && profilePic && (
-        <button
-          className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full text-white transition-opacity duration-200"
-          onClick={handleRemovePicture}
-        >
-          <FaTrash size={18} />
         </button>
       )}
 

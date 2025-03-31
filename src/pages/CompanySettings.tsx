@@ -156,7 +156,7 @@ const CompanySettings = () => {
             setLogo(data.logo); // Set logo from API
           }
         } catch (error) {
-          console.error('Error fetching company data:', error);
+          // console.error('Error fetching company data:', error);
         } finally {
           setLoading(false);
         }
@@ -185,7 +185,7 @@ const CompanySettings = () => {
         logo: logo || company.logo,
       };
 
-      console.log('Sending Data:', payload);
+      // console.log('Sending Data:', payload);
 
       const updatedCompany = await updateCompany(company_id, payload);
 

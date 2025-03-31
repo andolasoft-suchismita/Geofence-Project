@@ -54,7 +54,7 @@ const loadState = () => {
     const serializedState = localStorage.getItem("reduxState");
     return serializedState ? JSON.parse(serializedState) : undefined;
   } catch (err) {
-    console.error("❌ Failed to load state:", err);
+    console.error(" Failed to load state:", err);
     return undefined;
   }
 };
@@ -77,7 +77,7 @@ store.subscribe(() => {
         userSlice: state.userSlice,
     };
     localStorage.setItem("reduxState", JSON.stringify(stateToPersist));
-    console.log(" Updated Redux Store:", store.getState());
+    // console.log(" Updated Redux Store:", store.getState());
   });
 
 export type RootState = ReturnType<typeof store.getState>;
