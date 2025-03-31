@@ -74,9 +74,7 @@ const handleAddEvent = (newEvent) => {
           )}
         </div>
       </div>
-
       
-     
       {/* Calendar UI */}
       <Calendar
         localizer={localizer}
@@ -96,4 +94,5 @@ const handleAddEvent = (newEvent) => {
 };
 
 export default CalendarPage;
+
 
