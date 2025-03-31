@@ -7,7 +7,7 @@ import CompanySettings from '../pages/CompanySettings';
 import DefaultLayout from '../layout/DefaultLayout';
 import Users from '../pages/Users';
 import DashboardHome from '../pages/dashboard/index';
-import Userdashboard from '../pages/dashboard/UserDashboard';
+import UserDashboard from '../pages/dashboard/UserDashboard';
 import NotFoundPage from '../pages/NotFoundPage';
 import { Navigate } from 'react-router-dom';
  
@@ -48,7 +48,7 @@ const PrivateRoutes = () => {
         {isAdmin ? (
           <Route path="/dashboard" element={<DashboardHome />} />
         ) : (
-          <Route path="/dashboard" element={<Userdashboard />} />
+          <Route path="/dashboard" element={<UserDashboard />} />
         )}
 
         {isAdmin ? (
