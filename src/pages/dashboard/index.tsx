@@ -61,18 +61,18 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        console.log('Fetching Attendance Summary...');
+        // console.log('Fetching Attendance Summary...');
         const summaryData = await getattendanceSummary(company_id);
-        console.log('Summary Data:', summaryData); // Check response
+        // console.log('Summary Data:', summaryData); // Check response
         dispatch(setAttendanceSummary(summaryData));
  
-        console.log('📡 Fetching Attendance Reports...');
+        // console.log('📡 Fetching Attendance Reports...');
         const reportData = await getattendanceReports(
           company_id,
           getCurrentMonth(),
           getCurrentYear()
         );
-        console.log('Report Data:', reportData); // Check response
+        // console.log('Report Data:', reportData); // Check response
         dispatch(setMonthlyReport(reportData));
       } catch (error) {
         console.error(' Error fetching dashboard data:', error);
@@ -137,9 +137,9 @@ const Dashboard = () => {
     half_days: '#578FCA', // Blue
   };
  
-  console.log(' Department Data:', departmentData);
-  console.log(' Pie Chart Data:', pieData);
-  console.log(' Monthly Report Data:', monthlyReport);
+  // console.log(' Department Data:', departmentData);
+  // console.log(' Pie Chart Data:', pieData);
+  // console.log(' Monthly Report Data:', monthlyReport);
   // const { isPunchedIn } = useSelector((state: RootState) => state.attendance);
  
   return (

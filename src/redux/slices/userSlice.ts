@@ -22,7 +22,7 @@ const userSlice = createSlice({
     updateRole: (state, action: PayloadAction<{ roletype: string }>) => {
       if (state.userInfo) {
         state.userInfo.role = action.payload.roletype.trim().toLowerCase(); // ✅ Normalize role
-        console.log("Updated Role in Redux:", state.userInfo.role);
+        // console.log("Updated Role in Redux:", state.userInfo.role);
       }
     },
   },

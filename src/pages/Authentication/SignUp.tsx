@@ -48,7 +48,7 @@ const SignUp = () => {
       // Register user
       await API.post('/v1/auth/register', data);
 
-      console.log('Logging in...');
+      // console.log('Logging in...');
       const loginData = new URLSearchParams();
       loginData.append('username', data.email);
       loginData.append('password', data.password);
@@ -58,7 +58,7 @@ const SignUp = () => {
 
       const token = userResponse.data?.access_token;
       if (!token) {
-        console.error('Login failed: No token received!');
+        // console.error('Login failed: No token received!');
         toast.error('Login failed. Please try again!');
         return;
       }

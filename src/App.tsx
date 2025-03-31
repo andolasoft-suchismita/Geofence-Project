@@ -9,7 +9,7 @@ const App = () => {
   const authToken = useSelector((state: RootState) => state?.authSlice?.token);
   const userId = useSelector((state: RootState) => state?.authSlice?.user_id);
 
-  console.log({ authToken, userId });
+  // console.log({ authToken, userId });
 
   return (
     <>

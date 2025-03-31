@@ -23,7 +23,7 @@ const PunchModal: React.FC<PunchModalProps> = ({
   const isPunchedIn = useSelector(
     (state: RootState) => state.attendance.isPunchedIn
   );
-  console.log('isPunchedIn dashboard', isPunchedIn);
+  // console.log('isPunchedIn dashboard', isPunchedIn);
 
   const user_id = useSelector((state: RootState) => state.authSlice.user_id);
   const attendanceRecords = useSelector(

@@ -54,7 +54,7 @@ const authSlice = createSlice({
     //New action to update role after profile update
     updateRole: (state, action: PayloadAction<{ roletype: string }>) => {
       const normalizedRole = action.payload.roletype.trim().toLowerCase(); //Normalize
-      console.log('Updated Role in Redux:', normalizedRole);
+      // console.log('Updated Role in Redux:', normalizedRole);
 
       state.roletype = normalizedRole;
       localStorage.setItem(

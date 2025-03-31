@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { FaTimes } from 'react-icons/fa'; // Importing cross icon
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import EditProfile from '../components/EditProfile';
 import { getUserById, updateUser } from '../api/services/profileService';
 import ProfilePicture from '../components/Images/profilepicture';
 import { RootState } from '../redux/store';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { setUserInfo } from '../redux/slices/userSlice';
 
 
 // Helper function to format text
@@ -19,6 +20,7 @@ const formatText = (text: string) => {
 };
 
 const ProfileSettings = () => {
+  const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [details, setDetails] = useState<any>(null);
   const [editData, setEditData] = useState<any>(null);
@@ -70,6 +72,10 @@ const ProfileSettings = () => {
       const updatedData = { ...details, profile_pic: base64String || null };
       await updateUser(userId, updatedData);
       setDetails(updatedData);
+      // Update Redux state
+      dispatch(setUserInfo(updatedData));
+      // Dispatch custom event to notify other components
+      window.dispatchEvent(new Event('profileUpdated'));
     } catch (error) {
       console.error("Error updating profile picture:", error);
       setError("Failed to update profile picture.");
@@ -107,8 +113,8 @@ const ProfileSettings = () => {
             <ProfilePicture
               profilePic={details.profile_pic}
               updateProfilePicture={updateProfilePicture}
-              isEditing={!isEditing}
-              isDetailsView={isEditing}
+              isEditing={isEditing}
+              isDetailsView={!isEditing}
             />
             <div>
               <h2 className="text-2xl font-bold text-grey-800">

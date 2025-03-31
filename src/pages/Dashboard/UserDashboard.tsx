@@ -31,7 +31,7 @@ const Userdashboard = () => {
     dispatch(resetDashboardData()); // Clears dashboard data
     localStorage.removeItem("reduxState"); // Clear persisted state
     window.location.reload(); // Force a fresh state on next load
-    console.log("Dashboard data reset after logout!");
+    // console.log("Dashboard data reset after logout!");
   };
 
   const user_id = useSelector((state: RootState) => state.authSlice.user_id);
@@ -74,7 +74,7 @@ const Userdashboard = () => {
     }))
     : [];
 
-  console.log('User data', user);
+  // console.log('User data', user);
 
   return (
     <div className="bg-gray-100 flex min-h-screen flex-col p-2">
