@@ -59,6 +59,9 @@ const ProfilePicture = ({ profilePic, updateProfilePicture, isEditing, isDetails
           )}
         </div>
       ) : (
+        // <div className="w-24 h-24 flex items-center justify-center rounded-full bg-gray-200 border-2 border-gray-300">
+        // <FaUser className="text-gray-500" size={60} />
+
         <div className="w-24 h-24 rounded-full border-2 border-gray-300">
           <img
             src="/default_picture-2.webp"
