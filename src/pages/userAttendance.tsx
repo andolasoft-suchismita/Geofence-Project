@@ -251,7 +251,7 @@ const Attendance: React.FC = () => {
     setLoading(true);
     setError(null);
     setAttendanceData([]); // Clear previous data before fetching
-    console.log('attendance main');
+    // console.log('attendance main');
     const attendance_date = format(selectedDate, 'yyyy-MM-dd');
 
     try {
