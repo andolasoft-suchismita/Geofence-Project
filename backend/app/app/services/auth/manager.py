@@ -57,15 +57,15 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     async def create(self, user_create: schemas.BaseUserCreate, safe: bool = False, request: Optional[Request] = None):
         user_data = user_create.model_dump()
         
-        # ✅ Ensure password exists
+        #  Ensure password exists
         if "password" not in user_data or not user_data["password"]:
             raise ValueError("Password is required")
 
-        # ✅ Hash password
+        #  Hash password
         # hashed_password = self.password_helper.hash(user_data.pop("password"))
         hashed_password = user_data.pop("password")
 
-        # ✅ Pass password explicitly to BaseUserCreate
+        #  Pass password explicitly to BaseUserCreate
         return await super().create(
             schemas.BaseUserCreate(**user_data, password=hashed_password), safe, request
         )
