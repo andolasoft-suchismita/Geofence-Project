@@ -14,6 +14,7 @@ import DeleteConfirmationModal from '../components/Modal/DeleteConfirmationModal
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/rootReducers';
 import { toast } from 'react-toastify';
+import Loader from '../components/Loader';
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -148,9 +149,7 @@ const Users: React.FC = () => {
 
       {/* Show Loader While Fetching Data */}
       {loading ? (
-        <div className="flex  items-center justify-center py-50">
-          <span className="border-gray-500 h-10 w-10 animate-spin rounded-full border-t-4"></span>
-        </div>
+       <Loader className="py-50" />
       ) : filteredUsers.length === 0 ? (
         <div className=" flex flex-col items-center justify-center gap-4">
           <p className="text-gray-500 mt-5 text-lg">No users found.</p>

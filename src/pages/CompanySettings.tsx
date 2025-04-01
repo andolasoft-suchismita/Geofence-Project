@@ -11,15 +11,16 @@ import {
   updateCompany,
 } from '../api/services/companyService';
 import { RootState } from '../redux/store';
-import { showToast } from '../utils/toast';
 import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import Select from 'react-select';
-import { MdDelete } from 'react-icons/md';
 import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ConfirmationDialog from '../components/ConfirmationDialog';
+import Loader from '../components/Loader';
+import Button from '../components/Button';
 
 // Validation Schema
 const validationSchema = Yup.object({
@@ -133,6 +134,7 @@ const CompanySettings = () => {
   const [loading, setLoading] = useState(true);
 
   const [logo, setLogo] = useState<string | null>(null);
+  const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -142,6 +144,28 @@ const CompanySettings = () => {
         setLogo(reader.result as string); // Store Base64
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveLogo = async () => {
+    try {
+      if (!company_id) {
+        toast.error('No company selected!');
+        return;
+      }
+
+      const updatedCompany = await updateCompany(company_id, {
+        ...company,
+        logo: null
+      });
+
+      dispatch(setCompanyData(updatedCompany));
+      setLogo(null);
+      toast.success('Company logo removed successfully!');
+      setShowConfirmationDialog(false);
+    } catch (error) {
+      console.error('Error removing logo:', error);
+      toast.error('Failed to remove company logo');
     }
   };
 
@@ -202,9 +226,7 @@ const CompanySettings = () => {
   return (
     <div className="container mx-auto w-full max-w-6xl rounded-lg bg-white p-8 shadow-lg">
       {loading ? (
-        <div className="flex h-screen items-center justify-center">
-          <div className="border-gray-500 h-12 w-12 animate-spin rounded-full border-t-4 border-solid"></div>
-        </div>
+       <Loader className=" py-70" />
       ) : (
         <Formik
           initialValues={{
@@ -278,7 +300,7 @@ const CompanySettings = () => {
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              setLogo(null);
+                              setShowConfirmationDialog(true);
                             }}
                             className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100 cursor-pointer"
                           >
@@ -466,8 +488,8 @@ const CompanySettings = () => {
                     placeholder="Enter working hours per day"
                     className="border-gray-300 w-full rounded-lg border bg-gray p-3 focus:outline-blue-500"
                     onChange={(e) => {
-                      setFieldValue('number', e.target.value);
-                      setFieldTouched('number', true, false); // Forces validation on change
+                      setFieldValue('working_hours', e.target.value);
+                      setFieldTouched('working_hours', true, false); // Forces validation on change
                     }}
                   />
                   <ErrorMessage
@@ -601,25 +623,35 @@ const CompanySettings = () => {
               </MapContainer>
 
               <div className="mt-4 flex justify-end gap-4">
-                <button
+                <Button
+                  title='Cancel'
                   type="button"
-                  className="rounded-lg bg-[#D3D3D3] px-7 py-3 transition hover:bg-red hover:text-white"
+                  variant="cancel"
                   onClick={() => navigate(-1)}
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
+                  title='Save'
                   type="submit"
-                  className="rounded-lg bg-blue-500 px-8 py-3 text-white hover:bg-blue-700"
+                  variant="save"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? 'Saving...' : 'Save'}
-                </button>
+                </Button>
               </div>
             </Form>
           )}
         </Formik>
       )}
+
+      <ConfirmationDialog
+        isOpen={showConfirmationDialog}
+        onClose={() => setShowConfirmationDialog(false)}
+        onConfirm={handleRemoveLogo}
+        title="Remove Company Logo"
+        message="Are you sure you want to remove the company logo? This action cannot be undone."
+      />
     </div>
   );
 };
