@@ -6,8 +6,8 @@ import WeeklyReport from '../pages/WeeklyReport';
 import CompanySettings from '../pages/CompanySettings';
 import DefaultLayout from '../layout/DefaultLayout';
 import Users from '../pages/Users';
-import DashboardHome from '../pages/dashboard/index';
-import UserDashboard from '../pages/dashboard/UserDashboard';
+import DashboardHome from '../pages/Dashboard/index';
+import UserDashboard from '../pages/Dashboard/UserDashboard';
 import NotFoundPage from '../pages/NotFoundPage';
 import { Navigate } from 'react-router-dom';
  
@@ -33,7 +33,7 @@ const PrivateRoutes = () => {
 
  useEffect(() => {
    if (location.pathname === '/') {
-     navigate('/user-dashboard');
+     navigate('/dashboard');
    }
    
    // Restrict users from accessing admin-only routes manually
