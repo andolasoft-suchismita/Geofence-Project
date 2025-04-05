@@ -45,5 +45,6 @@ async def get_user_db(session: AsyncSession = Depends(get_db)):
 async def init_db():
     print("Initializing Database...")
     async with engine.begin() as conn:
+        print("Database connection successfully!")
         await conn.run_sync(Base.metadata.create_all)
     print("All tables created successfully!")

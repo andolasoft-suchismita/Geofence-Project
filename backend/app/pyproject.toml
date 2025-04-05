@@ -44,6 +44,10 @@ validate-email = "^1.3"
 python-barcode = "^0.15.1"
 pillow = "^11.1.0"
 whoosh = "^2.7.4"
+asyncpg = "^0.30.0"
+fastapi-pagination = "^0.12.34"
+passlib = "^1.7.4"
+geopy = "^2.4.1"
 
 
 [build-system]
