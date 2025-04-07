@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://192.168.2.31:9009/attendance/attendance";
+const BASE_URL = "http://127.0.0.1:8000/attendance/attendance";
 
 export const getAttendanceReports = async (companyId: number, month: number, year: number) => {
   const monthNames = [

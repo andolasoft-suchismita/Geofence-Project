@@ -27,7 +27,7 @@
 // };
 
 
-const BASE_URL = "http://192.168.2.31:9009/companyholidays/company-holidays";
+const BASE_URL = "http://127.0.0.1:8000/companyholidays/company-holidays";
 const COMPANY_ID = 23;
 
 // Fetch holidays
