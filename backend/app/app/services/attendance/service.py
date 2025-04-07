@@ -134,7 +134,7 @@ class AttendanceService:
 
     
 
-    async def get_attendance_by_user(
+    async def   get_attendance_by_user(
         self, user_id: UUID, start_date: Optional[date] = None, end_date: Optional[date] = None
     ) -> List[AttendanceResponseSchema]:
         """
@@ -150,9 +150,10 @@ class AttendanceService:
         if not user:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
         
-        username = user.first_name+ " " +user.last_name
         if username is None:
             username = ""
+        else:
+            username = user.first_name + " " +user.last_name
         # Fetch attendance records with filters applied
         attendance_records = await self.attendance_repository.get_attendance_by_user(user_id, start_date, end_date)
         

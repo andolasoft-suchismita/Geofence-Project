@@ -19,6 +19,7 @@ from fastapi_users.authentication import (
     JWTStrategy,
 )
 from fastapi_users.db import SQLAlchemyUserDatabase
+from services.users.repository import UserRepository
 from services.company.service import CompanyService
 from db.database import get_user_db
 from services.users.model import User
@@ -49,10 +50,14 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     #     # Call the parent create method after successful verification
     #     return await super().create(user_create, safe, request)
     
-    # async def on_after_register(self, user: User, request: Optional[Request] = None):
-    #     registered_email = user.email
-    #     # Create new Tenant and add User to Tenant
-    #     tenant = await CompanyService().create_from_user(user)
+    async def on_after_register(self, user: User, request: Optional[Request] = None):
+        user_instance = user
+        user_instance.is_superuser=True
+        user_instance.is_verified=True
+        await UserRepository().update(user_instance)
+        # registered_email = user.email
+        # Create new Tenant and add User to Tenant
+        # tenant = await CompanyService().create_from_user(user)
     
     async def create(self, user_create: schemas.BaseUserCreate, safe: bool = False, request: Optional[Request] = None):
         user_data = user_create.model_dump()
