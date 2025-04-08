@@ -54,7 +54,8 @@ const SignUp = () => {
       loginData.append('password', data.password);
 
       // Login and get token
-      const userResponse = await FormAPI.post('/v1/auth/jwt/login', loginData);
+      const userResponse = await FormAPI.post('/v1/auth/jwt/login', loginData);3
+      
 
       const token = userResponse.data?.access_token;
       if (!token) {

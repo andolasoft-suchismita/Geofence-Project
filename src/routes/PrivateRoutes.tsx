@@ -33,7 +33,7 @@ const PrivateRoutes = () => {
 
  useEffect(() => {
    if (location.pathname === '/') {
-     navigate('/user-dashboard');
+     navigate('/dashboard'); // Redirect to dashboard if accessing root path
    }
    
    // Restrict users from accessing admin-only routes manually
