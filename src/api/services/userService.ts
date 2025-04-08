@@ -4,9 +4,7 @@ import API from '../axiosInstance';
 export const fetchUsersAPI = async (company_id: number) => {
   try {
     // const response = await API.get('/v1/users');
-    const response = await API.get(
-      `/company/company/${company_id}/employees`
-    );
+    const response = await API.get(`/company/company/${company_id}/employees`);
     return response.data;
   } catch (error) {
     throw error;
@@ -26,10 +24,10 @@ export const createUserAPI = async (userData: any) => {
 //  Update User
 export const updateUserAPI = async (id: string, userData: Partial<any>) => {
   try {
-    const response = await API.put(`/users/users/${id}`, userData);
+    const response = await API.put(`/v1/users/${id}`, userData);
     return response.data;
   } catch (error) {
-    console.error("Error updating user:", error);
+    console.error('Error updating user:', error);
     throw error;
   }
 };
@@ -37,7 +35,7 @@ export const updateUserAPI = async (id: string, userData: Partial<any>) => {
 //  Delete User
 export const deleteUserAPI = async (id: string) => {
   try {
-    await API.delete(`/users/users/${id}`);
+    await API.delete(`/v1/users/${id}`);
     return id; // Return deleted user ID for Redux state update
   } catch (error) {
     throw error;
@@ -47,18 +45,16 @@ export const deleteUserAPI = async (id: string) => {
 // Fetch User Details by ID
 export const fetchUserDetailsAPI = async (id: string) => {
   try {
-    const response = await API.get(`/users/users/${id}`);
+    const response = await API.get(`/v1/users/${id}`);
     return response.data;
   } catch (error) {
     throw error;
   }
 };
 
- 
-
 export const fetchCurrentUserAPI = async (user_id: string) => {
   try {
-    const response = await API.get(`/users/users/${user_id}`); // Ensure correct API route
+    const response = await API.get(`/v1/users/${user_id}`); // Ensure correct API route
     console.log('Fetched User Data:', response.data);
 
     return response.data;

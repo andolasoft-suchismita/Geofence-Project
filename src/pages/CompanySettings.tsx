@@ -19,7 +19,7 @@ import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ConfirmationDialog from '../components/ConfirmationDialog';
-import Loader from '../components/Loader';
+import Loader from '../components/Loading/Loader';
 import Button from '../components/Button';
 
 // Validation Schema

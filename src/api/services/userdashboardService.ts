@@ -1,6 +1,6 @@
 import API from '../axiosInstance';
 
-const API_URL = "http://192.168.2.31:9009/attendance/attendance/attendance_summary_by_user";
+const API_URL = "http://192.168.2.39:8000/attendance/attendance/attendance_summary_by_user";
 
 export const fetchUserDashboardData = async (user_id: string) => {
     try {
