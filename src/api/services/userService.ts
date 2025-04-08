@@ -4,9 +4,7 @@ import API from '../axiosInstance';
 export const fetchUsersAPI = async (company_id: number) => {
   try {
     // const response = await API.get('/v1/users');
-    const response = await API.get(
-      `/company/company/${company_id}/employees`
-    );
+    const response = await API.get(`/company/company/${company_id}/employees`);
     return response.data;
   } catch (error) {
     throw error;
@@ -29,7 +27,7 @@ export const updateUserAPI = async (id: string, userData: Partial<any>) => {
     const response = await API.put(`/users/users/${id}`, userData);
     return response.data;
   } catch (error) {
-    console.error("Error updating user:", error);
+    console.error('Error updating user:', error);
     throw error;
   }
 };
@@ -53,8 +51,6 @@ export const fetchUserDetailsAPI = async (id: string) => {
     throw error;
   }
 };
-
- 
 
 export const fetchCurrentUserAPI = async (user_id: string) => {
   try {

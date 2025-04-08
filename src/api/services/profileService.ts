@@ -19,9 +19,8 @@ export const updateUser = async (id: string, updatedData: any) => {
   try {
     const response = await API.put(`/users/users/${id}`, updatedData);
     // console.log('Updated User Data:', response.data);
-   
+
     return response.data;
-   
   } catch (error) {
     console.error(
       'Error updating user profile:',
