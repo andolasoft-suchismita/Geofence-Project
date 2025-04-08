@@ -14,7 +14,7 @@ import DeleteConfirmationModal from '../components/Modal/DeleteConfirmationModal
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/rootReducers';
 import { toast } from 'react-toastify';
-import Loader from '../components/Loader';
+import Loader from '../components/Loading/Loader';
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);

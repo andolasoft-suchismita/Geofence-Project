@@ -11,6 +11,8 @@ import { useNavigate, Link } from 'react-router-dom';
 // import API from '../../api/axiosInstance';
 import { useDispatch } from 'react-redux';
 import { login } from '../../redux/slices/authSlice';
+import { fetchCurrentUserAPI } from '../../api/services/userService';
+import { setUserInfo } from '../../redux/slices/userSlice';
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -33,6 +35,19 @@ const SignUp = () => {
       .oneOf([Yup.ref('password'), ''], 'Passwords must match')
       .required('Confirm Password is required'),
   });
+  const fetchUserInfo = async (user_id: string) => {
+    try {
+      const userInfo = await fetchCurrentUserAPI(user_id); //  Fetch user info
+      // console.log('kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk', userInfo)
+      if (userInfo) {
+        dispatch(setUserInfo(userInfo)); //  Dispatch only when data exists
+      } else {
+        console.warn('No user info found.');
+      }
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+    }
+  };
 
   const handleSignUp = async (values: any) => {
     try {
@@ -79,7 +94,7 @@ const SignUp = () => {
 
       // Store token, user_id, and company_id in Redux
       dispatch(login({ token, user_id, company_id }));
-
+      fetchUserInfo(user_id);
       toast.success('SignUp Successfully!');
       navigate('/dashboard'); // Redirect to dashboard
     } catch (error) {
