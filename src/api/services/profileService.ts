@@ -3,7 +3,7 @@ import API from '../axiosInstance';
 // Fetch user profile by ID
 export const getUserById = async (id: string) => {
   try {
-    const response = await API.get(`/v1/users/${id}`);
+    const response = await API.get(`/users/users/${id}`);
     // console.log('Fetched User Data:', response.data);
     return response.data;
   } catch (error) {
@@ -17,11 +17,10 @@ export const getUserById = async (id: string) => {
 // Update user profile (both fields and profile picture)
 export const updateUser = async (id: string, updatedData: any) => {
   try {
-    const response = await API.put(`/v1/users/${id}`, updatedData);
+    const response = await API.put(`/users/users/${id}`, updatedData);
     // console.log('Updated User Data:', response.data);
-   
+
     return response.data;
-   
   } catch (error) {
     console.error(
       'Error updating user profile:',
