@@ -20,14 +20,14 @@ class CompanyService:
         tenant_instance = Company(
             name = company.name,
             email = company.email,
-            is_active = 1
+            is_active = True
         )
         tenantRepository = CompanyRepository()
 
         tenant = await tenantRepository.create(tenant_instance)
         tenant_user_instance = CompanyUser(
             company_id = tenant.id, 
-            user_id = str(user.id),
+            user_id = user.id,
             user_type = 'admin', 
             status = 'active',
         )

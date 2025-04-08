@@ -7,7 +7,7 @@ from uuid import UUID
 from fastapi_query.pagination import PaginationParams
 from services.auth.manager import current_super_user, current_active_user
 
-AddUserRouter = APIRouter(prefix="/users", tags=["User-Management"])
+AddUserRouter = APIRouter(prefix="/users", tags=["Add-User"])
 
 # Create a new User
 @AddUserRouter.post("/", response_model=UserResponseSchema, status_code=201)

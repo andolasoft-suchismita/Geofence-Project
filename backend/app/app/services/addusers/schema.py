@@ -97,6 +97,7 @@ class UpdateUserSchema(BaseModel):
 
 
 class UserResponseSchema(BaseModel):
+    id :UUID
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     email: Optional[str] = None

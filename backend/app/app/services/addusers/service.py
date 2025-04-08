@@ -46,7 +46,7 @@ class AddUserService:
         
         company_user_instance = CompanyUser(
                company_id=super_user_company.id,
-               user_id=str(user_created.id),
+               user_id= user_created.id,
                user_type="user",
                status="active",
             )
