@@ -3,7 +3,7 @@ import API from '../axiosInstance';
 // Fetch user profile by ID
 export const getUserById = async (id: string) => {
   try {
-    const response = await API.get(`v1/users/${id}`);
+    const response = await API.get(`users/users/${id}`);
     // console.log('Fetched User Data:', response.data);
     return response.data;
   } catch (error) {
