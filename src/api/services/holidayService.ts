@@ -1,5 +1,5 @@
 // const BASE_URL = "http://192.168.2.31:9009/companyholidays/company-holidays";
-// const COMPANY_ID = 23; 
+// const COMPANY_ID = 23;
 
 // // Fetch holidays
 // export const fetchHolidays = async () => {
@@ -47,10 +47,10 @@ export const fetchHolidays = async () => {
       start: new Date(holiday.holiday_date),
       end: new Date(holiday.holiday_date),
       allDay: true,
-      type: "holiday",
+      type: 'holiday',
     }));
   } catch (error) {
-    console.error("Error fetching holidays:", error);
+    console.error('Error fetching holidays:', error);
     throw error;
   }
 };
@@ -59,21 +59,21 @@ export const fetchHolidays = async () => {
 export const createHoliday = async (holidayData: any) => {
   try {
     const response = await fetch(BASE_URL, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(holidayData),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || "Error creating holiday");
+      throw new Error(errorData.message || 'Error creating holiday');
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error creating holiday:", error);
+    console.error('Error creating holiday:', error);
     throw error;
   }
 };
@@ -82,21 +82,21 @@ export const createHoliday = async (holidayData: any) => {
 export const updateHoliday = async (holidayId: number, holidayData: any) => {
   try {
     const response = await fetch(`${BASE_URL}/${holidayId}`, {
-      method: "PUT",
+      method: 'PUT',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(holidayData),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || "Error updating holiday");
+      throw new Error(errorData.message || 'Error updating holiday');
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error updating holiday:", error);
+    console.error('Error updating holiday:', error);
     throw error;
   }
 };
@@ -105,7 +105,7 @@ export const updateHoliday = async (holidayId: number, holidayData: any) => {
 export const deleteHoliday = async (holidayId: number) => {
   try {
     const response = await fetch(`${BASE_URL}/${holidayId}`, {
-      method: "DELETE",
+      method: 'DELETE',
     });
 
     if (!response.ok) {
@@ -114,7 +114,7 @@ export const deleteHoliday = async (holidayId: number) => {
 
     return true; // Success
   } catch (error) {
-    console.error("Error deleting holiday:", error);
+    console.error('Error deleting holiday:', error);
     throw error;
   }
 };

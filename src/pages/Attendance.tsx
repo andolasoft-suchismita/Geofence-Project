@@ -210,7 +210,7 @@ const Attendance: React.FC = () => {
         ) : filteredData.length === 0 ? (
           <p className="text-gray-500 text-center">No user found.</p>
         ) : (
-          <AttendanceTable data={filteredData} />
+          <AttendanceTable data={filteredData} onRefresh={fetchAttendance} />
         )}
       </div>
     </div>

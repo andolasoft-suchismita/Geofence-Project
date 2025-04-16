@@ -257,19 +257,19 @@ const Attendance: React.FC = () => {
     // console.log('attendance main');
     const attendance_date = format(selectedDate, 'yyyy-MM-dd');
 
-    try {
-      const data = await getAttendanceByDate(
-        attendance_date,
-        company_id.toString()
-      );
+  //   try {
+  //     const data = await getAttendanceByDate(
+  //       attendance_date,
+  //       company_id.toString()
+  //     );
 
-      setAttendanceData(Array.isArray(data) ? data : []);
-    } catch (err) {
-      setError(err.message);
-      setAttendanceData([]); // Ensure no data when there's an error
-    } finally {
-      setLoading(false);
-    }
+  //     setAttendanceData(Array.isArray(data) ? data : []);
+  //   } catch (err) {
+  //     setError(err.message);
+  //     setAttendanceData([]); // Ensure no data when there's an error
+  //   } finally {
+  //     setLoading(false);
+  //   }
   };
 
   useEffect(() => {

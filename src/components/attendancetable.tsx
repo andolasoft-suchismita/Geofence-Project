@@ -5,14 +5,19 @@ import {
   flexRender,
 } from '@tanstack/react-table';
 import { format } from 'date-fns';
-// import { attendanceData } from "../data/attendanceData";
+
 import {
-  getAttendanceByDate,
+
   getAttendanceByUserId,
+
 } from '../api/services/attendanceService';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/rootReducers';
 import Pagination from './UiElements/Pagination';
+import { toast } from 'react-toastify';
+import { punchOut} from '../redux/slices/attendanceSlice';
+import { AppDispatch } from '../redux/store';
+
 const getMonthOptions = () => {
   const months = [
     'January',
@@ -48,17 +53,16 @@ const EmployeeDetailsModal = ({ employee, onClose }) => {
       return;
     }
 
-    const userId = employee.user_id.trim(); // Fetch based on selected employee
+    const userId = employee.user_id.trim();
     setLoading(true);
     setError('');
 
     try {
-      const attendanceData = await getAttendanceByUserId(userId); // API fetches based on employee ID
+      const attendanceData = await getAttendanceByUserId(userId);
       const filteredData = attendanceData.filter((item) => {
-        // console.log('Checking date:', item.date, 'against', selectedMonth);
-        // return item.date.startsWith(selectedMonth);
-        const formattedDate = format(new Date(item.date), 'yyyy-MM'); // Convert item.date to 'YYYY-MM'
-        return formattedDate === selectedMonth; // Compare formatted date with selected month
+
+        const formattedDate = format(new Date(item.date), 'yyyy-MM');
+        return formattedDate === selectedMonth;
       });
       setAttendanceData(filteredData);
     } catch (err) {
@@ -81,7 +85,7 @@ const EmployeeDetailsModal = ({ employee, onClose }) => {
     return `${hours}h ${minutes}m`;
   };
   const formatCheck = (timeString: string | null) => {
-    if (!timeString) return '-'; // Handle missing data
+    if (!timeString) return '-';
 
     // Convert "HH:mm:ss.SSSSSS" to Date object
     const [hours, minutes, seconds] = timeString.split(':');
@@ -155,11 +159,7 @@ const EmployeeDetailsModal = ({ employee, onClose }) => {
         {/* Modal Header */}
         <div className="flex items-center justify-between bg-gray p-4">
           <div className="flex items-center gap-3">
-            {/* <img
-              src={employee.profile}
-              alt={employee.name}
-              className="h-12 w-12 rounded-full shadow-md"
-            /> */}
+
             <div>
               <h2 className="text-xl font-semibold text-black">
                 {employee.name}
@@ -242,42 +242,29 @@ const EmployeeDetailsModal = ({ employee, onClose }) => {
 
 interface AttendanceTableProps {
   data: any[];
+  onRefresh: () => void;
 }
-const AttendanceTable: React.FC<AttendanceTableProps> = ({ data }) => {
+const AttendanceTable: React.FC<AttendanceTableProps> = ({ data, onRefresh }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 5; // Display 10 rows per page
-  const totalPages = Math.ceil(data.length / rowsPerPage); // Calculate total pages
-
-  const [attendanceData, setAttendanceData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const rowsPerPage = 5;
+  const totalPages = Math.ceil(data.length / rowsPerPage);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-  //  Get user & company details from Redux
-  const user_id = useSelector((state: RootState) => state.authSlice.user_id);
-  const company_id = useSelector(
-    (state: RootState) => state.authSlice.company_id
+  const [editingAttendance, setEditingAttendance] = useState(null);
+  const [tableData, setTableData] = useState(data);
+  
+  const currentUser = useSelector(
+    (state: RootState) => state.userSlice.userInfo
   );
-  const attendance_date = new Date().toISOString().split('T')[0]; //  Current date
+  const isAdmin = currentUser?.is_superuser === true || currentUser?.roletype === "admin"; // Admin role check
+  console.log({ isAdmin })
 
-  //  Fetch attendance when date or company changes
-  // const fetchAttendance = async () => {
-  //   setLoading(true);
-  //   console.log('attendance in table');
-  //   try {
-  //     const data = await getAttendanceByDate(
-  //       attendance_date,
-  //       company_id.toString()
-  //     );
-  //     setAttendanceData(data);
-  //   } catch (error) {
-  //     console.error('Failed to load attendance data');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-  // useEffect(() => {
-  //   if (!attendance_date || !company_id) return;
-  //   fetchAttendance();
-  // }, [attendance_date, company_id]);
+  
+  const dispatch = useDispatch<AppDispatch>();
+
+  // Add effect to update tableData when data prop changes
+  useEffect(() => {
+    setTableData(data);
+  }, [data]);
 
   const formatTime = (decimalHours: number) => {
     if (!decimalHours || decimalHours <= 0) return '-';
@@ -286,9 +273,8 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ data }) => {
     return `${hours}h ${minutes}m`;
   };
   const formatCheck = (timeString: string | null) => {
-    if (!timeString) return '-'; // Handle missing data
+    if (!timeString) return '-';
 
-    // Convert "HH:mm:ss.SSSSSS" to Date object
     const [hours, minutes, seconds] = timeString.split(':');
     const date = new Date();
     date.setHours(
@@ -304,6 +290,41 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ data }) => {
       hour12: true,
     });
   };
+
+  // Check if a date is today
+  const isToday = (date: string) => {
+    const today = new Date();
+    const attendanceDate = new Date(date);
+    return (
+      attendanceDate.getDate() === today.getDate() &&
+      attendanceDate.getMonth() === today.getMonth() &&
+      attendanceDate.getFullYear() === today.getFullYear()
+    );
+  };
+
+  // Update the updateAttendanceRecord function
+  const updateAttendanceRecord = (updatedAttendance: any) => {
+    // Update the table data with the new check-out time while preserving the original check-in time
+    const updatedData = tableData.map((attendance) =>
+      attendance.attendance_id === updatedAttendance.attendance_id
+        ? {
+          ...attendance,
+          check_in: updatedAttendance.check_in || attendance.check_in, // Preserve original check-in time
+          check_out: updatedAttendance.check_out,
+          working_hours: updatedAttendance.working_hours,
+          overtime: updatedAttendance.overtime
+        }
+        : attendance
+    );
+    setTableData(updatedData);
+    
+    // Trigger a refresh of the parent component's data
+    onRefresh();
+  };
+
+ 
+
+  
 
   const columns = [
     { accessorKey: 'name', header: 'Employee' },
@@ -333,13 +354,39 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ data }) => {
         return formatTime(value);
       },
     },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => {
+        const hasCheckOut = row.original.check_out;
+        const hasCheckIn = row.original.check_in;
+        const isTodayAttendance = isToday(row.original.date);
+        
+        return (
+          <button
+            onClick={() => {
+              if (!hasCheckOut && hasCheckIn && isAdmin && !isTodayAttendance) {
+                setEditingAttendance(row.original);
+              }
+            }}
+            className={`px-3 py-1 rounded-md text-sm transition-colors duration-200 ${
+              hasCheckOut || !hasCheckIn || !isAdmin || isTodayAttendance
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-blue-500 hover:bg-blue-600 text-white'
+            }`}
+            disabled={hasCheckOut || !hasCheckIn || !isAdmin || isTodayAttendance}
+          >
+            {hasCheckOut ? 'Completed' : !hasCheckIn ? 'No Check-in' : !isAdmin ? 'Admin Only' : isTodayAttendance ? 'Today\'s Record' : 'Edit'}
+          </button>
+        );
+      },
+    },
   ];
-  // Slice data based on pagination
+  // Update the paginatedData to use tableData instead of data prop
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * rowsPerPage;
-    return data.slice(startIndex, startIndex + rowsPerPage);
-  }, [data, currentPage]);
-
+    return tableData.slice(startIndex, startIndex + rowsPerPage);
+  }, [tableData, currentPage]);
   //  Initialize TanStack Table
   const table = useReactTable({
     data: paginatedData,
@@ -347,9 +394,10 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ data }) => {
     getCoreRowModel: getCoreRowModel(),
   });
 
+
   return (
     <div className="relative">
-      {/* {loading && <p>Loading...</p>} */}
+
 
       <table className="w-full border-collapse rounded-lg shadow-lg">
         <thead className="bg-[#4B5563] text-white">
@@ -382,16 +430,16 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ data }) => {
                     className="text-gray-800 p-4 text-center"
                     onClick={() => {
                       if (cell.column.id === 'name') {
-                        setSelectedEmployee(row.original); // Just open modal with selected data
+                        setSelectedEmployee(row.original);
                       }
                     }}
                     style={
                       cell.column.id === 'name'
                         ? {
-                            cursor: 'pointer',
-                            color: '#2563EB',
-                            fontWeight: 'bold',
-                          }
+                          cursor: 'pointer',
+                          color: '#2563EB',
+                          fontWeight: 'bold',
+                        }
                         : {}
                     }
                   >
@@ -409,6 +457,14 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ data }) => {
           )}
         </tbody>
       </table>
+      {editingAttendance && (
+        <EditAttendanceModal
+
+          onClose={() => setEditingAttendance(null)}
+          onUpdate={updateAttendanceRecord}
+          editingAttendance={editingAttendance}
+        />
+      )}
       {selectedEmployee && (
         <EmployeeDetailsModal
           employee={selectedEmployee}
@@ -424,4 +480,106 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ data }) => {
   );
 };
 
+// Add new EditAttendanceModal component
+const EditAttendanceModal = ({onClose, onUpdate}) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const [checkOutTime, setCheckOutTime] = useState(() => {
+    const now = new Date();
+    return now.toTimeString().split(" ")[0]; // "HH:MM:SS"
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const user_id = useSelector((state: RootState) => state.authSlice.user_id);
+  const attendanceRecords = useSelector((state: RootState) => state.attendance.users[user_id] || []);
+  const attendance_id = attendanceRecords.length > 0 ? attendanceRecords[attendanceRecords.length - 1].attendance_id : null;
+
+  const currentUser = useSelector(
+    (state: RootState) => state.userSlice.userInfo
+  );
+  const isAdmin = currentUser?.is_superuser === true || currentUser?.roletype === "admin";
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    setError('');
+
+    if (!isAdmin) {
+      setError('Only administrators can update check-out times');
+      setLoading(false);
+      return;
+    }
+
+    if (!attendance_id) {
+      toast.error('No active attendance record found. Please try again.');
+      setLoading(false);
+      return;
+    }
+
+    // Convert selected time into proper ISO format
+    const today = new Date();
+    const [hours, minutes] = checkOutTime.split(":");
+    today.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0);
+
+    try {
+      await dispatch(
+        punchOut({
+          attendance_id: attendance_id, 
+          check_out: today.toISOString(),  // Use the selected time
+        })
+      );
+      toast.success("Check-out time updated successfully!");
+      onUpdate({ attendance_id, check_out: today.toISOString() });  // Call the update function if needed
+      onClose();  
+    } catch (err) {
+      setError('Failed to update check-out time');
+      console.error('Error updating check-out:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 z-9999 flex items-center justify-center bg-black bg-opacity-50 p-4">
+      <div className="w-96 rounded-lg bg-white p-6 shadow-lg">
+        <h2 className="mb-4 text-xl font-semibold">Update Check-out Time</h2>
+        {!isAdmin && (
+          <p className="mb-4 text-sm text-red-500">Only administrators can update check-out times</p>
+        )}
+        <div className="mb-4">
+          <label className="mb-2 block text-sm font-medium text-gray-700">
+            Check-out Time
+          </label>
+          <input
+            type="time"
+            value={checkOutTime}
+            onChange={(e) => setCheckOutTime(e.target.value)}
+            className="w-full rounded border p-2"
+            disabled={!isAdmin}
+          />
+        </div>
+        {error && <p className="mb-4 text-sm text-red-500">{error}</p>}
+        <div className="flex justify-end gap-2">
+          <button
+            onClick={onClose}
+            className="rounded bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={loading || !isAdmin}
+            className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 disabled:bg-blue-300"
+          >
+            {loading ? 'Updating...' : 'Update'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default AttendanceTable;
+
+
+
